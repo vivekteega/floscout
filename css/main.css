@@ -66,7 +66,7 @@ section header #logo h5 {
 }
 
 section header h1 {
-  font-size: 3em;
+  font-size: 2em;
 }
 
 section header .border {
@@ -111,7 +111,7 @@ section .dark-background {
   -ms-grid-columns: auto 1fr;
       grid-template-columns: auto 1fr;
   z-index: 1;
-  width: calc(100vw - 4rem);
+  width: calc(100vw - 2rem);
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
@@ -126,7 +126,7 @@ section .dark-background {
   width: 100%;
   background: transparent;
   outline: none;
-  font-size: 1em;
+  font-size: 0.9rem;
   font-weight: 500;
 }
 
@@ -136,7 +136,7 @@ section .dark-background {
   width: 1.5em;
   fill: none;
   stroke: black;
-  opacity: 0.6;
+  opacity: 0.5;
   stroke-width: 6;
 }
 
@@ -145,10 +145,10 @@ section .dark-background {
   position: absolute;
   bottom: 0;
   right: 0;
-  font-size: 16rem;
+  font-size: 12rem;
   text-align: right;
   opacity: 0.1;
-  line-height: 0.6em;
+  line-height: 1em;
 }
 
 .dark-background {
@@ -169,7 +169,7 @@ section .dark-background {
 }
 
 #highlights .highlight-item h1 {
-  font-size: 2em;
+  font-size: 1.6em;
   letter-spacing: 0.1rem;
   margin-top: 0.1em;
 }
@@ -189,6 +189,10 @@ section .dark-background {
   }
   .input {
     width: 80vw !important;
+  }
+  .watermark {
+    font-size: 16rem;
+    line-height: 0.6em;
   }
 }
 
