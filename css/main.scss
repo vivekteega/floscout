@@ -11,7 +11,7 @@
     --primary-color: #00A7B4;
 }
 body{
-    font-size: 16px;
+    font-size: 14px;
 }
 input[type=text]::-ms-clear {  display: none; width : 0; height: 0; }
 input[type=text]::-ms-reveal {  display: none; width : 0; height: 0; }
@@ -81,7 +81,7 @@ section{
             font-size: 1.5rem;
         }
         .border{
-            height: 0.4em;
+            height: 0.3rem;
             width: 50%;
             background: var(--primary-color);
         }
@@ -142,7 +142,7 @@ section{
         right: 0;
         font-size: 12rem;
         text-align: right;
-        opacity: 0.1;
+        opacity: 0.06;
         line-height: 1em;
     }
 }
@@ -197,7 +197,7 @@ section{
             letter-spacing: 0.06em;
         }
         .border{
-            height: 0.3em;
+            height: 0.2em;
             width: 50%;
             background: var(--primary-color);
         }
@@ -221,6 +221,7 @@ section{
         text-transform: uppercase;
         margin-bottom: 0.4em;
         opacity: 0.8;
+        font-size: 0.7em;
     }  
     h4{
         cursor: pointer;
@@ -243,6 +244,9 @@ section{
     }
 }
 @media only screen and (min-width: 640px){
+    body{
+        font-size: 16px;
+    }
     .padding{
         padding: 0 6vw;
     }
@@ -309,9 +313,6 @@ section{
     }
     .margin{
         margin: 0 24vw;
-    }
-    #top_transaction_container{
-        grid-template-columns: repeat(6, 1fr);
     }
 }
 @media only screen and (max-width: 320px){
