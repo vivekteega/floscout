@@ -29,6 +29,11 @@ body[data-theme='dark'] {
   --dark-shade: #1a1a1a;
 }
 
+.transition {
+  -webkit-transition: all 0.6s;
+  transition: all 0.6s;
+}
+
 h5 {
   font-weight: 500;
 }
@@ -159,8 +164,8 @@ button {
 }
 
 .toggle input:checked ~ .switch .circle {
-  -webkit-transform: translateY(-1.8rem);
-          transform: translateY(-1.8rem);
+  -webkit-transform: translateY(-1.7rem);
+          transform: translateY(-1.7rem);
 }
 
 section {
@@ -227,7 +232,7 @@ section .dark-background {
   display: -ms-grid;
   display: grid;
   place-items: center;
-  padding: 1em;
+  padding: 1rem;
   height: 100%;
 }
 
@@ -260,11 +265,10 @@ section .dark-background {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  background: var(--background);
-  padding: 1em;
+  padding: 1rem;
   gap: 1em;
   border-radius: 0.4em;
-  border: 1px solid rgba(var(--text), 0.1);
+  background: var(--background);
 }
 
 #main_search input {
@@ -273,8 +277,6 @@ section .dark-background {
   background: transparent;
   outline: none;
   font-size: 1rem;
-  letter-spacing: 0.06em;
-  font-weight: 500;
   color: rgba(var(--text), 1);
 }
 
@@ -288,20 +290,8 @@ section .dark-background {
   stroke-width: 6;
 }
 
-#main_search .watermark {
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-  z-index: -1;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  font-size: 40vw;
-  text-align: right;
-  opacity: 0.06;
-  line-height: 1em;
-  pointer-events: none;
+#main_search .icon line {
+  stroke-width: 8;
 }
 
 #highlights {
@@ -314,13 +304,13 @@ section .dark-background {
 }
 
 #highlights .highlight-item {
-  background: var(--background);
   padding: 1.5rem;
   border-radius: 0.4rem;
+  background: var(--background);
 }
 
 #highlights .highlight-item h4 {
-  color: rgba(var(--text-light), 1);
+  color: var(--primary-color);
 }
 
 #highlights .highlight-item h1 {
@@ -345,7 +335,7 @@ section .dark-background {
 .bebas {
   font-family: 'Bebas Neue', cursive;
   font-weight: normal;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
 }
 
 #top_transaction_container {
@@ -363,7 +353,7 @@ section .dark-background {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  padding: 2em;
+  padding: 1.5rem;
   border-radius: 0.3em;
   background: var(--background);
 }

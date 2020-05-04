@@ -57,12 +57,11 @@
                     <label class="input margin">
                         <svg class="icon" viewBox="0 0 64 64">
                             <title>search icon</title>
-                            <path d="M24,46.66A22.94,22.94,0,0,1,7.8,7.51,22.94,22.94,0,1,1,40.24,39.94,22.75,22.75,0,0,1,24,46.66Z" transform="translate(-0.3 0)"/>
                             <path d="M24,1.58A22.15,22.15,0,0,1,39.68,39.39,22.15,22.15,0,0,1,8.36,8.07,22,22,0,0,1,24,1.58M24,0A23.73,23.73,0,1,0,40.8,7,23.65,23.65,0,0,0,24,0Z" transform="translate(-0.3 0)"/>
-                            <line x1="63.35" y1="63.35" x2="39.86" y2="39.86"/></svg>
+                            <line x1="63.35" y1="63.35" x2="39.86" y2="39.86"/>
+                        </svg>
                         <input type="search" placeholder="Search Block, Transactions, address, token or contract">
                     </label>
-                    <h1 class="bebas watermark">flo scout</h1>
                 </div>
             </div>
             <div id="highlights" class="margin">
@@ -71,7 +70,7 @@
                     <h1>RMT</h1>
                 </div>
                 <div class="highlight-item">
-                    <h4 class="bebas">top contrat</h4>
+                    <h4 class="bebas">top contract</h4>
                     <h1>India elections 2019</h1>
                 </div>
                 <div class="highlight-item">
@@ -123,6 +122,7 @@
             themeToggler.checked = false
         }
         themeToggler.addEventListener('change', () => {
+            transition()
             if(themeToggler.checked){
                 nightlight();
                 localStorage.setItem('theme', 'dark')
@@ -137,6 +137,12 @@
         }
         function nightlight(){
             body.setAttribute('data-theme', 'dark');
+        }
+        function transition(){
+            body.classList.add('transition')
+            setTimeout(() => {
+                body.classList.remove('transition')
+            }, 700)
         }
     </script>
 </body>
