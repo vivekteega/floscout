@@ -117,6 +117,10 @@ button {
   letter-spacing: 0.06em;
 }
 
+.uppercase {
+  text-transform: uppercase;
+}
+
 .toggle {
   position: relative;
   cursor: pointer;
@@ -183,6 +187,19 @@ section .dark-background {
       grid-template-rows: auto 1fr;
 }
 
+ul[type='circle'] {
+  padding: 1.5rem 2.5rem;
+  list-style: circle;
+}
+
+ul[type='circle'] li {
+  margin-bottom: 1rem;
+}
+
+ul[type='circle'] li:last-of-type {
+  margin-bottom: 0;
+}
+
 ul {
   list-style: none;
 }
@@ -221,6 +238,7 @@ ul .balance:last-of-type {
 .card h4 {
   margin-bottom: 0.4rem;
   font-weight: 400;
+  text-transform: capitalize;
 }
 
 .label {
@@ -546,6 +564,10 @@ ul .balance:last-of-type {
   font-family: 'Montserrat', sans-serif;
 }
 
+#page_header h3 {
+  font-weight: 500;
+}
+
 .page {
   padding: 1.5rem 0;
 }
@@ -604,6 +626,7 @@ p {
       -ms-flex-align: center;
           align-items: center;
   font-size: 0.8rem;
+  margin-bottom: 0.5rem;
 }
 
 .status.done {
@@ -643,15 +666,7 @@ p {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-}
-
-.tabs .line {
-  position: absolute;
-  height: 0.1rem;
-  background: rgba(var(--text), 0.8);
-  bottom: 0;
-  -webkit-transition: left 0.3s, width 0.3s;
-  transition: left 0.3s, width 0.3s;
+  overflow-x: auto;
 }
 
 .tabs .tab {
@@ -660,6 +675,9 @@ p {
   opacity: 0.6;
   padding-bottom: 0.5rem;
   margin-right: 1rem;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+  border-bottom: transparent;
 }
 
 .tabs .tab:last-of-type {
@@ -668,6 +686,25 @@ p {
 
 .tabs .tab.active {
   opacity: 1;
+  border-bottom: 0.1em solid rgba(var(--text), 0.8);
+}
+
+.contract-choice {
+  margin-bottom: 2rem;
+}
+
+.contract-choice:last-of-type {
+  margin-bottom: 0;
+}
+
+.contract-choice h3 {
+  text-transform: capitalize;
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+}
+
+#homepage {
+  margin: 0 1.5rem;
 }
 
 @media only screen and (min-width: 640px) {
@@ -676,6 +713,9 @@ p {
   }
   .margin {
     margin: 0 6vw;
+  }
+  #homepage {
+    margin: 0 4vw;
   }
   .input {
     width: 80vw !important;
@@ -725,6 +765,9 @@ p {
   .margin {
     margin: 0 16vw;
   }
+  #homepage {
+    margin: 0 8vw;
+  }
   .input {
     width: 50vw !important;
   }
@@ -765,6 +808,9 @@ p {
   .margin {
     margin: 0 26vw;
   }
+  #homepage {
+    margin: 0 12vw;
+  }
 }
 
 @media only screen and (min-width: 2048px) {
@@ -776,6 +822,9 @@ p {
   }
   .margin {
     margin: 0 32vw;
+  }
+  #homepage {
+    margin: 0 24vw;
   }
   #first_section {
     min-height: auto;

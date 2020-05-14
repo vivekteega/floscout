@@ -80,6 +80,9 @@ button{
     overflow-wrap: break-word;
     letter-spacing: 0.06em;
 }
+.uppercase{
+    text-transform: uppercase;
+}
 .toggle{
     position: relative;
     cursor: pointer;
@@ -127,11 +130,23 @@ section{
     }
 }
 ul{
-    list-style: none;
-    .balance{
-        margin-bottom: 2rem;
-        &:last-of-type{
-            margin-bottom: 0;
+    &[type='circle']{
+        padding: 1.5rem 2.5rem;
+        list-style: circle;
+        li{
+            margin-bottom: 1rem;
+            &:last-of-type{
+                margin-bottom: 0;
+            }
+        }   
+    }
+    &{
+        list-style: none;
+        .balance{
+            margin-bottom: 2rem;
+            &:last-of-type{
+                margin-bottom: 0;
+            }
         }
     }
 }
@@ -155,6 +170,7 @@ ul{
     h4{
         margin-bottom: 0.4rem;
         font-weight: 400;
+        text-transform: capitalize;
     }
 }
 .label{
@@ -385,6 +401,9 @@ ul{
     padding: 1.5rem 0;
     align-items: center;
     font-family: 'Montserrat', sans-serif;
+    h3{
+        font-weight: 500;
+    }
 }
 .page{
     padding: 1.5rem 0;
@@ -431,6 +450,7 @@ p{
     display: inline-flex;
     align-items: center;
     font-size: 0.8rem;
+    margin-bottom: 0.5rem;
     &.done{
         background: #00C853;
         align-self: center;
@@ -461,26 +481,38 @@ p{
     position: relative;
     margin-top: 2rem;
     display: flex;
-    .line{
-        position: absolute;
-        height: 0.1rem;
-        background: rgba(var(--text), 0.8);
-        bottom: 0;
-        transition: left 0.3s, width 0.3s;
-    }
+    overflow-x: auto;
     .tab{
         cursor: pointer;
         font-family: 'Montserrat', sans-serif;
         opacity: 0.6;
         padding-bottom: 0.5rem;
         margin-right: 1rem;
+        -webkit-tap-highlight-color: transparent;
+        white-space: nowrap;
+        border-bottom: transparent;
         &:last-of-type{
             margin-right: 0;
         }
         &.active{
             opacity: 1;
+            border-bottom: 0.1em solid rgba(var(--text), 0.8);
         }
     }
+}
+.contract-choice{
+    margin-bottom: 2rem;
+    &:last-of-type{
+        margin-bottom: 0;
+    }
+    h3{
+        text-transform: capitalize;
+        font-weight: 400;
+        margin-bottom: 0.5rem;
+    }
+}
+#homepage{
+    margin: 0 1.5rem;
 }
 @media only screen and (min-width: 640px){
     .padding{
@@ -488,6 +520,9 @@ p{
     }
     .margin{
         margin: 0 6vw;
+    }
+    #homepage{
+        margin: 0 4vw;
     }
     .input{
         width: 80vw !important;
@@ -535,7 +570,9 @@ p{
     .margin{
        margin: 0 16vw;
     }
-
+    #homepage{
+        margin: 0 8vw;
+    }
     .input{
         width: 50vw !important;
     }
@@ -568,6 +605,9 @@ p{
     .margin{
         margin: 0 26vw;
     }
+    #homepage{
+        margin: 0 12vw;
+    }
 }
 @media only screen and (min-width: 2048px){
     body{
@@ -578,6 +618,9 @@ p{
     }
     .margin{
         margin: 0 32vw;
+    }
+    #homepage{
+        margin: 0 24vw;
     }
     #first_section{
         min-height: auto;

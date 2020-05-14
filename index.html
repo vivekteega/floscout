@@ -8,7 +8,7 @@
 </head>
 <body data-theme='dark'>
     <main>
-        <div id="homepage" class="page hide-completely margin">
+        <div id="homepage" class="page hide-completely">
             <section id="first_section">
                 <header class="header">
                     <div id="logo">
@@ -102,7 +102,7 @@
                     <title>Back Button</title>
                     <polyline points="32.15 0.35 0.7 31.8 32.15 63.72"/>
                 </svg>
-                <h3  id="page_title">Block</h3>
+                <h3 id="page_title">Block</h3>
                 <svg class="icon search margin-left-auto" viewBox="0 0 64 64">
                     <title>search icon</title>
                     <circle cx="25.34" cy="25.34" r="24.84"/>
@@ -208,7 +208,7 @@
                     <h4>2527</h4>
                 </div>
             </div>
-            <div id="token_page" class="page">
+            <div id="token_page" class="page hide-completely">
                   <h2>RMT</h2>
                   <div class="card">
                     <h5 class="label">Supply</h5>
@@ -238,6 +238,48 @@
                       </li>
                   </ul>
             </div> 
+            <div id="contract_page" class="page">
+                <div class="status closed">Closed</div>
+                <h2 class="uppercase">India ELections 2019</h2>
+                <div class="card">
+                    <h5 class="label">Contract Type</h5>
+                    <h4 class="breakable address">F6EMAHjivqrcrdAHNABq2R1FLNkx8xfEaT</h4>
+                    <h5 class="label">Expiration</h5>
+                    <h4>wed may 22 2019 21:00:00 gmt+05:30</h4>
+                    <h5 class="label">Token Used</h5>
+                    <h4>RMT</h4>
+                    <h5 class="label">Participation Amount</h5>
+                    <h4>0.001 RMT</h4>
+                </div>
+                <h3 class="heading">User Choices</h3>
+                <ul class="card" type='circle'>
+                    <li>Narendra Modi Wins</li>
+                    <li>Narendra Modi Loses</li>
+                </ul>
+                <div class="tabs">
+                    <h4 class="tab active" data-target="participant_container">Participants</h4>
+                    <h4 class="tab" data-target="winners_container">Winners</h4>
+                    <div class="line"></div>
+                </div>
+                <ul id="participant_container" data-tab-group="token" class="card">
+                    <li class="contract-choice" >
+                        <h5 class="breakable label">F6EMAHjivqrcrdAHNABq2R1FLNkx8xfEaT</h5>
+                        <h3>narendra modi wins</h3>
+                        <h4>0.0000023333 RMT</h4>
+                    </li>
+                    <li class="balance">
+                        <h5 class="breakable label">F6EMAHjivqrcrdAHNABq2R1FLNkx8xfEaT</h5>
+                        <h4>0.0000023333 RMT</h4>
+                    </li>
+                </ul>
+                <ul id="winners_container" data-tab-group="token" class="card hide-completely">
+                    <li class="contract-choice winner" >
+                        <h5 class="breakable label">F6EMAHjivqrcrdAHNABq2R1FLNkx8xfEaT</h5>
+                        <h3>narendra modi wins</h3>
+                        <h4>0.0000023333 RMT</h4>
+                    </li>
+                </ul>
+            </div>
         </div>        
     </main>
     <script>
@@ -331,6 +373,10 @@
                     showPage("block_page")
                     pageTitle.textContent = 'Block'
                 }
+                if(e.target.closest('.block')){
+                    showPage("contract_page")
+                    pageTitle.textContent = 'Contract  '
+                }
                 if(e.target.closest('.tab')){
                     showTab(e.target.closest('.tab'))
                 }
@@ -342,8 +388,7 @@
                 targetBody = document.getElementById(targetTab),
                 targetGroup = targetBody.getAttribute('data-tab-group'),
                 tabGroupMembers = document.querySelectorAll(`[data-tab-group = '${targetGroup}']`),
-                allTabs = tab.parentNode.querySelectorAll('.tab'),
-                line = tab.closest('.tabs').querySelector('.line')
+                allTabs = tab.parentNode.querySelectorAll('.tab')
             tabGroupMembers.forEach(member => {
                 member.classList.add('hide-completely')
             })
@@ -352,7 +397,6 @@
                 thisTab.classList.remove('active')
             })
             tab.classList.add('active')
-            line.setAttribute('style', `left: ${tab.offsetLeft}px; width: ${tab.getBoundingClientRect().width}px`);
         }
     </script>
 </body>
