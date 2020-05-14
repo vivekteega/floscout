@@ -6,11 +6,11 @@
     <title>FLO Scout</title>
     <link rel="stylesheet" href="css/main.css">
 </head>
-<body data-theme=''>
+<body data-theme='dark'>
     <main>
-        <div class="page hide-completely">
+        <div id="homepage" class="page hide-completely margin">
             <section id="first_section">
-                <header class="margin header">
+                <header class="header">
                     <div id="logo">
                         <svg id="main_logo" viewBox="0 0 27.25 32">
                             <title>RanchiMall</title>
@@ -52,7 +52,7 @@
                         <input type="search" placeholder="Search">
                     </label>
                 </div>
-            <div id="highlights" class="margin">
+            <div id="highlights">
                 <div class="highlight-item">
                     <h4 class="label">top token</h4>
                     <h1>RMT</h1>
@@ -72,27 +72,25 @@
             </div>
         </section>
         <section id="latest_transaction_section">
-            <header class="margin grid grid-2 header">
+            <header class="grid grid-2 header">
                 <h1 class="montserrat">Latest transactions</h1>
                 <button class="margin-left-auto">all</button>
             </header>
-            <div id="top_transaction_container" class="padding">
+            <div id="top_transaction_container">
                 <div class="transaction">
                     <div class="transaction-header grid grid-2">
                         <div>
                             <h5>Token transfer</h5>
-                            <h2>Rupee</h2>
+                            <h2 class="token">Rupee</h2>
                         </div>
-                        <div class="icon">
-                            <svg  viewBox="0 0 64 64">
-                                <title>More infomation icon</title>
-                                <path d="M32,0A32,32,0,1,0,64,32,32,32,0,0,0,32,0Zm3.07,47.91a3.1,3.1,0,0,1-6.19,0V26.55a3.1,3.1,0,0,1,6.19,0Zm-.49-29.27a3.46,3.46,0,0,1-2.59.93,3.46,3.46,0,0,1-2.59-.93,3.22,3.22,0,0,1-.9-2.33,3.3,3.3,0,0,1,.9-2.37A3.43,3.43,0,0,1,32,13a3.43,3.43,0,0,1,2.59.94,3.27,3.27,0,0,1,.92,2.37A3.2,3.2,0,0,1,34.58,18.64Z"/>
-                            </svg>
-                        </div>
+                        <svg class="icon" viewBox="0 0 64 64">
+                            <title>More infomation icon</title>
+                            <path d="M32,0A32,32,0,1,0,64,32,32,32,0,0,0,32,0Zm3.07,47.91a3.1,3.1,0,0,1-6.19,0V26.55a3.1,3.1,0,0,1,6.19,0Zm-.49-29.27a3.46,3.46,0,0,1-2.59.93,3.46,3.46,0,0,1-2.59-.93,3.22,3.22,0,0,1-.9-2.33,3.3,3.3,0,0,1,.9-2.37A3.43,3.43,0,0,1,32,13a3.43,3.43,0,0,1,2.59.94,3.27,3.27,0,0,1,.92,2.37A3.2,3.2,0,0,1,34.58,18.64Z"/>
+                        </svg>
                     </div>
-                    <h4 class="breakable">FDhQizsksSHs4dyJBeLqGcbyuEg163jhXi</h4>
+                    <h4 class="breakable address">FDhQizsksSHs4dyJBeLqGcbyuEg163jhXi</h4>
                     <h5>to</h5>
-                    <h4 class="breakable">FDhQizsksSHs4dyJBeLqGcbyuEg163jhXi</h4>
+                    <h4 class="breakable address">FDhQizsksSHs4dyJBeLqGcbyuEg163jhXi</h4>
                     <h3>₹0.000000007</h3>
                 </div>
             </div>
@@ -100,15 +98,15 @@
         </div>
         <div id="page_container" class="margin">
             <header id="page_header" class="flex">
-                <svg class="icon" id="back_btn" viewBox="0 0 32.5 64">
+                <svg class="icon" onclick="showPage('homepage')" id="back_btn" viewBox="0 0 32.5 64">
                     <title>Back Button</title>
                     <polyline points="32.15 0.35 0.7 31.8 32.15 63.72"/>
                 </svg>
                 <h3  id="page_title">Block</h3>
                 <svg class="icon search margin-left-auto" viewBox="0 0 64 64">
                     <title>search icon</title>
-                    <path d="M24,1.58A22.15,22.15,0,0,1,39.68,39.39,22.15,22.15,0,0,1,8.36,8.07,22,22,0,0,1,24,1.58M24,0A23.73,23.73,0,1,0,40.8,7,23.65,23.65,0,0,0,24,0Z" transform="translate(-0.3 0)"/>
-                    <line x1="63.35" y1="63.35" x2="39.86" y2="39.86"/>
+                    <circle cx="25.34" cy="25.34" r="24.84"/>
+                    <line x1="63.65" y1="63.65" x2="42.91" y2="42.91"/>
                 </svg>
             </header>
             <div id="all_transations" class="">
@@ -119,14 +117,14 @@
             </div>
             <div id="block_page" class="page hide-completely">
                 <h5 class="label">Block Height</h5>
-                <h2>4008986</h2>
+                <h2 class="block">4008986</h2>
                 <div class="card">
                     <h4>1 Transction</h4>
                     <h5 class="label">57465724.625 bytes</h5>
                     <h5 class="label">Reward</h5>
                     <h4>3.1253FLO</h4>
                     <h5 class="label">Hash</h5>
-                    <h4 class="breakable">17779bedfe0c174eea678318adf30ff33f74c575ce7238efe339927832632fe1</h4>
+                    <h4 class="breakable hash">17779bedfe0c174eea678318adf30ff33f74c575ce7238efe339927832632fe1</h4>
                     <h5 class="label">Difficulty</h5>
                     <h4>681</h4>
                     <h5 class="label">Nonce</h5>
@@ -145,9 +143,9 @@
                                 <path d="M32,0A32,32,0,1,0,64,32,32,32,0,0,0,32,0Zm3.07,47.91a3.1,3.1,0,0,1-6.19,0V26.55a3.1,3.1,0,0,1,6.19,0Zm-.49-29.27a3.46,3.46,0,0,1-2.59.93,3.46,3.46,0,0,1-2.59-.93,3.22,3.22,0,0,1-.9-2.33,3.3,3.3,0,0,1,.9-2.37A3.43,3.43,0,0,1,32,13a3.43,3.43,0,0,1,2.59.94,3.27,3.27,0,0,1,.92,2.37A3.2,3.2,0,0,1,34.58,18.64Z"/>
                             </svg>
                         </div>
-                        <h4 class="breakable">FDhQizsksSHs4dyJBeLqGcbyuEg163jhXi</h4>
+                        <h4 class="breakable address">FDhQizsksSHs4dyJBeLqGcbyuEg163jhXi</h4>
                         <h5>to</h5>
-                        <h4 class="breakable">FDhQizsksSHs4dyJBeLqGcbyuEg163jhXi</h4>
+                        <h4 class="breakable address">FDhQizsksSHs4dyJBeLqGcbyuEg163jhXi</h4>
                         <h3>₹0.000000007</h3>
                     </div>
                 </div>
@@ -177,24 +175,35 @@
 
                 </div>
             </div>
-            <div id="transaction_page">
-                <h5 class="label">Token Transfer</h5>
-                <h2>RUPEE </h2>
+            <div id="transaction_page" class="page">
+                <div class="grid grid-2">
+                    <div>
+                        <h5 class="label">Token Transfer</h5>
+                        <h2 class="token">RUPEE </h2>
+                    </div>
+                    <div class="status done">
+                        <svg class="icon" viewBox="0 0 64 42">
+                            <title>Success</title>
+                            <polyline points="0.35 19.41 22.4 41.29 63.65 0.35"/>
+                        </svg>
+                        Success
+                    </div>
+                </div>
                 <div class="card">
                     <h4>Block</h4>
-                    <h5 class="label">#40008986</h5>
+                    <h5 class="label block">#40008986</h5>
                     <h5 class="label">Amount</h5>
                     <h4>3.1253FLO</h4>
                     <h5 class="label">Sender</h5>
-                    <h4 class="breakable">F7HEAV9226tqXtRk34XrA9nZCb8ZcbVJt1</h4>
+                    <h4 class="breakable address">F7HEAV9226tqXtRk34XrA9nZCb8ZcbVJt1</h4>
                     <h5 class="label">Reciever</h5>
-                    <h4 class="breakable">F7HEAV9226tqXtRk34XrA9nZCb8ZcbVJt1</h4>
+                    <h4 class="breakable address">F7HEAV9226tqXtRk34XrA9nZCb8ZcbVJt1</h4>
                 </div>
                 <div class="card">
                     <h5 class="label">FLO Data</h5>
                     <p>transfer 40000 rupee# to FJyz51JTnPuB3AMRjyYe3rbuLmnq4qErcc</p>
                     <h5 class="label">Hash</h5>
-                    <h4 class="breakable">17779bedfe0c174eea678318adf30ff33f74c575ce7238efe339927832632fe1</h4>
+                    <h4 class="breakable hash">17779bedfe0c174eea678318adf30ff33f74c575ce7238efe339927832632fe1</h4>
                     <h5 class="label">Block Confirmations</h5>
                     <h4>2527</h4>
                 </div>
@@ -237,13 +246,18 @@
         }
 
         const   allPages = document.querySelectorAll('.page'),
-                pageTitle = document.getElementById('page_title');
+                pageTitle = document.getElementById('page_title'),
+                pageContainer = document.getElementById('page_container');
         function showPage(pageId){
             let thisPage = document.getElementById(pageId);
             allPages.forEach(page => {
                 page.classList.add('hide-completely')
             })
             thisPage.classList.remove('hide-completely')
+            if(pageId === 'homepage')
+                pageContainer.classList.add('hide-completely')
+            else
+                pageContainer.classList.remove('hide-completely')
         }
 
         const create = {
@@ -254,20 +268,41 @@
                 card.innerHTML = `<div class="transaction-header grid grid-2">
                                     <div>
                                         <h5>${type}</h5>
-                                        <h2>${name}</h2>
+                                        <h2 class="token">${name}</h2>
                                     </div>
                                     <svg class="icon margin-left-auto" viewBox="0 0 64 64">
                                         <title>More infomation icon</title>
                                         <path d="M32,0A32,32,0,1,0,64,32,32,32,0,0,0,32,0Zm3.07,47.91a3.1,3.1,0,0,1-6.19,0V26.55a3.1,3.1,0,0,1,6.19,0Zm-.49-29.27a3.46,3.46,0,0,1-2.59.93,3.46,3.46,0,0,1-2.59-.93,3.22,3.22,0,0,1-.9-2.33,3.3,3.3,0,0,1,.9-2.37A3.43,3.43,0,0,1,32,13a3.43,3.43,0,0,1,2.59.94,3.27,3.27,0,0,1,.92,2.37A3.2,3.2,0,0,1,34.58,18.64Z"/>
                                     </svg>
                                 </div>
-                                <h4 class="breakable">${sender}</h4>
+                                <h4 class="breakable address">${sender}</h4>
                                 <h5>to</h5>
-                                <h4 class="breakable">${reciever}</h4>
+                                <h4 class="breakable address">${reciever}</h4>
                                 <h3>₹${amount}</h3>`;
                 return card;
             }
         }
+
+        window.addEventListener('load', () => {
+            document.querySelector('main').addEventListener('click', e => {
+                if(e.target.closest('.address')){
+                    showPage("address_page")
+                    pageTitle.textContent = 'Address'
+                }
+                if(e.target.closest('.token')){
+                    showPage("token_page")
+                    pageTitle.textContent = 'Token'
+                }
+                if(e.target.closest('.hash')){
+                    showPage("transaction_page")
+                    pageTitle.textContent = 'Transaction'
+                }
+                if(e.target.closest('.block')){
+                    showPage("block_page")
+                    pageTitle.textContent = 'Block'
+                }
+            })
+        })
     </script>
 </body>
 </html>
