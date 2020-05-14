@@ -10,7 +10,7 @@
 }
 
 body {
-  --primary-color: purple;
+  --primary-color: #1E88E5;
   --text: 17, 17, 17;
   --text-light: 85, 85, 85;
   --foreground: 255, 255, 255;
@@ -181,6 +181,18 @@ section .dark-background {
   display: grid;
   -ms-grid-rows: auto 1fr;
       grid-template-rows: auto 1fr;
+}
+
+ul {
+  list-style: none;
+}
+
+ul .balance {
+  margin-bottom: 2rem;
+}
+
+ul .balance:last-of-type {
+  margin-bottom: 0;
 }
 
 .padding {
@@ -538,7 +550,7 @@ section .dark-background {
   padding: 1.5rem 0;
 }
 
-.page h2.heading {
+.page h3.heading {
   margin-top: 2rem;
   font-family: 'Montserrat', sans-serif;
 }
@@ -623,6 +635,39 @@ p {
 .address, .token, .hash, .contract, .block {
   cursor: pointer;
   color: var(--primary-color);
+}
+
+.tabs {
+  position: relative;
+  margin-top: 2rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.tabs .line {
+  position: absolute;
+  height: 0.1rem;
+  background: rgba(var(--text), 0.8);
+  bottom: 0;
+  -webkit-transition: left 0.3s, width 0.3s;
+  transition: left 0.3s, width 0.3s;
+}
+
+.tabs .tab {
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  opacity: 0.6;
+  padding-bottom: 0.5rem;
+  margin-right: 1rem;
+}
+
+.tabs .tab:last-of-type {
+  margin-right: 0;
+}
+
+.tabs .tab.active {
+  opacity: 1;
 }
 
 @media only screen and (min-width: 640px) {

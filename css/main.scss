@@ -8,7 +8,7 @@
     font-family: 'Roboto', sans-serif;
 } 
 body{
-    --primary-color: purple;
+    --primary-color: #1E88E5;
     --text: 17, 17, 17;
     --text-light: 85, 85, 85;
     --foreground: 255, 255, 255;
@@ -124,6 +124,15 @@ section{
     .dark-background{
         display: grid;
         grid-template-rows: auto 1fr;
+    }
+}
+ul{
+    list-style: none;
+    .balance{
+        margin-bottom: 2rem;
+        &:last-of-type{
+            margin-bottom: 0;
+        }
     }
 }
 .padding{
@@ -379,7 +388,7 @@ section{
 }
 .page{
     padding: 1.5rem 0;
-    h2.heading{
+    h3.heading{
         margin-top: 2rem;
         font-family: 'Montserrat', sans-serif;
     }
@@ -447,6 +456,31 @@ p{
 .address, .token, .hash, .contract, .block{
     cursor: pointer;
     color: var(--primary-color);
+}
+.tabs{
+    position: relative;
+    margin-top: 2rem;
+    display: flex;
+    .line{
+        position: absolute;
+        height: 0.1rem;
+        background: rgba(var(--text), 0.8);
+        bottom: 0;
+        transition: left 0.3s, width 0.3s;
+    }
+    .tab{
+        cursor: pointer;
+        font-family: 'Montserrat', sans-serif;
+        opacity: 0.6;
+        padding-bottom: 0.5rem;
+        margin-right: 1rem;
+        &:last-of-type{
+            margin-right: 0;
+        }
+        &.active{
+            opacity: 1;
+        }
+    }
 }
 @media only screen and (min-width: 640px){
     .padding{

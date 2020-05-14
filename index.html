@@ -130,7 +130,7 @@
                     <h5 class="label">Nonce</h5>
                     <h4>29294481394</h4>
                 </div>
-                <h2 class="heading">Transactions</h2>
+                <h3 class="heading">Transactions</h3>
                 <div id="block_transaction_container" class="top-bottom-padding">
                     <div class="transaction">
                         <div class="transaction-header grid grid-2">
@@ -170,12 +170,12 @@
                     <h2>1.0006</h2><h4>FLO</h4>
                     <p class="breakable">FDhQizsksSHs4dyJBeLqGcbyuEg163jhXi</p>
                 </div>
-                <h2 class="heading">Transactions</h2>
+                <h3 class="heading">Transactions</h3>
                 <div id="address_transaction_container" class="top-bottom-padding">
 
                 </div>
             </div>
-            <div id="transaction_page" class="page">
+            <div id="transaction_page" class="page hide-completely">
                 <div class="grid grid-2">
                     <div>
                         <h5 class="label">Token Transfer</h5>
@@ -208,7 +208,37 @@
                     <h4>2527</h4>
                 </div>
             </div>
-        </div>       
+            <div id="token_page" class="page">
+                  <h2>RMT</h2>
+                  <div class="card">
+                    <h5 class="label">Supply</h5>
+                    <h4>21,000,000</h4>
+                    <h5 class="label">Incorporation Address</h5>
+                    <h4 class="breakable">F6EMAHjivqrcrdAHNABq2R1FLNkx8xfEaT</h4>
+                  </div> 
+                  <div class="tabs">
+                      <h4 class="tab active" data-target="token_balance_container">Top Balances</h4>
+                      <h4 class="tab" data-target="token_transaction_container">Top Transactions</h4>
+                      <div class="line"></div>
+                  </div>
+                  <ul id="token_balance_container" data-tab-group="token" class="card">
+                      <li class="balance" >
+                          <h5 class="breakable label">F6EMAHjivqrcrdAHNABq2R1FLNkx8xfEaT</h5>
+                          <h4>0.0000023333 RMT</h4>
+                      </li>
+                      <li class="balance">
+                          <h5 class="breakable label">F6EMAHjivqrcrdAHNABq2R1FLNkx8xfEaT</h5>
+                          <h4>0.0000023333 RMT</h4>
+                      </li>
+                  </ul>
+                  <ul id="token_transaction_container" data-tab-group="token" class="card hide-completely">
+                      <li class="balance" >
+                          <h5 class="breakable label">F6EMAHjivqrcrdAHNABq2R1FLNkx8xfEaT</h5>
+                          <h4>0.0000023333 RMT</h4>
+                      </li>
+                  </ul>
+            </div> 
+        </div>        
     </main>
     <script>
         let themeToggler = document.getElementById('theme_toggle'),
@@ -301,8 +331,29 @@
                     showPage("block_page")
                     pageTitle.textContent = 'Block'
                 }
+                if(e.target.closest('.tab')){
+                    showTab(e.target.closest('.tab'))
+                }
             })
         })
+
+        function showTab(tab){
+            let targetTab = tab.getAttribute('data-target'),
+                targetBody = document.getElementById(targetTab),
+                targetGroup = targetBody.getAttribute('data-tab-group'),
+                tabGroupMembers = document.querySelectorAll(`[data-tab-group = '${targetGroup}']`),
+                allTabs = tab.parentNode.querySelectorAll('.tab'),
+                line = tab.closest('.tabs').querySelector('.line')
+            tabGroupMembers.forEach(member => {
+                member.classList.add('hide-completely')
+            })
+            targetBody.classList.remove('hide-completely')
+            allTabs.forEach(thisTab => {
+                thisTab.classList.remove('active')
+            })
+            tab.classList.add('active')
+            line.setAttribute('style', `left: ${tab.offsetLeft}px; width: ${tab.getBoundingClientRect().width}px`);
+        }
     </script>
 </body>
 </html>
