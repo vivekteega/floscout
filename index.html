@@ -8,8 +8,8 @@
 </head>
 <body data-theme='dark'>
     <main>
-        <div id="page_container" class="margin">
-            <header id="page_header" class="flex">
+        <div id="page_container">
+            <header id="page_header" class="flex margin">
                 <svg class="icon" onclick="render('homepage')" id="back_btn" viewBox="0 0 32.5 64">
                     <title>Back Button</title>
                     <polyline points="32.15 0.35 0.7 31.8 32.15 63.72"/>
@@ -71,7 +71,7 @@
                     </label>
                 </header>
                 <div id="main_search">
-                    <h1 class="montserrat">FLO SCOUT</h1>
+                    <h1>FLO SCOUT</h1>
                    
                     <label class="input margin">
                         <svg class="icon" viewBox="0 0 64 64">
@@ -85,25 +85,25 @@
             <div id="highlights">
                 <div class="highlight-item">
                     <h4 class="label">top token</h4>
-                    <h1>${topToken}</h1>
+                    <h2 class="token">${topToken}</h2>
                 </div>
                 <div class="highlight-item">
                     <h4 class="label">total transactions</h4>
-                    <h1>${totalTransactions}</h1>
+                    <h2>${totalTransactions}</h2>
                 </div>
                 <div class="highlight-item">
                     <h4 class="label">Wallet addresses</h4>
-                    <h1>${walletAddresses}</h1>
+                    <h2>${walletAddresses}</h2>
                 </div>
                 <div class="highlight-item">
                     <h4 class="label">top contract</h4>
-                    <h1>${topContract}</h1>
+                    <h2>${topContract}</h2>
                 </div>
             </div>
         </section>
         <section id="latest_transaction_section">
             <header class="grid grid-2 header">
-                <h1 class="montserrat">Latest transactions</h1>
+                <h3>Latest transactions</h3>
                 <button class="margin-left-auto">all</button>
             </header>
             <div id="top_transaction_container">
@@ -227,7 +227,7 @@
                 page.classList.add('page')
                 page.id = 'token_page'
                 page.innerHTML = ` 
-                <h2 class="capitalise">${token}</h2>
+                <h2 class="uppercase">${token}</h2>
                   <div class="card">
                     <h5 class="label">Supply</h5>
                     <h4>${supply}</h4>
@@ -335,6 +335,7 @@
                 pageContainer = document.getElementById('page_container'),
                 pageHeader = document.getElementById('page_header');
         let currentPage = 'homepage'
+        
         function removePage(page){
             document.getElementById(page).remove()
         }
@@ -342,46 +343,62 @@
         function render(pageId){
             if(currentPage !== pageId)
                 removePage(currentPage)
+            
             if(pageId === 'address_page'){
                 pageContainer.append(create.addressPage('0.0001', 'F91a5151a651d1adv56151avdadlkn'))
                 pageTitle.textContent = 'Address'
             }
+
+            if(pageId === 'transaction_page'){
+                let obj = {
+                    type: 'Token Transfer',
+                    name: 'RMT',
+                    blockHeight: '4530254',
+                    amount: '0.1FLO',
+                    sender: 'F846EFefybwewe45avd5165adv16',
+                    reciever: 'F846EFefybwewe45avd5165adv16',
+                    floData: 'ansfer 100 rupee# to FJyz51JTnPuB3AMRjyYe3rbuLmnq4qErcc for FCuFeAa3Haqk9oKQWEKVSt4pwQQEooDAEm.',
+                    hash: '1ab70a9de6a8deeb0ba8f6c4ca015d60659c90953a7c8a1f3215276fe57b1fb2',
+                    confirmations: '22458'
+                }
+                pageContainer.append(create.transactionPage(obj))
+                pageTitle.textContent = 'Transaction'
+            }
+
+            if(pageId === 'token_page'){
+                pageContainer.append(create.tokenPage('rmt', '21,000,000', 'F6EMAHjivqrcrdAHNABq2R1FLNkx8xfEaT'))
+                pageTitle.textContent = 'Token'
+            }
+
             if(pageId === 'homepage'){
                 pageHeader.classList.add('hide-completely')
                 pageContainer.append(create.homepage({topToken: 'RMT', totalTransactions: '88', walletAddresses: '44', topContract: 'India Election 2019'}))
                 let themeToggler = document.getElementById('theme_toggle'),
-                body = document.querySelector('body');
-            if(localStorage.theme === 'dark'){
-                nightlight();
-                themeToggler.checked = true
-            }
-            else{
-                daylight()
-                themeToggler.checked = false
-            }
-            themeToggler.addEventListener('change', () => {
-                transition()
-                if(themeToggler.checked){
+                    body = document.querySelector('body');
+                if(localStorage.theme === 'dark'){
                     nightlight();
-                    localStorage.setItem('theme', 'dark')
+                    themeToggler.checked = true
                 }
                 else{
-                    daylight();
-                    localStorage.setItem('theme', 'light')
+                    daylight()
+                    themeToggler.checked = false
                 }
-            })
-            function daylight(){
-                body.setAttribute("data-theme", 'light');
-            }
-            function nightlight(){
-                body.setAttribute('data-theme', 'dark');
-            }
-            function transition(){
-                body.classList.add('transition')
-                setTimeout(() => {
-                    body.classList.remove('transition')
-                }, 700)
-            }
+                function daylight(){
+                    body.setAttribute("data-theme", 'light');
+                }
+                function nightlight(){
+                    body.setAttribute('data-theme', 'dark');
+                }
+                themeToggler.addEventListener('change', () => {
+                    if(themeToggler.checked){
+                        nightlight();
+                        localStorage.setItem('theme', 'dark')
+                    }
+                    else{
+                        daylight();
+                        localStorage.setItem('theme', 'light')
+                    }
+                })
             }
             else
                 pageHeader.classList.remove('hide-completely')
@@ -397,11 +414,9 @@
                 }
                 if(e.target.closest('.token')){
                     render("token_page")
-                    pageTitle.textContent = 'Token'
                 }
                 if(e.target.closest('.hash')){
                     render("transaction_page")
-                    pageTitle.textContent = 'Transaction'
                 }
                 if(e.target.closest('.block')){
                     render("block_page")
