@@ -10,12 +10,12 @@
     <main>
         <div id="page_container">
             <header id="page_header" class="flex margin">
-                <svg class="icon" onclick="render('homepage')" id="back_btn" viewBox="0 0 32.5 64">
+                <svg class="icon hover" onclick="render('homepage')" id="back_btn" viewBox="0 0 32.5 64">
                     <title>Back Button</title>
                     <polyline points="32.15 0.35 0.7 31.8 32.15 63.72"/>
                 </svg>
                 <h3 id="page_title">Block</h3>
-                <svg class="icon search margin-left-auto" viewBox="0 0 64 64">
+                <svg class="icon margin-left-auto" viewBox="0 0 64 64">
                     <title>search icon</title>
                     <circle cx="25.34" cy="25.34" r="24.84"/>
                     <line x1="63.65" y1="63.65" x2="42.91" y2="42.91"/>
@@ -40,7 +40,7 @@
                 page.id = 'homepage'
                 page.innerHTML = ` 
                 <section id="first_section">
-                <header class="header">
+                <header class="header flex">
                     <div id="logo">
                         <svg id="main_logo" viewBox="0 0 27.25 32">
                             <title>RanchiMall</title>
@@ -76,10 +76,10 @@
                     <label class="input margin">
                         <svg class="icon" viewBox="0 0 64 64">
                             <title>search icon</title>
-                            <path d="M24,1.58A22.15,22.15,0,0,1,39.68,39.39,22.15,22.15,0,0,1,8.36,8.07,22,22,0,0,1,24,1.58M24,0A23.73,23.73,0,1,0,40.8,7,23.65,23.65,0,0,0,24,0Z" transform="translate(-0.3 0)"/>
-                            <line x1="63.35" y1="63.35" x2="39.86" y2="39.86"/>
+                            <circle cx="25.34" cy="25.34" r="24.84"/>
+                            <line x1="63.65" y1="63.65" x2="42.91" y2="42.91"/>
                         </svg>
-                        <input type="search" placeholder="Search">
+                        <input type="search" placeholder="Search block, transactions, address, token or contract">
                     </label>
                 </div>
             <div id="highlights">
@@ -97,32 +97,24 @@
                 </div>
                 <div class="highlight-item">
                     <h4 class="label">top contract</h4>
-                    <h2>${topContract}</h2>
+                    <h2 class="contract">${topContract}</h2>
                 </div>
             </div>
         </section>
         <section id="latest_transaction_section">
             <header class="grid grid-2 header">
-                <h3>Latest transactions</h3>
-                <button class="margin-left-auto">all</button>
+                <h3 class="heading">Latest transactions</h3>
+                <button id='all_trans_btn' class="margin-left-auto">view all</button>
             </header>
             <div id="top_transaction_container">
-                <div class="transaction">
-                    <div class="transaction-header grid grid-2">
-                        <div>
-                            <h5>Token transfer</h5>
-                            <h2 class="token">Rupee</h2>
-                        </div>
-                        <svg class="icon" viewBox="0 0 64 64">
-                            <title>More infomation icon</title>
-                            <path d="M32,0A32,32,0,1,0,64,32,32,32,0,0,0,32,0Zm3.07,47.91a3.1,3.1,0,0,1-6.19,0V26.55a3.1,3.1,0,0,1,6.19,0Zm-.49-29.27a3.46,3.46,0,0,1-2.59.93,3.46,3.46,0,0,1-2.59-.93,3.22,3.22,0,0,1-.9-2.33,3.3,3.3,0,0,1,.9-2.37A3.43,3.43,0,0,1,32,13a3.43,3.43,0,0,1,2.59.94,3.27,3.27,0,0,1,.92,2.37A3.2,3.2,0,0,1,34.58,18.64Z"/>
-                        </svg>
-                    </div>
-                    <h4 class="breakable address">FDhQizsksSHs4dyJBeLqGcbyuEg163jhXi</h4>
-                    <h5>to</h5>
-                    <h4 class="breakable address">FDhQizsksSHs4dyJBeLqGcbyuEg163jhXi</h4>
-                    <h3>₹0.000000007</h3>
-                </div>
+            </div>
+        </section>
+        <section id="latest_blocks_section">
+            <header class="grid grid-2 header">
+                <h3 class="heading">Latest blocks</h3>
+                <button id='all_blocks_btn' class="margin-left-auto">view all</button>
+            </header>
+            <div id="top_blocks_container">
             </div>
         </section>
                 `
@@ -183,7 +175,7 @@
                 return page;
             },
             transactionPage: function(obj){
-                let {type, name, blockHeight, amount, sender, reciever, floData, hash, confirmations} = obj,
+                let {type, name, blockHeight, amount, sender, receiver, floData, hash, confirmations} = obj,
                     page = document.createElement('div')
                 page.classList.add('page')
                 page.id = 'transaction_page'
@@ -207,9 +199,9 @@
                     <h5 class="label">Amount</h5>
                     <h4>${amount}</h4>
                     <h5 class="label">Sender</h5>
-                    <h4 class="breakable address">${sender}</h4>
+                    <h4 class="address">${sender}</h4>
                     <h5 class="label">Reciever</h5>
-                    <h4 class="breakable address">${reciever}</h4>
+                    <h4 class="address">${receiver}</h4>
                 </div>
                 <div class="card">
                     <h5 class="label">FLO Data</h5>
@@ -227,8 +219,8 @@
                 page.classList.add('page')
                 page.id = 'token_page'
                 page.innerHTML = ` 
-                <h2 class="uppercase">${token}</h2>
                   <div class="card">
+                    <h2 class="uppercase">${token}</h2>
                     <h5 class="label">Supply</h5>
                     <h4>${supply}</h4>
                     <h5 class="label">Incorporation Address</h5>
@@ -259,7 +251,7 @@
                 return page;
             },
             contractPage: function(obj){
-                let {contract, contractType, incAddress, expiration,token, participationFees} = obj,
+                let {status, contract, contractType, incAddress, expiration, token, participationFees} = obj,
                     page = document.createElement('div')
                 page.classList.add('page')
                 page.id = 'contract_page'
@@ -270,11 +262,11 @@
                     <h5 class="label">Contract Type</h5>
                     <h4>${contractType}</h4>
                     <h5 class="label">Incorporation Address</h5>
-                    <h4 class="breakable address">${incAddress}</h4>
+                    <h4 class="address">${incAddress}</h4>
                     <h5 class="label">Expiration</h5>
                     <h4>${expiration}</h4>
                     <h5 class="label">Token Used</h5>
-                    <h4>${token}</h4>
+                    <h4 class="uppercase">${token}</h4>
                     <h5 class="label">Participation Amount</h5>
                     <h4>${participationFees}</h4>
                 </div>
@@ -309,24 +301,129 @@
                 `
                 return page;
             },
-            transactionCard: function(block, type, name, sender, reciever, amount){
-                let card = document.createElement('div');
-                card.classList.add('transaction')
-                card.id = block;
-                card.innerHTML = `<div class="transaction-header grid grid-2">
-                                    <div>
-                                        <h5>${type}</h5>
-                                        <h2 class="token">${name}</h2>
-                                    </div>
-                                    <svg class="icon margin-left-auto" viewBox="0 0 64 64">
-                                        <title>More infomation icon</title>
-                                        <path d="M32,0A32,32,0,1,0,64,32,32,32,0,0,0,32,0Zm3.07,47.91a3.1,3.1,0,0,1-6.19,0V26.55a3.1,3.1,0,0,1,6.19,0Zm-.49-29.27a3.46,3.46,0,0,1-2.59.93,3.46,3.46,0,0,1-2.59-.93,3.22,3.22,0,0,1-.9-2.33,3.3,3.3,0,0,1,.9-2.37A3.43,3.43,0,0,1,32,13a3.43,3.43,0,0,1,2.59.94,3.27,3.27,0,0,1,.92,2.37A3.2,3.2,0,0,1,34.58,18.64Z"/>
-                                    </svg>
+            contractTransferCard: function(obj){
+                let {hash, blockHeight, token, sender, receiver, amount, contractName, userChoice} = obj,
+                    card = document.createElement('div');
+                card.classList.add('transaction token-transfer')
+                card.id = hash;
+                card.innerHTML = `
+                                <h5 class="label block">${blockHeight}</h5>
+                                <div class="contract-type">
+                                    <h5 class="label">Smart Contract Transfer</h5>
+                                    <h2 class="token uppercase">${token}</h2>
                                 </div>
-                                <h4 class="breakable address">${sender}</h4>
-                                <h5>to</h5>
-                                <h4 class="breakable address">${reciever}</h4>
-                                <h3>₹${amount}</h3>`;
+                                <div class="contract-info">
+                                    <h5 class="label">Sender</h5>
+                                    <h4 class="address">${sender}</h4>
+                                    <h5 class="label">receiver</h5>
+                                    <h4 class="address">${receiver}</h4>
+                                    <h5 class="label">amount</h5>
+                                    <h3>${amount} ${token}</h3>
+                                    <h5 class="label">Contract name</h5>
+                                    <h4>${contractName}</h4>`
+                if(userChoice)
+                    card.innerHTML += `
+                                    <h5 class="label">User Choice</h5>
+                                    <h4>${userChoice}</h4>`
+                
+                card.innerHTML += `</div>`;
+                return card;
+            },
+            tokenTransferCard: function(obj){
+                let {hash, blockHeight, token, sender, receiver, amount} = obj,
+                    card = document.createElement('div');
+                card.classList.add('transaction token-transfer')
+                card.id = hash;
+                card.innerHTML = `
+                                <h5 class="label block">${blockHeight}</h5>
+                                <div class="contract-type">
+                                    <h5 class="label">Token transfer</h5>
+                                    <h2 class="token uppercase">${token}</h2>
+                                </div>
+                                <div class="contract-info">
+                                    <h5 class="label">Sender</h5>
+                                    <h4 class="address">${sender}</h4>
+                                    <h5 class="label">receiver</h5>
+                                    <h4 class="address">${receiver}</h4>
+                                    <h5 class="label">amount</h5>
+                                    <h3>${amount} ${token}</h3>
+                                </div>`;
+                return card;
+            },
+            tokenCreationCard: function(obj){
+                let {hash, blockHeight, token, incAddress, supply} = obj,
+                    card = document.createElement('div');
+                card.classList.add('transaction token-creation')
+                card.id = hash;
+                card.innerHTML = `
+                                <h5 class="label block">${blockHeight}</h5>
+                                <div class="contract-type">
+                                    <h5 class="label">token creation</h5>
+                                    <h2 class="token uppercase">${token}</h2>
+                                </div>
+                                <div class="contract-info">
+                                    <h5 class="label">Incorporation address</h5>
+                                    <h4>${incAddress}</h4>
+                                    <h5 class="label">token name</h5>
+                                    <h4 class="uppercase">${token}</h4>
+                                    <h5 class="label">supply</h5>
+                                    <h4>${supply}</h4>
+                                </div>`;
+                return card;
+            },
+            contractTriggerCard: function(obj){
+                let {hash, blockHeight, contractName, contractAddress, winningChoice, committeeAddress} = obj,
+                    card = document.createElement('div');
+                card.classList.add('transaction contract-trigger')
+                card.id = hash;
+                card.innerHTML = `
+                                <h5 class="label block">${blockHeight}</h5>
+                                <div class="contract-type">
+                                    <h2 class="token uppercase">smart contract trigger</h2>
+                                </div>
+                                <div class="contract-info">
+                                    <h5 class="label">Contract name</h5>
+                                    <h4>${contractName}</h4>
+                                    <h5 class="label">contract address</h5>
+                                    <h4 class="address">${contractAddress}</h4>
+                                    <h5 class="label">Winning Choice</h5>
+                                    <h4>${winningChoice}</h4>
+                                    <h5 class="label">committee address</h5>
+                                    <h4>${committeeAddress}</h4>
+                                </div>`;
+                return card;
+            },
+            contractCreationCard: function(obj){
+                let {hash, blockHeight, token, contractName, incAddress, contractType, expiration, participationFees, availableChoices} = obj,
+                    card = document.createElement('div');
+                card.classList.add('transaction contract-creation')
+                card.id = hash;
+                card.innerHTML = `
+                                <h5 class="label block">${blockHeight}</h5>
+                                <div class="contract-type">
+                                    
+                                    <h2 class="token uppercase">${token}</h2>
+                                </div>
+                                <div class="contract-info">
+                                    <h5 class="label">Contract name</h5>
+                                    <h4>${contractName}</h4>
+                                    <h5 class="label">Incorporation address</h5>
+                                    <h4>${incAddress}</h4>
+                                    <h5 class="label">token used</h5>
+                                    <h4 class="uppercase">${token}</h4>
+                                    <h5 class="label">contract type</h5>
+                                    <h4>${contractType}</h4>
+                                    <h5 class="label">expiration</h5>
+                                    <h4 class="address">${expiration}</h4>
+                                    <h5 class="label">participation amount</h5>
+                                    <h4>${participationFees} ${token}</h4>
+                                    <h5 class="label">user Choices</h5>
+                                    <div class="choices-container">`;
+                availableChoices.forEach(choice => {
+                    card.innerHTML = `<div class="choice">${choice}</div>`
+                })
+                card.innerHTML +=`  </div>
+                                </div>`;
                 return card;
             }
         }
@@ -338,6 +435,10 @@
         
         function removePage(page){
             document.getElementById(page).remove()
+        }
+
+        function replaceDash(string){
+            return string.replace(/-/g," ")
         }
 
         function render(pageId){
@@ -356,8 +457,8 @@
                     blockHeight: '4530254',
                     amount: '0.1FLO',
                     sender: 'F846EFefybwewe45avd5165adv16',
-                    reciever: 'F846EFefybwewe45avd5165adv16',
-                    floData: 'ansfer 100 rupee# to FJyz51JTnPuB3AMRjyYe3rbuLmnq4qErcc for FCuFeAa3Haqk9oKQWEKVSt4pwQQEooDAEm.',
+                    receiver: 'F846EFefybwewe45avd5165adv16',
+                    floData: 'transfer 100 rupee# to FJyz51JTnPuB3AMRjyYe3rbuLmnq4qErcc for FCuFeAa3Haqk9oKQWEKVSt4pwQQEooDAEm.',
                     hash: '1ab70a9de6a8deeb0ba8f6c4ca015d60659c90953a7c8a1f3215276fe57b1fb2',
                     confirmations: '22458'
                 }
@@ -369,6 +470,22 @@
                 pageContainer.append(create.tokenPage('rmt', '21,000,000', 'F6EMAHjivqrcrdAHNABq2R1FLNkx8xfEaT'))
                 pageTitle.textContent = 'Token'
             }
+
+            if(pageId === 'contract_page'){
+                let obj = {
+                    stauts: 'closed',
+                    contract: 'india-elections-2019',
+                    contractType: 'one-time-event',
+                    incAddress: 'F7osBpjDDV1mSSnMNrLudEQQ3cwDJ2dPR1',
+                    expiration: 'wed may 22 2019 21:00:00 gmt+0530',
+                    token: 'rmt',
+                    participationFees: '0.001 RMT',
+                }
+                pageContainer.append(create.contractPage(obj))
+                pageTitle.textContent = 'Contract'
+            }
+
+
 
             if(pageId === 'homepage'){
                 pageHeader.classList.add('hide-completely')
@@ -405,6 +522,10 @@
             currentPage = pageId;
         }
 
+        function renderTransactions(){
+
+        }
+
         window.addEventListener('load', () => {
             render('homepage')
         
@@ -422,9 +543,8 @@
                     render("block_page")
                     pageTitle.textContent = 'Block'
                 }
-                if(e.target.closest('.block')){
+                if(e.target.closest('.contract')){
                     render("contract_page")
-                    pageTitle.textContent = 'Contract  '
                 }
                 if(e.target.closest('.tab')){
                     showTab(e.target.closest('.tab'))
