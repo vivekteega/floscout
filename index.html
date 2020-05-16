@@ -7,27 +7,38 @@
     <link rel="stylesheet" href="css/main.css">
 </head>
 <body data-theme='dark'>
-    <main>
-        <div id="page_container">
-            <header id="page_header" class="flex margin">
-                <svg class="icon hover" onclick="render('homepage')" id="back_btn" viewBox="0 0 32.5 64">
-                    <title>Back Button</title>
-                    <polyline points="32.15 0.35 0.7 31.8 32.15 63.72"/>
-                </svg>
-                <h3 id="page_title">Block</h3>
-                <svg class="icon margin-left-auto" viewBox="0 0 64 64">
+    <div id="loader_page" class="hide-completely">
+        <svg id="loader" class="icon" viewBox="0 0 64 64">
+            <title>Loading</title>
+            <circle cx="32" cy="32" r="32"/>
+        </svg>
+        <h4>Loading</h4>`
+    </div>
+    <header id="page_header" class="flex margin">
+        <h3 id="page_title">Block</h3>
+        <svg id="secondary_search_btn" class="icon margin-left-auto hover" viewBox="0 0 64 64">
+            <title>search for block, transactions, address, token or contract</title>
+            <circle cx="25.34" cy="25.34" r="24.84"/>
+            <line x1="63.65" y1="63.65" x2="42.91" y2="42.91"/>
+        </svg>
+    </header>
+    <main id="page_container">
+        <!--<div id="search_page" class="page hide-completely">
+            <label id="secondary_search" class="input">
+                <svg class="icon" viewBox="0 0 64 64">
                     <title>search icon</title>
                     <circle cx="25.34" cy="25.34" r="24.84"/>
                     <line x1="63.65" y1="63.65" x2="42.91" y2="42.91"/>
                 </svg>
-            </header>
+                <input type="search" placeholder="Search block, transactions, address, token or contract">
+            </label>
+        </div>
             <div id="all_transations" class="">
 
             </div>
             <div id="all_blocks" class="">
 
-            </div>
-        </div>        
+            </div>  -->    
     </main>
     <script>
         
@@ -71,15 +82,15 @@
                     </label>
                 </header>
                 <div id="main_search">
-                    <h1>FLO SCOUT</h1>
-                   
-                    <label class="input margin">
+                    <h1 class="other-font">FLO SCOUT</h1>
+                    <h3>Search for<br>block, transaction, address,<br>token and contract</h3>
+                    <label id="primary_search" class="input">
                         <svg class="icon" viewBox="0 0 64 64">
                             <title>search icon</title>
                             <circle cx="25.34" cy="25.34" r="24.84"/>
                             <line x1="63.65" y1="63.65" x2="42.91" y2="42.91"/>
                         </svg>
-                        <input type="search" placeholder="Search block, transactions, address, token or contract">
+                        <input type="search" placeholder="Search">
                     </label>
                 </div>
             <div id="highlights">
@@ -127,7 +138,7 @@
                 page.id = 'block_page'
                 page.innerHTML = `    
                 <h5 class="label">Block Height</h5>
-                <h2 class="block">${blockHeight}</h2>
+                <h2 class="block-height">${blockHeight}</h2>
                 <div class="card">
                     <h4>1 Transaction</h4>
                     <h5 class="label">${size}</h5>
@@ -145,8 +156,9 @@
                 </div>`
                 return page;
             },
-            addressPage: function(balance, address){
-                let page = document.createElement('div')
+            addressPage: function(obj){
+                let {balance, address} = obj,
+                    page = document.createElement('div')
                 page.classList.add('page')
                 page.id = 'address_page'
                 page.innerHTML = `                
@@ -194,8 +206,8 @@
                     </div>
                 </div>
                 <div class="card">
-                    <h4>Block</h4>
-                    <h5 class="label block">${blockHeight}}</h5>
+                    <h5 class="label">Block</h5>
+                    <h4 class="block-height">${blockHeight}</h4>
                     <h5 class="label">Amount</h5>
                     <h4>${amount}</h4>
                     <h5 class="label">Sender</h5>
@@ -304,13 +316,13 @@
             contractTransferCard: function(obj){
                 let {hash, blockHeight, token, sender, receiver, amount, contractName, userChoice} = obj,
                     card = document.createElement('div');
-                card.classList.add('transaction token-transfer')
+                card.classList.add('transaction', 'token-transfer')
                 card.id = hash;
                 card.innerHTML = `
-                                <h5 class="label block">${blockHeight}</h5>
+                                <h5 class="label block-height">${blockHeight}</h5>
                                 <div class="contract-type">
                                     <h5 class="label">Smart Contract Transfer</h5>
-                                    <h2 class="token uppercase">${token}</h2>
+                                    <h4 class="token uppercase">${token}</h4>
                                 </div>
                                 <div class="contract-info">
                                     <h5 class="label">Sender</h5>
@@ -318,7 +330,7 @@
                                     <h5 class="label">receiver</h5>
                                     <h4 class="address">${receiver}</h4>
                                     <h5 class="label">amount</h5>
-                                    <h3>${amount} ${token}</h3>
+                                    <h4>${amount} ${token}</h4>
                                     <h5 class="label">Contract name</h5>
                                     <h4>${contractName}</h4>`
                 if(userChoice)
@@ -332,13 +344,13 @@
             tokenTransferCard: function(obj){
                 let {hash, blockHeight, token, sender, receiver, amount} = obj,
                     card = document.createElement('div');
-                card.classList.add('transaction token-transfer')
+                card.classList.add('transaction','token-transfer')
                 card.id = hash;
                 card.innerHTML = `
-                                <h5 class="label block">${blockHeight}</h5>
+                                <h5 class="label block-height">${blockHeight}</h5>
                                 <div class="contract-type">
                                     <h5 class="label">Token transfer</h5>
-                                    <h2 class="token uppercase">${token}</h2>
+                                    <h4 class="token uppercase">${token}</h4>
                                 </div>
                                 <div class="contract-info">
                                     <h5 class="label">Sender</h5>
@@ -346,20 +358,20 @@
                                     <h5 class="label">receiver</h5>
                                     <h4 class="address">${receiver}</h4>
                                     <h5 class="label">amount</h5>
-                                    <h3>${amount} ${token}</h3>
+                                    <h4>${amount} ${token}</h4>
                                 </div>`;
                 return card;
             },
             tokenCreationCard: function(obj){
                 let {hash, blockHeight, token, incAddress, supply} = obj,
                     card = document.createElement('div');
-                card.classList.add('transaction token-creation')
+                card.classList.add('transaction', 'token-creation')
                 card.id = hash;
                 card.innerHTML = `
-                                <h5 class="label block">${blockHeight}</h5>
+                                <h5 class="label block-height">${blockHeight}</h5>
                                 <div class="contract-type">
                                     <h5 class="label">token creation</h5>
-                                    <h2 class="token uppercase">${token}</h2>
+                                    <h4 class="token uppercase">${token}</h4>
                                 </div>
                                 <div class="contract-info">
                                     <h5 class="label">Incorporation address</h5>
@@ -374,12 +386,12 @@
             contractTriggerCard: function(obj){
                 let {hash, blockHeight, contractName, contractAddress, winningChoice, committeeAddress} = obj,
                     card = document.createElement('div');
-                card.classList.add('transaction contract-trigger')
+                card.classList.add('transaction', 'contract-trigger')
                 card.id = hash;
                 card.innerHTML = `
-                                <h5 class="label block">${blockHeight}</h5>
+                                <h5 class="label block-height">${blockHeight}</h5>
                                 <div class="contract-type">
-                                    <h2 class="token uppercase">smart contract trigger</h2>
+                                    <h4 class="token uppercase">smart contract trigger</h4>
                                 </div>
                                 <div class="contract-info">
                                     <h5 class="label">Contract name</h5>
@@ -396,13 +408,13 @@
             contractCreationCard: function(obj){
                 let {hash, blockHeight, token, contractName, incAddress, contractType, expiration, participationFees, availableChoices} = obj,
                     card = document.createElement('div');
-                card.classList.add('transaction contract-creation')
+                card.classList.add('transaction', 'contract-creation')
                 card.id = hash;
                 card.innerHTML = `
-                                <h5 class="label block">${blockHeight}</h5>
+                                <h5 class="label block-height">${blockHeight}</h5>
                                 <div class="contract-type">
-                                    
-                                    <h2 class="token uppercase">${token}</h2>
+                                    <h5 class="label">Smart Contract creation</h5>
+                                    <h4 class="token uppercase">${token}</h4>
                                 </div>
                                 <div class="contract-info">
                                     <h5 class="label">Contract name</h5>
@@ -419,9 +431,10 @@
                                     <h4>${participationFees} ${token}</h4>
                                     <h5 class="label">user Choices</h5>
                                     <div class="choices-container">`;
-                availableChoices.forEach(choice => {
-                    card.innerHTML = `<div class="choice">${choice}</div>`
-                })
+                if(availableChoices )
+                    availableChoices.forEach(choice => {
+                        card.innerHTML = `<div class="choice">${choice}</div>`
+                    })
                 card.innerHTML +=`  </div>
                                 </div>`;
                 return card;
@@ -431,22 +444,42 @@
         const   pageTitle = document.getElementById('page_title'),
                 pageContainer = document.getElementById('page_container'),
                 pageHeader = document.getElementById('page_header');
-        let currentPage = 'homepage'
+        let currentPage = 'homepage', 
+            prevField = '';
         
-        function removePage(page){
-            document.getElementById(page).remove()
+        function removePage(){
+            if(pageContainer.firstElementChild)
+                pageContainer.firstElementChild.remove()
         }
 
         function replaceDash(string){
             return string.replace(/-/g," ")
         }
 
-        function render(pageId){
-            if(currentPage !== pageId)
-                removePage(currentPage)
+        let appState = {
+            page: 'homepage',
+            thisField: null
+        }
+
+        window.onpopstate = e => {
+            if(e.state !== null){
+                let {page, thisField} = e.state
+                render(page, thisField)
+            }
+        }
+
+        async function render(pageId, field){
+
+            if ('scrollRestoration' in history) {
+                history.scrollRestoration = 'manual';
+            }
+            window.scrollTo(0,0);
+
+            removePage(currentPage)
             
             if(pageId === 'address_page'){
-                pageContainer.append(create.addressPage('0.0001', 'F91a5151a651d1adv56151avdadlkn'))
+                let data = await getAddressInfo(field)
+                pageContainer.append(create.addressPage(data))
                 pageTitle.textContent = 'Address'
             }
 
@@ -485,11 +518,41 @@
                 pageTitle.textContent = 'Contract'
             }
 
-
+            if(pageId === 'block_page'){
+                let obj = {
+                    blockHeight: '4530254',
+                    size: '5161351651 bytes',
+                    transactions: '2',
+                    reward: '1FLO',
+                    amount: '0.1FLO',
+                    nonce: '5161',
+                    difficulty: '654564',
+                    hash: '1ab70a9de6a8deeb0ba8f6c4ca015d60659c90953a7c8a1f3215276fe57b1fb2',
+                }
+                pageContainer.append(create.blockPage(obj))
+                pageTitle.textContent = 'block'
+            }
 
             if(pageId === 'homepage'){
                 pageHeader.classList.add('hide-completely')
-                pageContainer.append(create.homepage({topToken: 'RMT', totalTransactions: '88', walletAddresses: '44', topContract: 'India Election 2019'}))
+                let data = await getData()
+                pageContainer.append(create.homepage(data))
+                let obj = {
+                    type: 'Token Transfer',
+                    name: 'RMT',
+                    blockHeight: '4530254',
+                    amount: '0.1FLO',
+                    sender: 'F846EFefybwewe45avd5165adv16',
+                    receiver: 'F846EFefybwewe45avd5165adv16',
+                    floData: 'transfer 100 rupee# to FJyz51JTnPuB3AMRjyYe3rbuLmnq4qErcc for FCuFeAa3Haqk9oKQWEKVSt4pwQQEooDAEm.',
+                    hash: '1ab70a9de6a8deeb0ba8f6c4ca015d60659c90953a7c8a1f3215276fe57b1fb2',
+                    confirmations: '22458'
+                }
+                frag.append(create.contractTransferCard(obj))
+                frag.append(create.tokenTransferCard(obj))
+                frag.append(create.tokenCreationCard(obj))
+                document.getElementById('top_transaction_container').append(frag)
+
                 let themeToggler = document.getElementById('theme_toggle'),
                     body = document.querySelector('body');
                 if(localStorage.theme === 'dark'){
@@ -520,6 +583,8 @@
             else
                 pageHeader.classList.remove('hide-completely')
             currentPage = pageId;
+            prevField = field;
+            loading()
         }
 
         function renderTransactions(){
@@ -528,26 +593,41 @@
 
         window.addEventListener('load', () => {
             render('homepage')
+            history.pushState(appState, null, null)
         
             document.querySelector('main').addEventListener('click', e => {
-                if(e.target.closest('.address')){
-                    render("address_page")
+                if(e.target.closest('.address') && prevField !== e.target.textContent){
+                    loading(true)
+                    render("address_page", e.target.textContent)
+                    appState = {page: 'address_page', thisField: e.target.textContent};
+                    history.pushState(appState, null, `?address=${e.target.textContent}`)
                 }
-                if(e.target.closest('.token')){
-                    render("token_page")
+                if(e.target.closest('.token') && prevField !== e.target.textContent){
+                    render("token_page", e.target.textContent)
+                    appState = {page: 'token_page', thisField: e.target.textContent};
+                    history.pushState(appState, null, null)
                 }
-                if(e.target.closest('.hash')){
-                    render("transaction_page")
+                if(e.target.closest('.hash') && prevField !== e.target.textContent){
+                    render("transaction_page", e.target.textContent)
+                    appState = {page: 'transaction_page', thisField: e.target.textContent}; 
+                    history.pushState(appState, null, null)
                 }
-                if(e.target.closest('.block')){
-                    render("block_page")
-                    pageTitle.textContent = 'Block'
+                if(e.target.closest('.block-height') && prevField !== e.target.textContent){
+                    render("block_page", e.target.textContent)
+                    appState = {page: 'block_page', thisField: e.target.textContent};
+                    history.pushState(appState, null, null)
                 }
-                if(e.target.closest('.contract')){
-                    render("contract_page")
+                if(e.target.closest('.contract') && prevField !== e.target.textContent){
+                    render("contract_page", e.target.textContent)
+                    appState = {page: 'contract_page', thisField: e.target.textContent};
+                    history.pushState(appState, null, null)
                 }
                 if(e.target.closest('.tab')){
                     showTab(e.target.closest('.tab'))
+                }
+                if(e.target.closest('#secondary_search')){
+                    render('homepage')
+                    document.getElementById('primary_search').click()
                 }
             })
         })
@@ -566,6 +646,33 @@
                 thisTab.classList.remove('active')
             })
             tab.classList.add('active')
+        }
+
+        let loader = document.getElementById('loader_page')
+
+        function loading(status){
+            if(status)
+                loader.classList.remove('hide-completely')
+            else
+                loader.classList.add('hide-completely')
+        }
+
+        function getData(){ 
+            return new Promise(resolve => {
+                let obj = {topToken: 'RMT', totalTransactions: '88', walletAddresses: '44', topContract: 'India Election 2019'}
+                setTimeout(() => {
+                    resolve(obj)
+                }, 100)
+            })
+        }
+
+        function getAddressInfo(thisAddress){ 
+            return new Promise(resolve => {
+                let obj = {balance: '0.0001', address: thisAddress}
+                setTimeout(() => {
+                    resolve(obj)
+                }, 2000)
+            })
         }
     </script>
 </body>
