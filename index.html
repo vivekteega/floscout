@@ -133,14 +133,18 @@
             },
             blockPage: function(obj){
                 let {blockHeight, size, transactions, reward, hash, difficulty, nonce} = obj,
-                    page = document.createElement('div');
+                    page = document.createElement('div'),
+                    wordForm = 'transaction';
+                if(transactions > 1)
+                    wordForm = 'transactions'
                 page.classList.add('page')
                 page.id = 'block_page'
+
                 page.innerHTML = `    
                 <h5 class="label">Block Height</h5>
                 <h2 class="block-height">${blockHeight}</h2>
                 <div class="card">
-                    <h4>1 Transaction</h4>
+                    <h4>1 ${wordForm}</h4>
                     <h5 class="label">${size}</h5>
                     <h5 class="label">Reward</h5>
                     <h4>${reward}</h4>
