@@ -243,8 +243,8 @@
                     <h4 class="breakable">${incAddress}</h4>
                   </div> 
                   <div class="tabs">
-                      <h4 class="tab active" data-target="token_balance_container">Top Balances</h4>
-                      <h4 class="tab" data-target="token_transaction_container">Top Transactions</h4>
+                      <h4 class="tab active" data-rank="1" data-target="token_balance_container">Top Balances</h4>
+                      <h4 class="tab" data-rank="2" data-target="token_transaction_container">Top Transactions</h4>
                       <div class="line"></div>
                   </div>
                   <ul id="token_balance_container" data-tab-group="token" class="card">
@@ -292,8 +292,9 @@
                     <li>Narendra Modi Loses</li>
                 </ul>
                 <div class="tabs">
-                    <h4 class="tab active" data-target="participant_container">Participants</h4>
-                    <h4 class="tab" data-target="winners_container">Winners</h4>
+                    <h4 class="tab active" data-rank="1" data-target="participant_container">Participants</h4>
+                    <h4 class="tab" data-rank="2" data-target="winners_container">Winners</h4>
+                    <h4 class="tab" data-rank="3" data-target="losers_container">losers</h4>
                     <div class="line"></div>
                 </div>
                 <ul id="participant_container" data-tab-group="token" class="card">
@@ -308,6 +309,13 @@
                     </li>
                 </ul>
                 <ul id="winners_container" data-tab-group="token" class="card hide-completely">
+                    <li class="contract-choice winner" >
+                        <h5 class="breakable label">F6EMAHjivqrcrdAHNABq2R1FLNkx8xfEaT</h5>
+                        <h3>narendra modi wins</h3>
+                        <h4>0.0000023333 RMT</h4>
+                    </li>
+                </ul>
+                <ul id="losers_container" data-tab-group="token" class="card hide-completely">
                     <li class="contract-choice winner" >
                         <h5 class="breakable label">F6EMAHjivqrcrdAHNABq2R1FLNkx8xfEaT</h5>
                         <h3>narendra modi wins</h3>
@@ -638,18 +646,37 @@
 
         function showTab(tab){
             let targetTab = tab.getAttribute('data-target'),
+                activeTabRank = parseInt(tab.parentNode.querySelector('.active').dataset.rank),
+                currentTabRank = parseInt(tab.dataset.rank),
+                currentBody = document.getElementById(tab.parentNode.querySelector('.active').dataset.target),
                 targetBody = document.getElementById(targetTab),
-                targetGroup = targetBody.getAttribute('data-tab-group'),
+                targetGroup = targetBody.dataset.tabGroup,
                 tabGroupMembers = document.querySelectorAll(`[data-tab-group = '${targetGroup}']`),
                 allTabs = tab.parentNode.querySelectorAll('.tab')
-            tabGroupMembers.forEach(member => {
-                member.classList.add('hide-completely')
-            })
-            targetBody.classList.remove('hide-completely')
-            allTabs.forEach(thisTab => {
-                thisTab.classList.remove('active')
-            })
-            tab.classList.add('active')
+            if(!currentBody.isEqualNode(targetBody)){
+                if(activeTabRank < currentTabRank){
+                    targetBody.classList.add('fly-in-from-right')
+                    currentBody.classList.add('fly-out-to-left')
+                }
+                else{
+                    targetBody.classList.add('fly-in-from-left')
+                    currentBody.classList.add('fly-out-to-right')
+                }
+                setTimeout(() => {
+                    tabGroupMembers.forEach(member => {
+                        member.classList.add('hide-completely')
+                    })
+                    targetBody.classList.remove('hide-completely')
+                    currentBody.classList.remove('fly-out-to-right', 'fly-out-to-left')
+                },300)
+                setTimeout(() => {
+                    targetBody.classList.remove('fly-in-from-right', 'fly-in-from-left')
+                },600)
+                allTabs.forEach(thisTab => {
+                    thisTab.classList.remove('active')
+                })
+                tab.classList.add('active')
+            }
         }
 
         let loader = document.getElementById('loader_page')
