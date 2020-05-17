@@ -281,7 +281,7 @@ ul{
 @keyframes flyInLeft{
     from{
         opacity: 0;
-        transform: translateX(-2rem);
+        transform: translateX(-0.5rem);
     }
     to{
         opacity: 1;
@@ -291,7 +291,7 @@ ul{
 @keyframes flyInRight{
     from{
         opacity: 0;
-        transform: translateX(2rem);
+        transform: translateX(0.5rem);
     }
     to{
         opacity: 1;
@@ -305,7 +305,7 @@ ul{
     }
     to{
         opacity: 0;
-        transform: translateX(-2rem);
+        transform: translateX(-0.5rem);
     }
 }
 @keyframes flyOutRight{
@@ -315,20 +315,20 @@ ul{
     }
     to{
         opacity: 0;
-        transform: translateX(2rem);
+        transform: translateX(0.5rem);
     }
 }
 .fly-in-from-left{
-    animation: flyInLeft 0.3s forwards;
+    animation: flyInLeft 0.2s forwards;
 }
 .fly-in-from-right{
-    animation: flyInRight 0.3s forwards;
+    animation: flyInRight 0.2s forwards;
 }
 .fly-out-to-left{
-    animation: flyOutLeft 0.3s forwards;
+    animation: flyOutLeft 0.2s forwards;
 }
 .fly-out-to-right{
-    animation: flyOutRight 0.3s forwards;
+    animation: flyOutRight 0.2s forwards;
 }
 #highlights{
     padding: 1.5rem 0;
@@ -514,10 +514,18 @@ p{
         &:last-of-type{
             margin-right: 0;
         }
-        &.active{
+        /*&.active{
             opacity: 1;
             border-bottom: 0.1em solid rgba(var(--text), 0.8);
-        }
+        }*/
+    }
+    .line{
+        position: absolute;
+        height: 0.1em;
+        background: rgba(var(--text), 1);
+        width: 1px;
+        bottom: 0;
+        transition: transform 0.4s, width 0.4s;
     }
 }
 .contract-choice{

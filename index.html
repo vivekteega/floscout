@@ -652,7 +652,8 @@
                 targetBody = document.getElementById(targetTab),
                 targetGroup = targetBody.dataset.tabGroup,
                 tabGroupMembers = document.querySelectorAll(`[data-tab-group = '${targetGroup}']`),
-                allTabs = tab.parentNode.querySelectorAll('.tab')
+                allTabs = tab.parentNode.querySelectorAll('.tab'),
+                line = tab.parentNode.querySelector('.line')
             if(!currentBody.isEqualNode(targetBody)){
                 if(activeTabRank < currentTabRank){
                     targetBody.classList.add('fly-in-from-right')
@@ -668,14 +669,15 @@
                     })
                     targetBody.classList.remove('hide-completely')
                     currentBody.classList.remove('fly-out-to-right', 'fly-out-to-left')
-                },300)
+                },200)
                 setTimeout(() => {
                     targetBody.classList.remove('fly-in-from-right', 'fly-in-from-left')
-                },600)
+                },400)
                 allTabs.forEach(thisTab => {
                     thisTab.classList.remove('active')
                 })
                 tab.classList.add('active')
+                line.setAttribute('style', `transform: translateX(${tab.offsetLeft}px); width: ${tab.getBoundingClientRect().width}px`)
             }
         }
 
