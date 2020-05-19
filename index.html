@@ -12,7 +12,7 @@
             <title>Loading</title>
             <circle cx="32" cy="32" r="32"/>
         </svg>
-        <h4>Loading</h4>`
+        <h4>Loading</h4>
     </div>
     <header id="page_header" class="flex margin">
         <h3 id="page_title">Block</h3>
@@ -487,6 +487,8 @@
             }
             window.scrollTo(0,0);
 
+            if(prevField === field)
+                return;
             removePage(currentPage)
             
             if(pageId === 'address_page'){
@@ -597,6 +599,9 @@
             currentPage = pageId;
             prevField = field;
             loading()
+            if(pageContainer.querySelector('.tab.active'))
+                pageContainer.querySelector('.tab.active').click()
+            tabMounted = false;
         }
 
         function renderTransactions(){
@@ -608,28 +613,28 @@
             history.pushState(appState, null, null)
         
             document.querySelector('main').addEventListener('click', e => {
-                if(e.target.closest('.address') && prevField !== e.target.textContent){
+                if(e.target.closest('.address')){
                     loading(true)
                     render("address_page", e.target.textContent)
                     appState = {page: 'address_page', thisField: e.target.textContent};
-                    history.pushState(appState, null, `?address=${e.target.textContent}`)
+                    history.pushState(appState, null, null)
                 }
-                if(e.target.closest('.token') && prevField !== e.target.textContent){
+                if(e.target.closest('.token')){
                     render("token_page", e.target.textContent)
                     appState = {page: 'token_page', thisField: e.target.textContent};
                     history.pushState(appState, null, null)
                 }
-                if(e.target.closest('.hash') && prevField !== e.target.textContent){
+                if(e.target.closest('.hash')){
                     render("transaction_page", e.target.textContent)
                     appState = {page: 'transaction_page', thisField: e.target.textContent}; 
                     history.pushState(appState, null, null)
                 }
-                if(e.target.closest('.block-height') && prevField !== e.target.textContent){
+                if(e.target.closest('.block-height')){
                     render("block_page", e.target.textContent)
                     appState = {page: 'block_page', thisField: e.target.textContent};
                     history.pushState(appState, null, null)
                 }
-                if(e.target.closest('.contract') && prevField !== e.target.textContent){
+                if(e.target.closest('.contract')){
                     render("contract_page", e.target.textContent)
                     appState = {page: 'contract_page', thisField: e.target.textContent};
                     history.pushState(appState, null, null)
@@ -644,6 +649,7 @@
             })
         })
 
+        let tabMounted = false;
         function showTab(tab){
             let targetTab = tab.getAttribute('data-target'),
                 activeTabRank = parseInt(tab.parentNode.querySelector('.active').dataset.rank),
@@ -654,31 +660,32 @@
                 tabGroupMembers = document.querySelectorAll(`[data-tab-group = '${targetGroup}']`),
                 allTabs = tab.parentNode.querySelectorAll('.tab'),
                 line = tab.parentNode.querySelector('.line')
-            if(!currentBody.isEqualNode(targetBody)){
-                if(activeTabRank < currentTabRank){
-                    targetBody.classList.add('fly-in-from-right')
-                    currentBody.classList.add('fly-out-to-left')
-                }
-                else{
-                    targetBody.classList.add('fly-in-from-left')
-                    currentBody.classList.add('fly-out-to-right')
-                }
-                setTimeout(() => {
-                    tabGroupMembers.forEach(member => {
-                        member.classList.add('hide-completely')
-                    })
-                    targetBody.classList.remove('hide-completely')
-                    currentBody.classList.remove('fly-out-to-right', 'fly-out-to-left')
-                },200)
-                setTimeout(() => {
-                    targetBody.classList.remove('fly-in-from-right', 'fly-in-from-left')
-                },400)
-                allTabs.forEach(thisTab => {
-                    thisTab.classList.remove('active')
-                })
-                tab.classList.add('active')
-                line.setAttribute('style', `transform: translateX(${tab.offsetLeft}px); width: ${tab.getBoundingClientRect().width}px`)
+            if(tabMounted && currentBody.isEqualNode(targetBody))
+                return
+            if(activeTabRank < currentTabRank){
+                targetBody.classList.add('fly-in-from-right')
+                currentBody.classList.add('fly-out-to-left')
             }
+            else{
+                targetBody.classList.add('fly-in-from-left')
+                currentBody.classList.add('fly-out-to-right')
+            }
+            setTimeout(() => {
+                tabGroupMembers.forEach(member => {
+                    member.classList.add('hide-completely')
+                })
+                targetBody.classList.remove('hide-completely')
+                currentBody.classList.remove('fly-out-to-right', 'fly-out-to-left')
+            },200)
+            setTimeout(() => {
+                targetBody.classList.remove('fly-in-from-right', 'fly-in-from-left')
+            },400)
+            allTabs.forEach(thisTab => {
+                thisTab.classList.remove('active')
+            })
+            tab.classList.add('active')
+            line.setAttribute('style', `transform: translateX(${tab.offsetLeft}px); width: ${tab.getBoundingClientRect().width}px`)
+            tabMounted = true;
         }
 
         let loader = document.getElementById('loader_page')

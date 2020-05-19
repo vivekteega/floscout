@@ -614,7 +614,7 @@ ul .balance:last-of-type {
 }
 
 .page {
-  padding: 1rem 0;
+  padding: 0.5rem 0;
   -webkit-animation: fade 0.3s;
           animation: fade 0.3s;
 }
@@ -756,21 +756,20 @@ p {
   -webkit-tap-highlight-color: transparent;
   white-space: nowrap;
   border-bottom: transparent;
-  /*&.active{
-            opacity: 1;
-            border-bottom: 0.1em solid rgba(var(--text), 0.8);
-        }*/
 }
 
 .tabs .tab:last-of-type {
   margin-right: 0;
 }
 
+.tabs .tab.active {
+  opacity: 1;
+}
+
 .tabs .line {
   position: absolute;
-  height: 0.1em;
+  height: 0.1rem;
   background: rgba(var(--text), 1);
-  width: 1px;
   bottom: 0;
   -webkit-transition: width 0.4s, -webkit-transform 0.4s;
   transition: width 0.4s, -webkit-transform 0.4s;
