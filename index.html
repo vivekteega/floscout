@@ -1,32 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FLO Scout</title>
-    <link rel="stylesheet" href="css/main.css" />
-  </head>
 
-  <body data-theme="dark">
-    <div id="loader_page" class="hide-completely">
-      <svg id="loader" class="icon" viewBox="0 0 64 64">
-        <title>Loading</title>
-        <circle cx="32" cy="32" r="32" />
-      </svg>
-      <h4>Loading</h4>
-    </div>
-    <header id="page_header" class="flex margin">
-      <h3 id="page_title">Block</h3>
-      <svg id="secondary_search_btn" class="icon margin-left-auto hover" viewBox="0 0 64 64">
-        <title>
-          search for block, transactions, address, token or contract
-        </title>
-        <circle cx="25.34" cy="25.34" r="24.84" />
-        <line x1="63.65" y1="63.65" x2="42.91" y2="42.91" />
-      </svg>
-    </header>
-    <main id="page_container">
-      <!--<div id="search_page" class="page hide-completely">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FLO Scout</title>
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+
+<!-- Set urls for token and flo Apis -->
+<script>
+  window.tokenapiUrl = 'https://ranchimallflo.duckdns.org'
+  window.floapiUrl = 'https://flosight.duckdns.org'
+</script>
+
+<body data-theme="dark">
+  <div id="loader_page" class="hide-completely">
+    <svg id="loader" class="icon" viewBox="0 0 64 64">
+      <title>Loading</title>
+      <circle cx="32" cy="32" r="32" />
+    </svg>
+    <h4>Loading</h4>
+  </div>
+  <header id="page_header" class="flex margin">
+    <h3 id="page_title">Block</h3>
+    <svg id="secondary_search_btn" class="icon margin-left-auto hover" viewBox="0 0 64 64">
+      <title>
+        search for block, transactions, address, token or contract
+      </title>
+      <circle cx="25.34" cy="25.34" r="24.84" />
+      <line x1="63.65" y1="63.65" x2="42.91" y2="42.91" />
+    </svg>
+  </header>
+  <main id="page_container">
+    <!--<div id="search_page" class="page hide-completely">
             <label id="secondary_search" class="input">
                 <svg class="icon" viewBox="0 0 64 64">
                     <title>search icon</title>
@@ -42,16 +49,16 @@
             <div id="all_blocks" class="">
 
             </div>  -->
-    </main>
-    <script>
-      let frag = document.createDocumentFragment();
-      const create = {
-        homepage(obj) {
-          let {topToken,totalTransactions,walletAddresses,topContract,} = obj,
-            page = document.createElement("div");
-          page.classList.add("page");
-          page.id = "homepage";
-          page.innerHTML = `
+  </main>
+  <script>
+    let frag = document.createDocumentFragment();
+    const create = {
+      homepage(obj) {
+        let { topToken, totalTransactions, walletAddresses, topContract, } = obj,
+          page = document.createElement("div");
+        page.classList.add("page");
+        page.id = "homepage";
+        page.innerHTML = `
               <section id="first_section">
               <header class="header flex">
                   <div id="logo">
@@ -110,7 +117,7 @@
               </div>
               <div class="highlight-item">
                   <h4 class="label">top contract</h4>
-                  <h2 class="contract">${topContract}</h2>
+                  <h2 class="contract">${topContract.name}</h2>
               </div>
           </div>
       </section>
@@ -131,18 +138,18 @@
           </div>
       </section>
               `;
-          return page;
-        },
-        blockPage(obj) {
-          let {blockHeight,size,transactions,reward,hash,difficulty,nonce,
-            } = obj,
-            page = document.createElement("div"),
-            wordForm = "transaction";
-          if (transactions > 1) wordForm = "transactions";
-          page.classList.add("page");
-          page.id = "block_page";
+        return page;
+      },
+      blockPage(obj) {
+        let { blockHeight, size, transactions, reward, hash, difficulty, nonce,
+        } = obj,
+          page = document.createElement("div"),
+          wordForm = "transaction";
+        if (transactions > 1) wordForm = "transactions";
+        page.classList.add("page");
+        page.id = "block_page";
 
-          page.innerHTML = `
+        page.innerHTML = `
               <h5 class="label">Block Height</h5>
               <h2 class="block-height">${blockHeight}</h2>
               <div class="card">
@@ -160,14 +167,14 @@
               <h3 class="heading">Transactions</h3>
               <div id="block_transaction_container" class="top-bottom-padding">
               </div>`;
-          return page;
-        },
-        addressPage(obj) {
-          let { balance, address } = obj,
-            page = document.createElement("div");
-          page.classList.add("page");
-          page.id = "address_page";
-          page.innerHTML = `
+        return page;
+      },
+      addressPage(obj) {
+        let { balance, address } = obj,
+          page = document.createElement("div");
+        page.classList.add("page");
+        page.id = "address_page";
+        page.innerHTML = `
               <div class="balance-card">
                   <svg class="flo-logo" viewBox="0 0 48 48">
                       <path d="M34.2,32.4c0,0,3.75-0.18,7.41-3.86c2.96-2.98,3.65-6.66,3.99-8.52c-11.04-0.63-12.36,0.99-13.71,1.68
@@ -190,14 +197,14 @@
               <h3 class="heading">Transactions</h3>
               <div id="address_transaction_container" class="top-bottom-padding">
               </div>`;
-          return page;
-        },
-        transactionPage(obj) {
-          let {type,name,blockHeight,amount,sender,receiver,floData,hash,confirmations,} = obj,
-            page = document.createElement("div");
-          page.classList.add("page");
-          page.id = "transaction_page";
-          page.innerHTML = `
+        return page;
+      },
+      transactionPage(obj) {
+        let { type, name, blockHeight, amount, sender, receiver, floData, hash, confirmations, } = obj,
+          page = document.createElement("div");
+        page.classList.add("page");
+        page.id = "transaction_page";
+        page.innerHTML = `
               <div class="grid grid-2">
                   <div>
                       <h5 class="label">${type}</h5>
@@ -230,14 +237,14 @@
                   <h4>${confirmations}</h4>
               </div>
               `;
-          return page;
-        },
-        tokenPage(obj) {
-          let { token, supply, incAddress } = obj;
-          let page = document.createElement("div");
-          page.classList.add("page");
-          page.id = "token_page";
-          page.innerHTML = `
+        return page;
+      },
+      tokenPage(obj) {
+        let { token, supply, incAddress } = obj;
+        let page = document.createElement("div");
+        page.classList.add("page");
+        page.id = "token_page";
+        page.innerHTML = `
                 <div class="card">
                   <h2 class="uppercase">${token}</h2>
                   <h5 class="label">Supply</h5>
@@ -267,14 +274,14 @@
                     </li>
                 </ul>
               `;
-          return page;
-        },
-        contractPage(obj) {
-          let {status,contract,contractType,incAddress,expiration,token,participationFees} = obj,
-            page = document.createElement("div");
-          page.classList.add("page");
-          page.id = "contract_page";
-          page.innerHTML = `
+        return page;
+      },
+      contractPage(obj) {
+        let { status, contract, contractType, incAddress, expiration, token, participationFees } = obj,
+          page = document.createElement("div");
+        page.classList.add("page");
+        page.id = "contract_page";
+        page.innerHTML = `
               <div class="status closed">Closed</div>
               <h2 class="uppercase">${contract}</h2>
               <div class="card">
@@ -326,14 +333,14 @@
                   </li>
               </ul>
               `;
-          return page;
-        },
-        contractTransferCard(obj) {
-          let {hash,blockHeight,token,sender,receiver,amount,contractName,userChoice} = obj,
-            card = document.createElement("div");
-          card.classList.add("transaction", "token-transfer");
-          card.id = hash;
-          card.innerHTML = `
+        return page;
+      },
+      contractTransferCard(obj) {
+        let { hash, blockHeight, token, sender, receiver, amount, contractName, userChoice } = obj,
+          card = document.createElement("div");
+        card.classList.add("transaction", "token-transfer");
+        card.id = hash;
+        card.innerHTML = `
                               <h5 class="label block-height">${blockHeight}</h5>
                               <div class="contract-type">
                                   <h5 class="label">Smart Contract Transfer</h5>
@@ -348,20 +355,20 @@
                                   <h4>${amount} ${token}</h4>
                                   <h5 class="label">Contract name</h5>
                                   <h4>${contractName}</h4>`;
-          if (userChoice)
-            card.innerHTML += `
+        if (userChoice)
+          card.innerHTML += `
                                   <h5 class="label">User Choice</h5>
                                   <h4>${userChoice}</h4>`;
 
-          card.innerHTML += `</div>`;
-          return card;
-        },
-        tokenTransferCard(obj) {
-          let { hash, blockHeight, token, sender, receiver, amount } = obj,
-            card = document.createElement("div");
-          card.classList.add("transaction", "token-transfer");
-          card.id = hash;
-          card.innerHTML = `
+        card.innerHTML += `</div>`;
+        return card;
+      },
+      tokenTransferCard(obj) {
+        let { hash, blockHeight, token, sender, receiver, amount } = obj,
+          card = document.createElement("div");
+        card.classList.add("transaction", "token-transfer");
+        card.id = hash;
+        card.innerHTML = `
                               <h5 class="label block-height">${blockHeight}</h5>
                               <div class="contract-type">
                                   <h5 class="label">Token transfer</h5>
@@ -375,14 +382,14 @@
                                   <h5 class="label">amount</h5>
                                   <h4>${amount} ${token}</h4>
                               </div>`;
-          return card;
-        },
-        tokenCreationCard(obj) {
-          let { hash, blockHeight, token, incAddress, supply } = obj,
-            card = document.createElement("div");
-          card.classList.add("transaction", "token-creation");
-          card.id = hash;
-          card.innerHTML = `
+        return card;
+      },
+      tokenCreationCard(obj) {
+        let { hash, blockHeight, token, incAddress, supply } = obj,
+          card = document.createElement("div");
+        card.classList.add("transaction", "token-creation");
+        card.id = hash;
+        card.innerHTML = `
                               <h5 class="label block-height">${blockHeight}</h5>
                               <div class="contract-type">
                                   <h5 class="label">token creation</h5>
@@ -396,14 +403,14 @@
                                   <h5 class="label">supply</h5>
                                   <h4>${supply}</h4>
                               </div>`;
-          return card;
-        },
-        contractTriggerCard(obj) {
-          let {hash,blockHeight,contractName,contractAddress,winningChoice,committeeAddress} = obj,
-            card = document.createElement("div");
-          card.classList.add("transaction", "contract-trigger");
-          card.id = hash;
-          card.innerHTML = `
+        return card;
+      },
+      contractTriggerCard(obj) {
+        let { hash, blockHeight, contractName, contractAddress, winningChoice, committeeAddress } = obj,
+          card = document.createElement("div");
+        card.classList.add("transaction", "contract-trigger");
+        card.id = hash;
+        card.innerHTML = `
                               <h5 class="label block-height">${blockHeight}</h5>
                               <div class="contract-type">
                                   <h4 class="token uppercase">smart contract trigger</h4>
@@ -418,14 +425,14 @@
                                   <h5 class="label">committee address</h5>
                                   <h4>${committeeAddress}</h4>
                               </div>`;
-          return card;
-        },
-        contractCreationCard(obj) {
-          let {hash,blockHeight,token,contractName,incAddress,contractType,expiration,participationFees,availableChoices} = obj,
-            card = document.createElement("div");
-          card.classList.add("transaction", "contract-creation");
-          card.id = hash;
-          card.innerHTML = `
+        return card;
+      },
+      contractCreationCard(obj) {
+        let { hash, blockHeight, token, contractName, incAddress, contractType, expiration, participationFees, availableChoices } = obj,
+          card = document.createElement("div");
+        card.classList.add("transaction", "contract-creation");
+        card.id = hash;
+        card.innerHTML = `
                               <h5 class="label block-height">${blockHeight}</h5>
                               <div class="contract-type">
                                   <h5 class="label">Smart Contract creation</h5>
@@ -446,740 +453,814 @@
                                   <h4>${participationFees} ${token}</h4>
                                   <h5 class="label">user Choices</h5>
                                   <div class="choices-container">`;
-          if (availableChoices)
-            availableChoices.forEach((choice) => {
-              card.innerHTML += `<div class="choice">${choice}</div>`;
-            });
-          card.innerHTML += `  </div>
+        if (availableChoices)
+          availableChoices.forEach((choice) => {
+            card.innerHTML += `<div class="choice">${choice}</div>`;
+          });
+        card.innerHTML += `  </div>
                               </div>`;
-          return card;
-        },
-      };
+        return card;
+      },
+    };
 
-      const pageTitle = document.getElementById("page_title"),
-        pageContainer = document.getElementById("page_container"),
-        pageHeader = document.getElementById("page_header");
-      let currentPage = "homepage",
-        prevField = "";
+    const pageTitle = document.getElementById("page_title"),
+      pageContainer = document.getElementById("page_container"),
+      pageHeader = document.getElementById("page_header");
+    let currentPage = "homepage",
+      prevField = "";
 
-      function removePage() {
-        if (pageContainer.firstElementChild)
-          pageContainer.firstElementChild.remove();
+    function removePage() {
+      if (pageContainer.firstElementChild)
+        pageContainer.firstElementChild.remove();
+    }
+
+    function replaceDash(string) {
+      return string.replace(/-/g, " ");
+    }
+
+    let appState = {
+      page: "homepage",
+      thisField: null,
+    };
+
+    window.onpopstate = (e) => {
+      if (e.state !== null) {
+        let { page, thisField } = e.state;
+        render(page, thisField);
+      }
+    };
+
+    async function render(pageId, field) {
+      if ("scrollRestoration" in history) {
+        history.scrollRestoration = "manual";
+      }
+      window.scrollTo(0, 0);
+      loading(true)
+      removePage(currentPage);
+
+      if (pageId === "address_page") {
+        let addressInfo = await getAddressInfo(field);
+        let addressBalance = await getAddressBalance(field);
+        let addressTxs = await getAddressTxs(field);
+        pageContainer.append(create.addressPage(addressBalance))
+        pageTitle.textContent = 'Address'
+        loading()
       }
 
-      function replaceDash(string) {
-        return string.replace(/-/g, " ");
+      if (pageId === "token_page") {
+        let tokenInfo = await getTokenInfo(field);
+        let tokenBalances = await getTokenBalances(field);
+        let tokenTransactions = await getTokenTransactions(field);
+        pageContainer.append(create.tokenPage(tokenInfo));
+        pageTitle.textContent = "Token";
+        loading()
       }
 
-      let appState = {
-        page: "homepage",
-        thisField: null,
-      };
+      if (pageId === "contract_page") {
+        // todo: load contract variable dynamically
+        let contract = {
+          name: "india-elections-2019",
+          address: "F7osBpjDDV1mSSnMNrLudEQQ3cwDJ2dPR1",
+        };
 
-      window.onpopstate = (e) => {
-        if (e.state !== null) {
-          let { page, thisField } = e.state;
-          render(page, thisField);
-        }
-      };
-
-      async function render(pageId, field) {
-        if ("scrollRestoration" in history) {
-          history.scrollRestoration = "manual";
-        }
-        window.scrollTo(0, 0);
-		loading(true)
-        removePage(currentPage);
-
-        if (pageId === "address_page") {
-          let addressInfo = await getAddressInfo(field);
-          let addressBalance = await getAddressBalance(field);
-          let addressTxs = await getAddressTxs(field);
-		  pageContainer.append(create.addressPage(addressBalance))
-                pageTitle.textContent = 'Address'
-		loading()
-        }
-
-        if (pageId === "token_page") {
-          let tokenInfo = await getTokenInfo(field);
-          pageContainer.append(create.tokenPage(tokenInfo));
-          pageTitle.textContent = "Token";
-		  loading()
-        }
-
-        if (pageId === "contract_page") {
-          // todo: load contract variable dynamically
-          let contract = {
-            name: "india-elections-2019",
-            address: "F7osBpjDDV1mSSnMNrLudEQQ3cwDJ2dPR1",
-          };
-
-          let contractInfo = await getContractInfo(contract);
-          // todo : check the type of contract & then further checks like fetching details of contractParticipant 
-          let contractTransactions = await getContractTransactions(contract);
-          let contractParticipants = await getContractParticipants(contract);
-          let obj = {
-            status: "closed",
-            contract: "india-elections-2019",
-            contractType: "one-time-event",
-            incAddress: "F7osBpjDDV1mSSnMNrLudEQQ3cwDJ2dPR1",
-            expiration: "wed may 22 2019 21:00:00 gmt+0530",
-            token: "rmt",
-            participationFees: "0.001 RMT",
-          };
-          pageContainer.append(create.contractPage(obj));
-          pageTitle.textContent = "Contract";
-		  loading()
-        }
-
-        if (pageId === "block_page") {
-          let blockInfo = await getBlockInfo(field);
-          pageContainer.append(create.blockPage(blockInfo));
-          pageTitle.textContent = "block";
-		  loading()
-        }
-
-        if (pageId === "homepage") {
-			// banner
-			pageHeader.classList.add("hide-completely");
-			let data = await getBannerData();
-			pageContainer.append(create.homepage(data));
-			loading()
-			let themeToggler = document.getElementById("theme_toggle"),
-				body = document.querySelector("body");
-			if (localStorage.theme === "dark") {
-				nightlight();
-				themeToggler.checked = true;
-			} else {
-				daylight();
-				themeToggler.checked = false;
-			}
-			function daylight() {
-				body.setAttribute("data-theme", "light");
-			}
-			function nightlight() {
-				body.setAttribute("data-theme", "dark");
-			}
-			themeToggler.addEventListener("change", () => {
-				if (themeToggler.checked) {
-				nightlight();
-				localStorage.setItem("theme", "dark");
-				} else {
-				daylight();
-				localStorage.setItem("theme", "light");
-				}
-			});
-			// Latest transactions
-			let latestTxs = await getLatestTxs();
-
-			for (let i = 0; i < latestTxs.length; i++) {
-				if (latestTxs[i]["type"] == "tokentransfer") {
-					frag.append(create.tokenTransferCard(latestTxs[i]));
-				} else if (latestTxs[i]["type"] == "contracttransfer") {
-					frag.append(create.contractTransferCard(latestTxs[i]));
-				}
-			}
-			document.getElementById("top_transaction_container").append(frag);
-
-			// todo - add latest blocks
-			let latestBlocks = await getLatestBlocks();
-        } else pageHeader.classList.remove("hide-completely");
-
-        if (pageId === "viewallblocks") {
-            let latest100blocks = await getLatestBlocks();
-			loading()
-        }
-
-        if (pageId === "viewalltxs") {
-            let latest100txs = await getViewallTxs();
-			loading()
-
-        }
-
-        if (pageId === "transaction_page") {
-            let latest100txs = await getTxDetafils();
-			loading()
-        }
-
-        currentPage = pageId;
-        prevField = field;
-		if(pageContainer.querySelector('.tab.active'))
-			pageContainer.querySelector('.tab.active').click()
-		tabMounted = false;
+        let contractInfo = await getContractInfo(contract);
+        // todo : check the type of contract & then further checks like fetching details of contractParticipant 
+        let contractTransactions = await getContractTransactions(contract);
+        let contractParticipants = await getContractParticipants(contract);
+        let obj = {
+          status: "closed",
+          contract: "india-elections-2019",
+          contractType: "one-time-event",
+          incAddress: "F7osBpjDDV1mSSnMNrLudEQQ3cwDJ2dPR1",
+          expiration: "wed may 22 2019 21:00:00 gmt+0530",
+          token: "rmt",
+          participationFees: "0.001 RMT",
+        };
+        pageContainer.append(create.contractPage(obj));
+        pageTitle.textContent = "Contract";
+        loading()
       }
 
-      function renderTransactions() {}
+      if (pageId === "block_page") {
+        let blockInfo = await getBlockInfo(field);
+        pageContainer.append(create.blockPage(blockInfo));
+        pageTitle.textContent = "block";
+        loading()
+      }
 
-      window.addEventListener("load", () => {
-        render("homepage");
-        history.pushState(appState, null, null);
-
-        document.querySelector("main").addEventListener("click", (e) => {
-          if (e.target.closest(".address") && prevField !== e.target.textContent){
-            render("address_page", e.target.textContent)
-            appState = {
-              page: "address_page",
-              thisField: e.target.textContent,
-            };
-            history.pushState(appState,null,null)
-          }
-          if (e.target.closest(".token") && prevField !== e.target.textContent) {
-            render("token_page", e.target.textContent);
-            appState = { page: "token_page", thisField: e.target.textContent };
-            history.pushState(appState, null, null)
-          }
-          if (e.target.closest(".hash") && prevField !== e.target.textContent) {
-            render("transaction_page", e.target.textContent);
-            appState = {
-              page: "transaction_page",
-              thisField: e.target.textContent,
-            };
-            history.pushState(appState, null, null)
-          }
-          if (e.target.closest(".block-height") && prevField !== e.target.textContent) {
-            render("block_page", e.target.textContent);
-            appState = { page: "block_page", thisField: e.target.textContent };
-            history.pushState(appState, null, null);
-          }
-          if (e.target.closest(".contract") && prevField !== e.target.textContent) {
-            render("contract_page", e.target.textContent)
-            appState = {
-              page: "contract_page",
-              thisField: e.target.textContent,
-            }
-            history.pushState(appState, null, null)
-          }
-          if (e.target.closest(".tab")) {
-            showTab(e.target.closest(".tab"));
-          }
-          if (e.target.closest("#secondary_search")) {
-            render("homepage");
-            document.getElementById("primary_search").click();
+      if (pageId === "homepage") {
+        // banner
+        pageHeader.classList.add("hide-completely");
+        let data = await getBannerData();
+        pageContainer.append(create.homepage(data));
+        loading()
+        let themeToggler = document.getElementById("theme_toggle"),
+          body = document.querySelector("body");
+        if (localStorage.theme === "dark") {
+          nightlight();
+          themeToggler.checked = true;
+        } else {
+          daylight();
+          themeToggler.checked = false;
+        }
+        function daylight() {
+          body.setAttribute("data-theme", "light");
+        }
+        function nightlight() {
+          body.setAttribute("data-theme", "dark");
+        }
+        themeToggler.addEventListener("change", () => {
+          if (themeToggler.checked) {
+            nightlight();
+            localStorage.setItem("theme", "dark");
+          } else {
+            daylight();
+            localStorage.setItem("theme", "light");
           }
         });
-      });
+        // Latest transactions
+        let latestTxs = await getLatestTxs();
 
-	  let tabMounted = false;
-        function showTab(tab){
-            let targetTab = tab.getAttribute('data-target'),
-                activeTabRank = parseInt(tab.parentNode.querySelector('.active').dataset.rank),
-                currentTabRank = parseInt(tab.dataset.rank),
-                currentBody = document.getElementById(tab.parentNode.querySelector('.active').dataset.target),
-                targetBody = document.getElementById(targetTab),
-                targetGroup = targetBody.dataset.tabGroup,
-                tabGroupMembers = document.querySelectorAll(`[data-tab-group = '${targetGroup}']`),
-                allTabs = tab.parentNode.querySelectorAll('.tab'),
-                line = tab.parentNode.querySelector('.line')
-            if(tabMounted && currentBody.isEqualNode(targetBody))
-                return
-            if(activeTabRank < currentTabRank){
-                targetBody.classList.add('fly-in-from-right')
-                currentBody.classList.add('fly-out-to-left')
-            }
-            else{
-                targetBody.classList.add('fly-in-from-left')
-                currentBody.classList.add('fly-out-to-right')
-            }
-            setTimeout(() => {
-                tabGroupMembers.forEach(member => {
-                    member.classList.add('hide-completely')
-                })
-                targetBody.classList.remove('hide-completely')
-                currentBody.classList.remove('fly-out-to-right', 'fly-out-to-left')
-            },200)
-            setTimeout(() => {
-                targetBody.classList.remove('fly-in-from-right', 'fly-in-from-left')
-            },400)
-            allTabs.forEach(thisTab => {
-                thisTab.classList.remove('active')
-            })
-            tab.classList.add('active')
-            line.setAttribute('style', `transform: translateX(${tab.offsetLeft}px); width: ${tab.getBoundingClientRect().width}px`)
-            tabMounted = true;
+        for (let i = 0; i < latestTxs.length; i++) {
+          if (latestTxs[i]["type"] == "tokentransfer") {
+            frag.append(create.tokenTransferCard(latestTxs[i]));
+          } else if (latestTxs[i]["type"] == "contracttransfer") {
+            frag.append(create.contractTransferCard(latestTxs[i]));
+          }
         }
+        document.getElementById("top_transaction_container").append(frag);
 
-      let loader = document.getElementById("loader_page");
+        // todo - add latest blocks
+        let latestBlocks = await getLatestBlocks();
+      } else pageHeader.classList.remove("hide-completely");
 
-      function loading(status) {
-        if (status) loader.classList.remove("hide-completely");
-        else loader.classList.add("hide-completely");
+      if (pageId === "viewallblocks") {
+        let latest100blocks = await getLatestBlocks();
+        loading()
       }
 
-      async function getBannerData() {
-        return fetch("https://ranchimallflo.duckdns.org/api/v1.0/getSystemData")
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (systemdata) {
+      if (pageId === "viewalltxs") {
+        let latest100txs = await getViewallTxs();
+        loading()
+
+      }
+
+      if (pageId === "transaction_page") {
+        let latest100txs = await getTxDetails();
+        loading()
+      }
+
+      currentPage = pageId;
+      prevField = field;
+      if (pageContainer.querySelector('.tab.active'))
+        pageContainer.querySelector('.tab.active').click()
+      tabMounted = false;
+    }
+
+    function renderTransactions() { }
+
+    window.addEventListener("load", () => {
+      render("homepage");
+      history.pushState(appState, null, null);
+
+      document.querySelector("main").addEventListener("click", (e) => {
+        if (e.target.closest(".address") && prevField !== e.target.textContent) {
+          render("address_page", e.target.textContent)
+          appState = {
+            page: "address_page",
+            thisField: e.target.textContent,
+          };
+          history.pushState(appState, null, null)
+        }
+        if (e.target.closest(".token") && prevField !== e.target.textContent) {
+          render("token_page", e.target.textContent);
+          appState = { page: "token_page", thisField: e.target.textContent };
+          history.pushState(appState, null, null)
+        }
+        if (e.target.closest(".hash") && prevField !== e.target.textContent) {
+          render("transaction_page", e.target.textContent);
+          appState = {
+            page: "transaction_page",
+            thisField: e.target.textContent,
+          };
+          history.pushState(appState, null, null)
+        }
+        if (e.target.closest(".block-height") && prevField !== e.target.textContent) {
+          render("block_page", e.target.textContent);
+          appState = { page: "block_page", thisField: e.target.textContent };
+          history.pushState(appState, null, null);
+        }
+        if (e.target.closest(".contract") && prevField !== e.target.textContent) {
+          render("contract_page", e.target.textContent)
+          appState = {
+            page: "contract_page",
+            thisField: e.target.textContent,
+          }
+          history.pushState(appState, null, null)
+        }
+        if (e.target.closest(".tab")) {
+          showTab(e.target.closest(".tab"));
+        }
+        if (e.target.closest("#secondary_search")) {
+          render("homepage");
+          document.getElementById("primary_search").click();
+        }
+      });
+    });
+
+    let tabMounted = false;
+    function showTab(tab) {
+      let targetTab = tab.getAttribute('data-target'),
+        activeTabRank = parseInt(tab.parentNode.querySelector('.active').dataset.rank),
+        currentTabRank = parseInt(tab.dataset.rank),
+        currentBody = document.getElementById(tab.parentNode.querySelector('.active').dataset.target),
+        targetBody = document.getElementById(targetTab),
+        targetGroup = targetBody.dataset.tabGroup,
+        tabGroupMembers = document.querySelectorAll(`[data-tab-group = '${targetGroup}']`),
+        allTabs = tab.parentNode.querySelectorAll('.tab'),
+        line = tab.parentNode.querySelector('.line')
+      if (tabMounted && currentBody.isEqualNode(targetBody))
+        return
+      if (activeTabRank < currentTabRank) {
+        targetBody.classList.add('fly-in-from-right')
+        currentBody.classList.add('fly-out-to-left')
+      }
+      else {
+        targetBody.classList.add('fly-in-from-left')
+        currentBody.classList.add('fly-out-to-right')
+      }
+      setTimeout(() => {
+        tabGroupMembers.forEach(member => {
+          member.classList.add('hide-completely')
+        })
+        targetBody.classList.remove('hide-completely')
+        currentBody.classList.remove('fly-out-to-right', 'fly-out-to-left')
+      }, 200)
+      setTimeout(() => {
+        targetBody.classList.remove('fly-in-from-right', 'fly-in-from-left')
+      }, 400)
+      allTabs.forEach(thisTab => {
+        thisTab.classList.remove('active')
+      })
+      tab.classList.add('active')
+      line.setAttribute('style', `transform: translateX(${tab.offsetLeft}px); width: ${tab.getBoundingClientRect().width}px`)
+      tabMounted = true;
+    }
+
+    let loader = document.getElementById("loader_page");
+
+    function loading(status) {
+      if (status) loader.classList.remove("hide-completely");
+      else loader.classList.add("hide-completely");
+    }
+
+    function getBannerData() {
+      return fetch(`${tokenapiUrl}/api/v1.0/getSystemData`)
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (systemdata) {
+          let obj = {
+            topToken: "RMT",
+            totalTransactions: systemdata["systemTransactionCount"],
+            walletAddresses: systemdata["systemAddressCount"],
+            topContract: {
+              name: "India Election 2019",
+              address: 'F7osBpjDDV1mSSnMNrLudEQQ3cwDJ2dPR1'
+            }
+          };
+          return obj;
+        });
+    }
+
+    function getLatestTxs() {
+      return fetch(
+        `${tokenapiUrl}/api/v1.0/getLatestTransactionDetails?numberOfLatestBlocks=4`
+      )
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (latestTxs) {
+          latestTxArray = [];
+
+          let txids = Object.keys(latestTxs["latestTransactions"]);
+          for (let i = 0; i < txids.length; i++) {
+            // determine txhash and blockHeight
             let obj = {
-              topToken: "RMT",
-              totalTransactions: systemdata["systemTransactionCount"],
-              walletAddresses: systemdata["systemAddressCount"],
-              topContract: "India Election 2019",
+              hash:
+                latestTxs["latestTransactions"][txids[i]][
+                "transactionDetails"
+                ]["txid"],
+              blockHeight:
+                latestTxs["latestTransactions"][txids[i]][
+                "transactionDetails"
+                ]["blockheight"],
             };
-            return obj;
-          });
-      }
 
-      async function getLatestTxs() {
-        return fetch(
-          "https://ranchimallflo.duckdns.org/api/v1.0/getLatestTransactionDetails?numberOfLatestBlocks=4"
-        )
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (latestTxs) {
-            latestTxArray = [];
+            let txtype =
+              latestTxs["latestTransactions"][txids[i]]["parsedFloData"][
+              "type"
+              ];
 
-            let txids = Object.keys(latestTxs["latestTransactions"]);
-            for (let i = 0; i < txids.length; i++) {
-              // determine txhash and blockHeight
-              let obj = {
-                hash:
-                  latestTxs["latestTransactions"][txids[i]][
-                    "transactionDetails"
-                  ]["txid"],
-                blockHeight:
-                  latestTxs["latestTransactions"][txids[i]][
-                    "transactionDetails"
-                  ]["blockheight"],
-              };
-
-              let txtype =
+            if (txtype != "smartContractPays") {
+              // determine token
+              obj["token"] =
                 latestTxs["latestTransactions"][txids[i]]["parsedFloData"][
-                  "type"
+                "tokenIdentification"
                 ];
 
-              if (txtype != "smartContractPays") {
-                // determine token
-                obj["token"] =
+              if (txtype == "transfer") {
+                if (
                   latestTxs["latestTransactions"][txids[i]]["parsedFloData"][
-                    "tokenIdentification"
-                  ];
-
-                if (txtype == "transfer") {
-                  if (
-                    latestTxs["latestTransactions"][txids[i]]["parsedFloData"][
-                      "transferType"
-                    ] == "token"
-                  ) {
-                    // token transfer
-                    /* tokenTransferCard
-                                                              hash, blockHeight, token, sender, receiver, amount */
-
-                    let receiveraddress = "";
-                    for (
-                      let i = 0,
-                        voutlist =
-                          latestTxs["latestTransactions"][txids[i]][
-                            "transactionDetails"
-                          ]["vout"];
-                      i < voutlist.length;
-                      i++
-                    ) {
-                      if (
-                        voutlist[i]["scriptPubKey"]["addresses"][0] !=
-                        latestTxs["latestTransactions"][txids[i]][
-                          "transactionDetails"
-                        ]["vin"][0]["addr"]
-                      ) {
-                        receiveraddress =
-                          voutlist[i]["scriptPubKey"]["addresses"][0];
-                      }
-                    }
-
-                    obj = Object.assign({}, obj, {
-                      sender:
-                        latestTxs["latestTransactions"][txids[i]][
-                          "transactionDetails"
-                        ]["vin"][0]["addr"],
-                      receiver: receiveraddress,
-                      amount: `${
-                        latestTxs["latestTransactions"][txids[i]][
-                          "parsedFloData"
-                        ]["tokenAmount"]
-                      }`,
-                      type: "tokentransfer",
-                    });
-                    latestTxArray.push(obj);
-                  } else if (
-                    latestTxs["latestTransactions"][txids[i]]["parsedFloData"][
-                      "transferType"
-                    ] == "smartContract"
-                  ) {
-                    // smart contract transfer
-                    let receiveraddress = "";
-                    for (
-                      let i = 0,
-                        voutlist =
-                          latestTxs["latestTransactions"][txids[i]][
-                            "transactionDetails"
-                          ]["vout"];
-                      i < voutlist.length;
-                      i++
-                    ) {
-                      if (
-                        voutlist[i]["scriptPubKey"]["addresses"][0] !=
-                        latestTxs["latestTransactions"][txids[i]][
-                          "transactionDetails"
-                        ]["vin"][0]["addr"]
-                      ) {
-                        receiveraddress =
-                          voutlist[i]["scriptPubKey"]["addresses"][0];
-                      }
-                    }
-
-                    obj = Object.assign({}, obj, {
-                      sender:
-                        latestTxs["latestTransactions"][txids[i]][
-                          "transactionDetails"
-                        ]["vin"][0]["addr"],
-                      receiver: receiveraddress,
-                      amount: `${
-                        latestTxs["latestTransactions"][txids[i]][
-                          "parsedFloData"
-                        ]["tokenAmount"]
-                      }`,
-                      contractName: `${
-                        latestTxs["latestTransactions"][txids[i]][
-                          "parsedFloData"
-                        ]["contractName"]
-                      }`,
-                      userChoice: `${
-                        latestTxs["latestTransactions"][txids[i]][
-                          "parsedFloData"
-                        ]["userChoice"]
-                      }`,
-                      type: "contracttransfer",
-                    });
-                    latestTxArray.push(obj);
-                  }
-                } else if (
-                  latestTxs["latestTransactions"][txids[i]]["parsedFloData"][
-                    "type"
-                  ] == "smartContractIncorporation"
+                  "transferType"
+                  ] == "token"
                 ) {
-                  // smart contract incorporation
-                  // todo : add checks to determine obj for different types of smart contract incorporation
-                  obj = Object.assign({}, obj, {
-                    contractName:
-                      latestTxs["latestTransactions"][txids[i]][
-                        "parsedFloData"
-                      ]["contractName"],
-                    incAddress:
-                      latestTxs["latestTransactions"][txids[i]][
-                        "parsedFloData"
-                      ]["contractAddress"],
-                    contractType:
-                      latestTxs["latestTransactions"][txids[i]][
-                        "parsedFloData"
-                      ]["contractType"],
-                    expiration:
-                      latestTxs["latestTransactions"][txids[i]][
-                        "parsedFloData"
-                      ]["contractConditions"]["expiryTime"],
-                    participationFees:
-                      latestTxs["latestTransactions"][txids[i]][
-                        "parsedFloData"
-                      ]["contractConditions"]["contractAmount"],
-                    availableChoices: "",
-                    type: "contractincorp",
-                  });
-                  latestTxArray.push(obj);
-                } else if (
-                  latestTxs["latestTransactions"][txids[i]]["parsedFloData"][
-                    "type"
-                  ] == "tokenIncorporation"
-                ) {
-                  // token incorporation
-                  // smart contract incorporation
-                  obj = Object.assign({}, obj, {
-                    incAddress:
-                      latestTxs["latestTransactions"][txids[i]][
-                        "transactionDetails"
-                      ]["vin"][0]["addr"],
-                    supply:
-                      latestTxs["latestTransactions"][txids[i]][
-                        "parsedFloData"
-                      ]["tokenAmount"],
-                    type: "tokenincorp",
-                  });
-                  latestTxArray.push(obj);
-                }
-              } else {
-                // smart contract committee trigger
-                // smart contract incorporation
-                let receiveraddress = "";
-                for (
-                  let i = 0,
+                  // token transfer
+                  /* tokenTransferCard
+                                                            hash, blockHeight, token, sender, receiver, amount */
+
+                  let receiveraddress = "";
+                  for (
+                    let i = 0,
                     voutlist =
                       latestTxs["latestTransactions"][txids[i]][
-                        "transactionDetails"
-                      ]["vout"];
-                  i < voutlist.length;
-                  i++
-                ) {
-                  if (
-                    voutlist[i]["scriptPubKey"]["addresses"][0] !=
-                    latestTxs["latestTransactions"][txids[i]][
                       "transactionDetails"
-                    ]["vin"][0]["addr"]
+                      ]["vout"];
+                    i < voutlist.length;
+                    i++
                   ) {
-                    receiveraddress =
-                      voutlist[i]["scriptPubKey"]["addresses"][0];
+                    if (
+                      voutlist[i]["scriptPubKey"]["addresses"][0] !=
+                      latestTxs["latestTransactions"][txids[i]][
+                      "transactionDetails"
+                      ]["vin"][0]["addr"]
+                    ) {
+                      receiveraddress =
+                        voutlist[i]["scriptPubKey"]["addresses"][0];
+                    }
                   }
+
+                  obj = Object.assign({}, obj, {
+                    sender:
+                      latestTxs["latestTransactions"][txids[i]][
+                      "transactionDetails"
+                      ]["vin"][0]["addr"],
+                    receiver: receiveraddress,
+                    amount: `${
+                      latestTxs["latestTransactions"][txids[i]][
+                      "parsedFloData"
+                      ]["tokenAmount"]
+                      }`,
+                    type: "tokentransfer",
+                  });
+                  latestTxArray.push(obj);
+                } else if (
+                  latestTxs["latestTransactions"][txids[i]]["parsedFloData"][
+                  "transferType"
+                  ] == "smartContract"
+                ) {
+                  // smart contract transfer
+                  let receiveraddress = "";
+                  for (
+                    let i = 0,
+                    voutlist =
+                      latestTxs["latestTransactions"][txids[i]][
+                      "transactionDetails"
+                      ]["vout"];
+                    i < voutlist.length;
+                    i++
+                  ) {
+                    if (
+                      voutlist[i]["scriptPubKey"]["addresses"][0] !=
+                      latestTxs["latestTransactions"][txids[i]][
+                      "transactionDetails"
+                      ]["vin"][0]["addr"]
+                    ) {
+                      receiveraddress =
+                        voutlist[i]["scriptPubKey"]["addresses"][0];
+                    }
+                  }
+
+                  obj = Object.assign({}, obj, {
+                    sender:
+                      latestTxs["latestTransactions"][txids[i]][
+                      "transactionDetails"
+                      ]["vin"][0]["addr"],
+                    receiver: receiveraddress,
+                    amount: `${
+                      latestTxs["latestTransactions"][txids[i]][
+                      "parsedFloData"
+                      ]["tokenAmount"]
+                      }`,
+                    contractName: `${
+                      latestTxs["latestTransactions"][txids[i]][
+                      "parsedFloData"
+                      ]["contractName"]
+                      }`,
+                    userChoice: `${
+                      latestTxs["latestTransactions"][txids[i]][
+                      "parsedFloData"
+                      ]["userChoice"]
+                      }`,
+                    type: "contracttransfer",
+                  });
+                  latestTxArray.push(obj);
                 }
+              } else if (
+                latestTxs["latestTransactions"][txids[i]]["parsedFloData"][
+                "type"
+                ] == "smartContractIncorporation"
+              ) {
+                // smart contract incorporation
+                // todo : add checks to determine obj for different types of smart contract incorporation
                 obj = Object.assign({}, obj, {
                   contractName:
-                    latestTxs["latestTransactions"][txids[i]]["parsedFloData"][
-                      "contractName"
-                    ],
-                  contractAddress: receiveraddress,
-                  winningChoice:
-                    latestTxs["latestTransactions"][txids[i]]["parsedFloData"][
-                      "triggerCondition"
-                    ],
-                  committeeAddress:
                     latestTxs["latestTransactions"][txids[i]][
-                      "transactionDetails"
+                    "parsedFloData"
+                    ]["contractName"],
+                  incAddress:
+                    latestTxs["latestTransactions"][txids[i]][
+                    "parsedFloData"
+                    ]["contractAddress"],
+                  contractType:
+                    latestTxs["latestTransactions"][txids[i]][
+                    "parsedFloData"
+                    ]["contractType"],
+                  expiration:
+                    latestTxs["latestTransactions"][txids[i]][
+                    "parsedFloData"
+                    ]["contractConditions"]["expiryTime"],
+                  participationFees:
+                    latestTxs["latestTransactions"][txids[i]][
+                    "parsedFloData"
+                    ]["contractConditions"]["contractAmount"],
+                  availableChoices: "",
+                  type: "contractincorp",
+                });
+                latestTxArray.push(obj);
+              } else if (
+                latestTxs["latestTransactions"][txids[i]]["parsedFloData"][
+                "type"
+                ] == "tokenIncorporation"
+              ) {
+                // token incorporation
+                // smart contract incorporation
+                obj = Object.assign({}, obj, {
+                  incAddress:
+                    latestTxs["latestTransactions"][txids[i]][
+                    "transactionDetails"
                     ]["vin"][0]["addr"],
-                  type: "contracttrigger",
+                  supply:
+                    latestTxs["latestTransactions"][txids[i]][
+                    "parsedFloData"
+                    ]["tokenAmount"],
+                  type: "tokenincorp",
                 });
                 latestTxArray.push(obj);
               }
+            } else {
+              // smart contract committee trigger
+              // smart contract incorporation
+              let receiveraddress = "";
+              for (
+                let i = 0,
+                voutlist =
+                  latestTxs["latestTransactions"][txids[i]][
+                  "transactionDetails"
+                  ]["vout"];
+                i < voutlist.length;
+                i++
+              ) {
+                if (
+                  voutlist[i]["scriptPubKey"]["addresses"][0] !=
+                  latestTxs["latestTransactions"][txids[i]][
+                  "transactionDetails"
+                  ]["vin"][0]["addr"]
+                ) {
+                  receiveraddress =
+                    voutlist[i]["scriptPubKey"]["addresses"][0];
+                }
+              }
+              obj = Object.assign({}, obj, {
+                contractName:
+                  latestTxs["latestTransactions"][txids[i]]["parsedFloData"][
+                  "contractName"
+                  ],
+                contractAddress: receiveraddress,
+                winningChoice:
+                  latestTxs["latestTransactions"][txids[i]]["parsedFloData"][
+                  "triggerCondition"
+                  ],
+                committeeAddress:
+                  latestTxs["latestTransactions"][txids[i]][
+                  "transactionDetails"
+                  ]["vin"][0]["addr"],
+                type: "contracttrigger",
+              });
+              latestTxArray.push(obj);
             }
+          }
 
-            return latestTxArray;
-          });
-      }
+          return latestTxArray;
+        });
+    }
 
-      async function getLatestBlocks() {
-        return fetch(
-          `https://ranchimallflo.duckdns.org/api/v1.0/getLatestBlockDetails?numberOfLatestBlocks=4`
-        )
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (latestBlocks) {
-            let obj = {};
-            return obj;
-          });
-      }
+    function getLatestBlocks() {
+      return fetch(
+        `${tokenapiUrl}/api/v1.0/getLatestBlockDetails?numberOfLatestBlocks=4`
+      )
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (latestBlocks) {
+          let obj = {};
+          return obj;
+        });
+    }
 
-      async function getAddressBalanceInfo(thisAddress) {
-        return fetch(
-          `https://ranchimallflo.duckdns.org/api/v1.0/getFloAddressInfo?floAddress=${thisAddress}`
-        )
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (tokenInfo) {
-            let obj = { balance: "0.0001", address: thisAddress };
-            return obj;
-          });
-      }
+    function getTokenInfo(thisToken) {
+      return fetch(
+        `${tokenapiUrl}/api/v1.0/getTokenInfo?token=${thisToken.toLowerCase()}`
+      )
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (tokenInfo) {
+          let associatedSC = {};
+          for (let i = 0, associatedScList = tokenInfo["associatedSmartContracts"]; i < associatedScList.length; i++) {
+            associatedSC[`${associatedScList[i]["contractName"]}-${associatedScList[i]["contractAddress"]}`] = associatedScList[i];
+          }
+          let obj = {
+            token: tokenInfo["token"],
+            supply: tokenInfo["tokenSupply"],
+            incAddress: tokenInfo["incorporationAddress"],
+            associatedContracts: associatedSC,
+            blockchainReference: tokenInfo["blockchainReference"],
+          };
+          return obj;
+        });
+    }
 
-      async function getTokenInfo(thisToken) {
-        return fetch(
-          `https://ranchimallflo.duckdns.org/api/v1.0/getTokenInfo?token=${thisToken.toLowerCase()}`
-        )
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (tokenInfo) {
-            let obj = {
-              token: tokenInfo["token"],
-              supply: tokenInfo["tokenSupply"],
-              incAddress: tokenInfo["incorporationAddress"],
-            };
-            return obj;
-          });
-      }
+    function getTokenBalances(tokenName) {
+      fetch(`${tokenapiUrl}/api/v1.0/getTokenBalances?token=` + tokenName)
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (responseJson) {
+          // 
+        });
 
-      function getBlockInfo(thisBlock) {
-        return fetch(
-          `https://ranchimallflo.duckdns.org/api/v1.0/getBlockDetails/${thisBlock}`
-        )
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (blockInfo) {
-            let obj = {
-              blockHeight: blockInfo["height"],
-              size: blockInfo["size"],
-              transactions: "",
-              reward: blockInfo["reward"],
-              hash: blockInfo["hash"],
-              difficulty: blockInfo["difficulty"],
-              nonce: blockInfo["nonce"],
-            };
-            return obj;
-          });
-      }
+    }
 
-      async function getContractInfo(contract) {
-        return fetch(
-          `https://ranchimallflo.duckdns.org/api/v1.0/getSmartContractInfo?contractName=${contract.name}&contractAddress=${contract.address}`
-        )
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (contractInfo) {
-            let obj = {
-              blockHeight: blockInfo["height"],
-              size: blockInfo["size"],
-              transactions: "",
-              reward: blockInfo["reward"],
-              hash: blockInfo["hash"],
-              difficulty: blockInfo["difficulty"],
-              nonce: blockInfo["nonce"],
-            };
-            return obj;
-          });
-      }
+    function getTokenTransactions(tokenName) {
+      fetch(`${tokenapiUrl}/api/v1.0/getTokenTransactions?token=` + tokenName)
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (responseJson) {
+          //
+        });
 
-      async function getContractParticipants(contract) {
-        return fetch(
-          `https://ranchimallflo.duckdns.org/api/v1.0/getSmartContractParticipants?contractName=${contract.name}&contractAddress=${contract.address}`
-        )
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (contractParticipants) {
-            let obj = {
-              blockHeight: blockInfo["height"],
-              size: blockInfo["size"],
-              transactions: "",
-              reward: blockInfo["reward"],
-              hash: blockInfo["hash"],
-              difficulty: blockInfo["difficulty"],
-              nonce: blockInfo["nonce"],
-            };
-            return obj;
-          });
-      }
+    }
 
-      async function getContractTransactions(contract) {
-        return fetch(
-          `https://ranchimallflo.duckdns.org/api/v1.0/getBlockDetails/${thisBlock}`
-        )
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (contractTxs) {
-            let obj = {
-              blockHeight: blockInfo["height"],
-              size: blockInfo["size"],
-              transactions: "",
-              reward: blockInfo["reward"],
-              hash: blockInfo["hash"],
-              difficulty: blockInfo["difficulty"],
-              nonce: blockInfo["nonce"],
-            };
-            return obj;
-          });
-      }
+    function getBlockInfo(thisBlock) {
+      return fetch(
+        `${tokenapiUrl}/api/v1.0/getBlockDetails/${thisBlock}`
+      )
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (blockInfo) {
+          let obj = {
+            blockHeight: blockInfo["blockDetails"]["height"],
+            size: blockInfo["blockDetails"]["size"],
+            transactions: "",
+            reward: blockInfo["blockDetails"]["reward"],
+            hash: blockInfo["blockDetails"]["hash"],
+            difficulty: blockInfo["blockDetails"]["difficulty"],
+            nonce: blockInfo["blockDetails"]["nonce"],
+          };
+          return obj;
+        });
+    }
 
-      async function getViewallBlocks() {
-        return fetch(
-          `https://ranchimallflo.duckdns.org/api/v1.0/getLatestBlockDetails?limit=100`
-        )
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (contractTxs) {
-            let obj = {
-              blockHeight: blockInfo["height"],
-              size: blockInfo["size"],
-              transactions: "",
-              reward: blockInfo["reward"],
-              hash: blockInfo["hash"],
-              difficulty: blockInfo["difficulty"],
-              nonce: blockInfo["nonce"],
-            };
-            return obj;
-          });
-      }
 
-      async function getViewallTxs() {
-        return fetch(
-          `https://ranchimallflo.duckdns.org/api/v1.0/getLatestTransactionDetails?limit=200`
-        )
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (contractTxs) {
-            let obj = {
-              blockHeight: blockInfo["height"],
-              size: blockInfo["size"],
-              transactions: "",
-              reward: blockInfo["reward"],
-              hash: blockInfo["hash"],
-              difficulty: blockInfo["difficulty"],
-              nonce: blockInfo["nonce"],
-            };
-            return obj;
-          });
-      
-        }
 
-      async function getAddressInfo(address){
-        return fetch(
-          `https://ranchimallflo.duckdns.org/api/v1.0/getFloAddressInfo?floAddress=${address}`
-        )
-          .then(function (response) {
-            return response.json();
-          }).then(console.log)
-          /*.then(function (addressInfo) {
-            let obj = {
-              blockHeight: blockInfo["height"],
-              size: blockInfo["size"],
-              transactions: "",
-              reward: blockInfo["reward"],
-              hash: blockInfo["hash"],
-              difficulty: blockInfo["difficulty"],
-              nonce: blockInfo["nonce"],
-            };
-            return obj;
-          });*/
-      }
+    function getContractInfo(contract) {
+      return fetch(
+        `${tokenapiUrl}/api/v1.0/getSmartContractInfo?contractName=${contract.name}&contractAddress=${contract.address}`
+      )
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (contractInfo) {
 
-      async function getAddressBalance(address){
-        return fetch(
-          `https://flosight.duckdns.org/api/addr/${address}/balance`
-        )
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (addressBalance) {
-            let obj = {
-              balance: addressBalance,
-              address: address,
-            };
-            return obj;
-          });
-      }
+          /*let obj = {
+            blockHeight: blockInfo["height"],
+            size: blockInfo["size"],
+            transactions: "",
+            reward: blockInfo["reward"],
+            hash: blockInfo["hash"],
+            difficulty: blockInfo["difficulty"],
+            nonce: blockInfo["nonce"],
+          }; */
 
-      async function getAddressTxs(address){
-        return fetch(
-          `https://ranchimallflo.duckdns.org/api/v1.0/getFloAddressTransactions?floAddress=${address}`
-        )
-          .then(function (response) {
-            return response.json();
-          }).then(console.log)
-          /*.then(function (addressBalance) {
-            let obj = {
-              blockHeight: blockInfo["height"],
-              size: blockInfo["size"],
-              transactions: "",
-              reward: blockInfo["reward"],
-              hash: blockInfo["hash"],
-              difficulty: blockInfo["difficulty"],
-              nonce: blockInfo["nonce"],
-            };
-            return obj;
-          });*/
-      }
-    </script>
-  </body>
+          /* type 1
+          expirytime	payeeaddress	minimumsubscriptionamount	maximumsubscriptionamount	contractamount
+
+          // type 2
+          expirytime	userchoices	contractamount	minimumsubscriptionamount	maximumsubscriptionamount
+          */
+
+          return obj = {};
+        });
+    }
+
+    function getContractParticipants(contract) {
+      return fetch(
+        `${tokenapiUrl}/api/v1.0/getSmartContractParticipants?contractName=${contract.name}&contractAddress=${contract.address}`
+      )
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (contractParticipants) {
+          /*let obj = {
+            blockHeight: blockInfo["height"],
+            size: blockInfo["size"],
+            transactions: "",
+            reward: blockInfo["reward"],
+            hash: blockInfo["hash"],
+            difficulty: blockInfo["difficulty"],
+            nonce: blockInfo["nonce"],
+          };*/
+          return obj = {};
+        });
+    }
+
+    function getContractTransactions(contract) {
+      return fetch(
+        `${tokenapiUrl}/api/v1.0/getSmartContractTransactions?contractName=${contract.name}&contractAddress=${contract.address}`
+      )
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (contractTxs) {
+          /*let obj = {
+            blockHeight: blockInfo["height"],
+            size: blockInfo["size"],
+            transactions: "",
+            reward: blockInfo["reward"],
+            hash: blockInfo["hash"],
+            difficulty: blockInfo["difficulty"],
+            nonce: blockInfo["nonce"],
+          };*/
+          return obj = {};
+        });
+    }
+
+    function getViewallBlocks() {
+      return fetch(
+        `${tokenapiUrl}/api/v1.0/getLatestBlockDetails?limit=100`
+      )
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (contractTxs) {
+          debugger;
+          /*let obj = {
+            blockHeight: blockInfo["height"],
+            size: blockInfo["size"],
+            transactions: "",
+            reward: blockInfo["reward"],
+            hash: blockInfo["hash"],
+            difficulty: blockInfo["difficulty"],
+            nonce: blockInfo["nonce"],
+          }; */
+          return obj;
+        });
+    }
+
+    function getViewallTxs() {
+      return fetch(
+        `${tokenapiUrl}/api/v1.0/getLatestTransactionDetails?limit=200`
+      )
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (contractTxs) {
+          let obj = {
+            blockHeight: blockInfo["height"],
+            size: blockInfo["size"],
+            transactions: "",
+            reward: blockInfo["reward"],
+            hash: blockInfo["hash"],
+            difficulty: blockInfo["difficulty"],
+            nonce: blockInfo["nonce"],
+          };
+          return obj;
+        });
+    }
+
+    function getAddressInfo(floAddress) {
+      return fetch(
+        `${tokenapiUrl}/api/v1.0/getFloAddressInfo?floAddress=${floAddress}`
+      )
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (addressInfo) {
+          // tokens
+          if (typeof addressInfo["floAddressBalances"] === "undefined") {
+            for (
+              let i = 0,
+              tokenkeys = Object.keys(addressInfo["floAddressBalances"]);
+              i < tokenkeys.length;
+              i++
+            ) { }
+          }
+
+          // contracts
+          if (typeof addressInfo["incorporatedSmartContracts"] === "undefined") {
+            for (let i = 0,
+              contractkeys = Object.keys(
+                addressInfo["incorporatedSmartContracts"]
+              );
+              i < contractkeys.length;
+              i++
+            ) { }
+          }
+
+          /*let obj = {
+            blockHeight: blockInfo["height"],
+            size: blockInfo["size"],
+            transactions: "",
+            reward: blockInfo["reward"],
+            hash: blockInfo["hash"],
+            difficulty: blockInfo["difficulty"],
+            nonce: blockInfo["nonce"],
+          };*/
+          return (obj = {});
+        });
+    }
+
+    function getAddressBalance(floAddress) {
+      return fetch(
+        `${floapiUrl}/api/addr/${floAddress}/balance`
+      )
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (addressBalance) {
+          return addressBalance;
+        });
+    }
+
+    function getAddressTxs(floAddress) {
+      return fetch(
+        `${tokenapiUrl}/api/v1.0/getFloAddressTransactions?floAddress=${floAddress}`
+      )
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (addressTxs) {
+          /*
+          let obj = {
+            blockHeight: blockInfo["height"],
+            size: blockInfo["size"],
+            transactions: "",
+            reward: blockInfo["reward"],
+            hash: blockInfo["hash"],
+            difficulty: blockInfo["difficulty"],
+            nonce: blockInfo["nonce"],
+          };
+          */
+          return (obj = {});
+        });
+    }
+
+    function getTxInfo(thisTx) {
+      return fetch(
+        `${tokenapiUrl}/api/v1.0/getTransactionDetails/${thisTx}`
+      )
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (txDetails) {
+          debugger;
+          let obj = {
+            blockHeight: blockInfo["blockDetails"]["height"],
+            size: blockInfo["blockDetails"]["size"],
+            transactions: "",
+            reward: blockInfo["blockDetails"]["reward"],
+            hash: blockInfo["blockDetails"]["hash"],
+            difficulty: blockInfo["blockDetails"]["difficulty"],
+            nonce: blockInfo["blockDetails"]["nonce"],
+          };
+          return obj;
+        });
+    }
+
+  </script>
+</body>
+
 </html>
