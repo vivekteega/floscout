@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@500;600;700&family=Roboto:wght@400;500;700&display=swap');
 *,
 ::before,
 ::after{
@@ -13,7 +12,7 @@ body{
     --text: 17, 17, 17;
     --text-light: 100, 100, 100;
     --foreground: 255, 255, 255;
-    --background: #efefef;
+    --background: #e8e8e8;
     --dark-shade: #dadada;
     font-size: 16px;
     color: rgba(var(--text), 1);
@@ -25,7 +24,7 @@ body[data-theme='dark']{
     --text: 218, 218, 218;
     --text-light: 170, 170, 170;
     --foreground: 20, 20, 20;
-    --background: #111;
+    --background: #0a0a0a;
     --dark-shade: #1a1a1a;
 }
 input[type=text]::-ms-clear {  display: none; width : 0; height: 0; }
@@ -88,8 +87,7 @@ h3{
     letter-spacing: 0.06em;
 }
 .other-font{
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 500;
+    font-family: 'Barlow', sans-serif;
 }
 .uppercase{
     text-transform: uppercase !important;
@@ -230,14 +228,14 @@ ul{
     position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    //text-align: center;
-    h1{
-        align-self: flex-start;
+    h2{
         margin-top: 2rem;
-        font-weight: 500;
+        align-self: flex-start;
+        font-size: 4rem;
+        letter-spacing: 0.1em;
+        font-weight: 600;
     }
-    h3{
+    h4{
         line-height: 1.4em;
         margin: 1rem 0 2rem 0;
         font-weight: 400;
@@ -245,6 +243,40 @@ ul{
     }
     .input{
         border-radius: 0.5rem; 
+        input:valid ~ #suggestions{
+            opacity: 1;
+            pointer-events: all;
+            transform: none;
+        }
+    }
+    label{
+        position: relative;
+    }
+    #suggestions{
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-0.5rem);
+        transition: transform 0.3s, opacity 0.3s;
+        position: absolute;
+        top: 100%;
+        width: 100%;
+        background: var(--background);
+        border-radius: 0.5rem;
+        padding: 0.5rem 0;
+        max-height: 20vh;
+        overflow-y: auto;
+        &:empty{
+            padding: 0;
+        }
+        margin-top: 0.5rem;
+    }
+    .suggestion{
+        padding: 0.6rem 1.5rem 0.6rem 3rem;
+        opacity: 0.8;
+        cursor: pointer;
+        &:hover, &:focus{
+            opacity: 1;
+        }
     }
 }
 .input{
@@ -257,7 +289,7 @@ ul{
     align-items: center;
     padding: 0.8rem;
     gap: 1em;
-    background: rgba(var(--text), 0.1);
+    background: var(--background);
     input{
         border: none;
         width: 100%;
@@ -268,9 +300,9 @@ ul{
     }
 }
 .icon{
-    height: 1.2em;
+    height: 1.2rem;
     overflow: visible;
-    width: 1.5em;
+    width: 1.2rem;
     fill: none;
     stroke: rgba(var(--text), 1);
     stroke-linecap: round;
@@ -405,7 +437,6 @@ ul{
 }
 .page{
     padding: 0 0 1rem 0;
-    animation: fade 0.3s;
     h3.heading{
         text-transform: capitalize;
         font-weight: 500;

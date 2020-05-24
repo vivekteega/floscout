@@ -86,17 +86,17 @@
                   </label>
               </header>
               <div id="main_search">
-                  <h1 class="other-font">FLO SCOUT</h1>
-                  <h3>Search for<br>block, transaction, address,<br>token and contract</h3>
+                  <h2 class="other-font">FLO SCOUT</h2>
+                  <h4>Search for<br>block, transaction, address,<br>token and contract</h4>
                   <label id="primary_search" class="input">
                       <svg class="icon" viewBox="0 0 64 64">
                           <title>search icon</title>
                           <circle cx="25.34" cy="25.34" r="24.84"/>
                           <line x1="63.65" y1="63.65" x2="42.91" y2="42.91"/>
                       </svg>
-                      <input id='main-search-text' type="search" placeholder="Search">
+                      <input id='main_search_field' autocomplete="off" type="search" placeholder="Search" required>
+                      <ul id="suggestions"></ul>
                   </label>
-                  <div id="suggetions"></div>
               </div>
           <div id="highlights">
               <div class="highlight-item">
@@ -279,7 +279,7 @@
         page.id = "contract_page";
         page.innerHTML = `
               <div class="status closed">Closed</div>
-              <h2 class="uppercase">${contract}</h2>
+              <h3 class="uppercase">${contract}</h3>
               <div class="card">
                   <h5 class="label">Contract Type</h5>
                   <h4>${contractType}</h4>
@@ -500,7 +500,7 @@
         let addressTxs = await getAddressTxs(field);*/
         let [addressInfo, addressBalance, addressTxs] = await Promise.all([getAddressInfo(field), getAddressBalance(field), getAddressTxs(field)])
         console.log(addressInfo, addressBalance, addressTxs)
-        pageContainer.append(create.addressPage({balance: addressBalance, address: field}))
+        pageContainer.append(create.addressPage({balance: addressBalance, address: -field}))
         pageTitle.textContent = 'Address'
         loading()
       }
@@ -565,7 +565,7 @@
         loading();
 
         // add event listener to input dialog box
-        document.getElementById("main-search-text").addEventListener("keydown", function (e) {
+        document.getElementById("main_search_field").addEventListener("keydown", function (e) {
             if (e.key === 'Enter') {  //checks whether the pressed key is "Enter"
                 processNavbarSearch();
             }
@@ -595,6 +595,8 @@
             localStorage.setItem("theme", "light");
           }
         });
+
+        getAllSuggestions()
 
         latestTxs.forEach(tx => {
           if (tx["type"] == "tokentransfer") 
@@ -636,7 +638,7 @@
       render("homepage");
       history.pushState(appState, null, null);
 
-      document.querySelector("main").addEventListener("click", (e) => {
+     this.addEventListener("click", (e) => {
         if (e.target.closest(".address") && prevField !== e.target.textContent) {
           render("address_page", e.target.textContent)
           appState = {
@@ -674,12 +676,42 @@
         if (e.target.closest(".tab")) {
           showTab(e.target.closest(".tab"));
         }
-        if (e.target.closest("#secondary_search")) {
-          render("homepage");
-          document.getElementById("primary_search").click();
+        if (e.target.closest("#secondary_search_btn")) {
+          render("homepage")
+          //document.getElementById("primary_search").click();
+        }
+        if(e.target.closest('.suggestion')){
+          let searchBox = document.getElementById('main_search_field');
+          searchBox.value = e.target.textContent;
+          processNavbarSearch()
         }
       });
     });
+
+    window.addEventListener('keyup', e => {
+      if(e.target.closest('.suggestion') && e.key === 'Enter'){
+          processNavbarSearch()
+        }
+      if(e.target.closest('.suggestion') && e.key === 'Tab'){
+          let searchBox = document.getElementById('main_search_field');
+          searchBox.value = e.target.textContent;
+      }
+      if(e.target.closest('#main_search_field')){
+        let results = index.search(e.target.value, 25),
+            entry, childs = suggestions.childNodes,
+            i = 0, len = results.length;
+        for (; i < len; i++) {
+          entry = childs[i];
+          if (!entry && data[results[i]]) {
+            suggestions.append(suggestion(data[results[i]]))
+          }
+        }
+        while (childs.length > len) {
+          suggestions.removeChild(childs[i])
+        }
+        suggestions.append(frag)
+      }
+    })
 
     let tabMounted = false;
     function showTab(tab) {
@@ -1552,53 +1584,50 @@
           //console.log('data entered is noise')
         }
 
-        //document.getElementById('main-search-text').value = '';
       }
     }
 
     function processNavbarSearch() {
-      userinput = document.getElementById('main-search-text');
-      console.log(userinput.value);
-    
+      userinput = document.getElementById('main_search_field');
       if (userinput.value != '') {
         categoriseText(userinput.value, userinput);
       }
     }
 
-    function runScriptJs() {
-      var $cell = $('.card');
+    // function runScriptJs() {
+    //   var $cell = $('.card');
 
-      //open and close card when clicked on card
-      $cell.find('.js-expander').click(function () {
+    //   //open and close card when clicked on card
+    //   $cell.find('.js-expander').click(function () {
 
-        var $thisCell = $(this).closest('.card');
+    //     var $thisCell = $(this).closest('.card');
 
-        if ($thisCell.hasClass('is-collapsed')) {
-          $cell.not($thisCell).removeClass('is-expanded').addClass('is-collapsed').addClass('is-inactive');
-          $thisCell.removeClass('is-collapsed').addClass('is-expanded');
+    //     if ($thisCell.hasClass('is-collapsed')) {
+    //       $cell.not($thisCell).removeClass('is-expanded').addClass('is-collapsed').addClass('is-inactive');
+    //       $thisCell.removeClass('is-collapsed').addClass('is-expanded');
 
-          if ($cell.not($thisCell).hasClass('is-inactive')) {
-            //do nothing
-          } else {
-            $cell.not($thisCell).addClass('is-inactive');
-          }
+    //       if ($cell.not($thisCell).hasClass('is-inactive')) {
+    //         //do nothing
+    //       } else {
+    //         $cell.not($thisCell).addClass('is-inactive');
+    //       }
 
-        } else {
-          $thisCell.removeClass('is-expanded').addClass('is-collapsed');
-          $cell.not($thisCell).removeClass('is-inactive');
-        }
-      });
+    //     } else {
+    //       $thisCell.removeClass('is-expanded').addClass('is-collapsed');
+    //       $cell.not($thisCell).removeClass('is-inactive');
+    //     }
+    //   });
 
-      //close card when click on cross
-      $cell.find('.js-collapser').click(function () {
+    //   //close card when click on cross
+    //   $cell.find('.js-collapser').click(function () {
 
-        var $thisCell = $(this).closest('.card');
+    //     var $thisCell = $(this).closest('.card');
 
-        $thisCell.removeClass('is-expanded').addClass('is-collapsed');
-        $cell.not($thisCell).removeClass('is-inactive');
+    //     $thisCell.removeClass('is-expanded').addClass('is-collapsed');
+    //     $cell.not($thisCell).removeClass('is-inactive');
 
-      });
-    }
+    //   });
+    // }
 
 
     // First load
@@ -1606,8 +1635,9 @@
 
     // loading of global variables which contains name of all tokens and smart contracts
 
-    var data = [];
-    fetch(`${window.tokenapiUrl}/api/v1.0/getTokenSmartContractList`)
+    function getAllSuggestions(){
+      window.data = [];
+      fetch(`${window.tokenapiUrl}/api/v1.0/getTokenSmartContractList`)
       .then(function (response) {
         return response.json();
       })
@@ -1626,7 +1656,6 @@
           data.push(ranchimallflo.smartcontractlist[i]['contractName']);
           ranchimallflo.smartcontractnamelist.push(ranchimallflo.smartcontractlist[i]['contractName']);
           ranchimallflo.smartcontractnameaddresslist.push(ranchimallflo.smartcontractlist[i]['contractName'] + '-' + ranchimallflo.smartcontractlist[i]['contractAddress']);
-
         }
 
         for (var i = 0; i < ranchimallflo.tokenlist.length; i++) {
@@ -1634,8 +1663,7 @@
           data.push(ranchimallflo.tokenlist[i]);
         }
 
-        var index = new FlexSearch({
-
+        window.index = new FlexSearch({
           encode: "advanced",
           tokenize: "reverse",
           suggest: true
@@ -1645,76 +1673,16 @@
           index.add(i, data[i]);
         }
 
-
-
-        var suggestions = document.getElementById("suggestions");
-        var autocomplete = document.getElementById("autocomplete");
-        var userinput = document.getElementById("userinput");
-
-        //userinput.addEventListener("input", show_results, true);
-        //userinput.addEventListener("keyup", accept_autocomplete, true);
-        //suggestions.addEventListener("click", accept_suggestion, true);
-
-        function show_results() {
-
-          var value = this.value;
-          var results = index.search(value, 25);
-          var entry, childs = suggestions.childNodes;
-          var i = 0, len = results.length;
-
-          for (; i < len; i++) {
-
-            entry = childs[i];
-
-            if (!entry) {
-
-              entry = document.createElement("div");
-              suggestions.appendChild(entry);
-            }
-
-            entry.textContent = data[results[i]];
-          }
-
-          while (childs.length > len) {
-
-            suggestions.removeChild(childs[i])
-          }
-
-          var first_result = data[results[0]];
-          var match = first_result && first_result.toLowerCase().indexOf(value.toLowerCase());
-
-          if (first_result && (match !== -1)) {
-
-            autocomplete.value = value + first_result.substring(match + value.length);
-            autocomplete.current = first_result;
-          }
-          else {
-
-            autocomplete.value = autocomplete.current = value;
-          }
-        }
-
-        function accept_autocomplete(event) {
-
-          if ((event || window.event).keyCode === 13) {
-
-            this.value = autocomplete.value = autocomplete.current;
-          }
-        }
-
-        function accept_suggestion(event) {
-
-          var target = (event || window.event).target;
-
-          userinput.value = autocomplete.value = target.textContent;
-
-          while (suggestions.lastChild) {
-            suggestions.removeChild(suggestions.lastChild);
-          }
-
-          return false;
+        window.suggestion = function(str){
+          let li = document.createElement('li')
+          li.textContent = str
+          li.tabIndex = 0
+          li.classList.add('suggestion')
+          return li;
         }
       });
+    }
+
 
   </script>
 </body>
