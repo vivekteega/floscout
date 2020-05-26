@@ -172,6 +172,8 @@
         page.id = "address_page";
         page.innerHTML = `
               <div class="balance-card">
+                <h5 class="label">Balance</h5>
+                <h3>${balance} FLO</h3>
                   <svg class="flo-logo" viewBox="0 0 48 48">
                       <path d="M34.2,32.4c0,0,3.75-0.18,7.41-3.86c2.96-2.98,3.65-6.66,3.99-8.52c-11.04-0.63-12.36,0.99-13.71,1.68
                       c-1.19,0.61-5.33,4.55-5.33,4.55s3.06-3.13,3.2-9.94c0.09-4.54-1.02-7.39-2.72-10.64C25.29,2.33,22.79,0,22.79,0l0.01,4.97
@@ -186,8 +188,6 @@
                       c1.93-1.76,4.27-4.34,6.79-6.01c3.87-2.57,9.63-1.87,9.63-1.87C39.26,30.38,34.2,32.4,34.2,32.4z M22.8,43.06
                       c-0.95-1.37-1.47-2.13-1.47-4.26c0-2.4,1.12-4.61,1.47-5.14c0.35,0.52,1.47,2.74,1.47,5.14C24.27,40.92,23.75,41.69,22.8,43.06z"/>
                   </svg>
-                  <h5 class="label">Balance</h5>
-                  <h2>${balance}</h2><h4>FLO</h4>
                   <p class="breakable">${address}</p>
               </div>
               <h3 class="heading">Transactions</h3>
@@ -196,23 +196,14 @@
         return page;
       },
       transactionPage(obj) {
-        let { type, name, blockHeight, amount, sender, receiver, floData, hash, confirmations, } = obj,
+        let { type, name, blockHeight, amount, sender, receiver, floData, hash, confirmations } = obj,
           page = document.createElement("div");
         page.classList.add("page");
         page.id = "transaction_page";
         page.innerHTML = `
-              <div class="grid grid-2">
-                  <div>
-                      <h5 class="label">${type}</h5>
-                      <h2 class="token">${name}</h2>
-                  </div>
-                  <div class="status done">
-                      <svg class="icon" viewBox="0 0 64 42">
-                          <title>Success</title>
-                          <polyline points="0.35 19.41 22.4 41.29 63.65 0.35"/>
-                      </svg>
-                      Success
-                  </div>
+              <div class='head'>
+                  <h5 class="label">${type}</h5>
+                  <h2 class="token">${name}</h2>
               </div>
               <div class="card">
                   <h5 class="label">Block</h5>
@@ -235,6 +226,14 @@
               `;
         return page;
       },
+      addrBalanceCard(address, balance, token){
+        let card = document.createElement('li')
+        card.classList.add('balance')
+        card.innerHTML = `
+                        <h5 class="address breakable label">${address}</h5>
+                        <h4>${balance} ${token}</h4>`
+        return card
+      },
       tokenPage(obj) {
         let { token, supply, incAddress } = obj;
         let page = document.createElement("div");
@@ -253,16 +252,7 @@
                     <h4 class="tab" data-rank="2" data-target="token_transaction_container">Top Transactions</h4>
                     <div class="line"></div>
                 </div>
-                <ul id="token_balance_container" data-tab-group="token" class="card">
-                    <li class="balance" >
-                        <h5 class="breakable label">F6EMAHjivqrcrdAHNABq2R1FLNkx8xfEaT</h5>
-                        <h4>0.0000023333 RMT</h4>
-                    </li>
-                    <li class="balance">
-                        <h5 class="breakable label">F6EMAHjivqrcrdAHNABq2R1FLNkx8xfEaT</h5>
-                        <h4>0.0000023333 RMT</h4>
-                    </li>
-                </ul>
+                <ul id="token_balance_container" data-tab-group="token" class="card"></ul>
                 <ul id="token_transaction_container" data-tab-group="token" class="card hide-completely">
                     <li class="balance" >
                         <h5 class="breakable label">F6EMAHjivqrcrdAHNABq2R1FLNkx8xfEaT</h5>
@@ -337,7 +327,14 @@
         card.classList.add("transaction", "token-transfer");
         card.id = hash;
         card.innerHTML = `
-                              <h5 class="label block-height">${blockHeight}</h5>
+                            <svg class="icon" viewBox="0 0 64 64">
+                              <title>contract</title>
+                              <path d="M4.75,49.27A8,8,0,0,0,4.2,61.14a7.82,7.82,0,0,0,4.34,2.24,7.42,7.42,0,0,0,1.34.12H47.41a8.06,8.06,0,0,0,8.05-8V7.87"/>
+                              <path d="M8.54,56.13V8.54a8.06,8.06,0,0,1,8.05-8H54.12a7.42,7.42,0,0,1,1.34.12A7.82,7.82,0,0,1,59.8,2.86a8,8,0,0,1-.55,11.87"/>
+                              <line x1="17.93" y1="22.62" x2="46.07" y2="22.62"/>
+                              <line x1="17.93" y1="32" x2="46.07" y2="32"/>
+                              <line x1="17.93" y1="41.38" x2="38.03" y2="41.38"/>
+                            </svg>
                               <div class="contract-type">
                                   <h5 class="label">Smart Contract Transfer</h5>
                                   <h4 class="token uppercase">${token}</h4>
@@ -364,8 +361,10 @@
           card = document.createElement("div");
         card.classList.add("transaction", "token-transfer");
         card.id = hash;
-        card.innerHTML = `
-                              <h5 class="label block-height">${blockHeight}</h5>
+        card.innerHTML = `    <svg class="icon" viewBox="0 0 64 64">
+                                  <title>transfer</title>
+                                  <polyline points="17.04 35.97 14.57 33.5 40.15 7.9 32.75 0.5 55.52 0.5 55.52 23.28 48.12 15.87 23.86 40.14 15.88 48.13 8.48 40.72 8.48 63.5 31.25 63.5 23.85 56.1 49.43 30.5 46.96 28.03"/>
+                              </svg>
                               <div class="contract-type">
                                   <h5 class="label">Token transfer</h5>
                                   <h4 class="token uppercase">${token}</h4>
@@ -385,8 +384,13 @@
           card = document.createElement("div");
         card.classList.add("transaction", "token-creation");
         card.id = hash;
-        card.innerHTML = `
-                              <h5 class="label block-height">${blockHeight}</h5>
+        card.innerHTML = `    <svg class="icon" viewBox="0 0 64 64">
+                                  <title>token</title>
+                                  <circle cx="32" cy="32" r="31"/>
+                                  <circle cx="32" cy="32" r="25.19"/>
+                                  <line x1="37" y1="21.74" x2="43.14" y2="21.74"/>
+                                  <path d="M20.86,21.74H32V43.23"/>
+                              </svg>
                               <div class="contract-type">
                                   <h5 class="label">token creation</h5>
                                   <h4 class="token uppercase">${token}</h4>
@@ -406,8 +410,10 @@
           card = document.createElement("div");
         card.classList.add("transaction", "contract-trigger");
         card.id = hash;
-        card.innerHTML = `
-                              <h5 class="label block-height">${blockHeight}</h5>
+        card.innerHTML = `    <svg class="icon" viewBox="0 0 64 64">
+                                  <circle cx="32" cy="32" r="31"/>
+                                  <polyline points="32 13.47 32 32 43.4 43.4"/>
+                              </svg>
                               <div class="contract-type">
                                   <h4 class="token uppercase">smart contract trigger</h4>
                               </div>
@@ -428,8 +434,16 @@
           card = document.createElement("div");
         card.classList.add("transaction", "contract-creation");
         card.id = hash;
-        card.innerHTML = `
-                              <h5 class="label block-height">${blockHeight}</h5>
+        card.innerHTML = `    svg viewBox="0 0 64 64">
+                                  <title>contract creation</title>
+                                  <path d="M47.07,23.85V11"/>
+                                  <path d="M3,47A7,7,0,0,0,.48,52.39a6.89,6.89,0,0,0,2.05,4.93,6.78,6.78,0,0,0,3.78,2,6.34,6.34,0,0,0,1.16.1H40.09a7,7,0,0,0,7-7V44"/>
+                                  <path d="M6.31,53V11.61a7,7,0,0,1,7-7H45.91a6.26,6.26,0,0,1,1.16.1,6.74,6.74,0,0,1,3.78,1.95A7,7,0,0,1,50.37,17"/>
+                                  <line x1="14.46" y1="23.85" x2="38.92" y2="23.85"/>
+                                  <line x1="14.46" y1="32" x2="38.92" y2="32"/>
+                                  <line x1="14.46" y1="40.15" x2="31.93" y2="40.15"/>
+                                  <path d="M57.79,24.44l-2.88-2.9,3.79-3.79a1,1,0,0,1,1.39,0l3.11,3.11a1,1,0,0,1,0,1.39L40.34,45.1a1,1,0,0,1-.52.28L36,46A1,1,0,0,1,34.9,44.9l.67-3.77a1,1,0,0,1,.27-.52L52.65,23.8"/>
+                              </svg>
                               <div class="contract-type">
                                   <h5 class="label">Smart Contract creation</h5>
                                   <h4 class="token uppercase">${token}</h4>
@@ -492,36 +506,30 @@
       }
       window.scrollTo(0, 0);
       loading(true)
-      removePage(currentPage);
+      removePage();
 
       if (pageId === "address_page") {
-        /*let addressInfo = await getAddressInfo(field);
-        let addressBalance = await getAddressBalance(field);
-        let addressTxs = await getAddressTxs(field);*/
         let [addressInfo, addressBalance, addressTxs] = await Promise.all([getAddressInfo(field), getAddressBalance(field), getAddressTxs(field)])
         console.log(addressInfo, addressBalance, addressTxs)
-        pageContainer.append(create.addressPage({balance: addressBalance, address: -field}))
+        pageContainer.append(create.addressPage({balance: addressBalance, address: field}))
         pageTitle.textContent = 'Address'
         loading()
       }
 
       if (pageId === "token_page") {
-        //console.time('data')
-        //console.timeLog('data')
-        /*let tokenInfo = await getTokenInfo(field);
-        let tokenBalances = await getTokenBalances(field);
-        let tokenTransactions = await getTokenTransactions(field);*/
         let [tokenInfo, tokenBalances, tokenTransactions] = await Promise.all([getTokenInfo(field), getTokenBalances(field), getTokenTransactions(field)])
-        //console.timeEnd('data')
 
-        /*for(bal in tokenBalances){
-          console.log(bal, tokenBalances[bal])
+        for(bal in tokenBalances){
+          frag.append(create.addrBalanceCard( bal, tokenBalances[bal], tokenInfo.token))
         }
-        for(tx in tokenTransactions){
+
+        console.log(tokenInfo.token, tokenBalances)
+        /*for(tx in tokenTransactions){
           console.log(tx, tokenTransactions[tx])
         }*/
         pageContainer.append(create.tokenPage(tokenInfo));
         pageTitle.textContent = "Token";
+        document.getElementById('token_balance_container').append(frag)
         loading()
       }
 
@@ -532,10 +540,9 @@
           address: "F7osBpjDDV1mSSnMNrLudEQQ3cwDJ2dPR1",
         };
 
-        let contractInfo = await getContractInfo(contract);
+        let [contractInfo, contractTransactions, contractParticipants] = await Promise.all([getContractInfo(contract), getContractTransactions(contract), getContractParticipants(contract)])
+
         // todo : check the type of contract & then further checks like fetching details of contractParticipant 
-        let contractTransactions = await getContractTransactions(contract);
-        let contractParticipants = await getContractParticipants(contract);
         let obj = {
           status: "closed",
           contract: "india-elections-2019",
@@ -564,9 +571,8 @@
         pageContainer.append(create.homepage(data));
         loading();
 
-        // add event listener to input dialog box
         document.getElementById("main_search_field").addEventListener("keydown", function (e) {
-            if (e.key === 'Enter') {  //checks whether the pressed key is "Enter"
+            if (e.key === 'Enter') {
                 processNavbarSearch();
             }
         });
@@ -621,7 +627,9 @@
       }
 
       if (pageId === "transaction_page") {
-        let latest100txs = await getTxDetails();
+        let txInfo = await getTxInfo(field);
+        pageContainer.append(create.transactionPage(txInfo))
+        pageTitle.textContent = "transaction";
         loading()
       }
 
@@ -657,6 +665,14 @@
           appState = {
             page: "transaction_page",
             thisField: e.target.textContent,
+          };
+          history.pushState(appState, null, null)
+        }
+        if (!e.target.classList.contains("token") && !e.target.classList.contains("address") && e.target.closest(".transaction")  && prevField !== e.target.textContent) {
+          render("transaction_page", e.target.closest(".transaction").id);
+          appState = {
+            page: "transaction_page",
+            thisField: e.target.closest(".transaction").id,
           };
           history.pushState(appState, null, null)
         }
@@ -1005,7 +1021,6 @@
               latestTxArray.push(obj);
             }
           }
-
           return latestTxArray;
         });
     }
@@ -1267,27 +1282,30 @@
           return (obj = {});
         });
     }
-
-    function getTxInfo(thisTx) {
-      return fetch(
-        `${tokenapiUrl}/api/v1.0/getTransactionDetails/${thisTx}`
-      )
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (txDetails) {
-          debugger;
-          let obj = {
-            blockHeight: blockInfo["blockDetails"]["height"],
-            size: blockInfo["blockDetails"]["size"],
-            transactions: "",
-            reward: blockInfo["blockDetails"]["reward"],
-            hash: blockInfo["blockDetails"]["hash"],
-            difficulty: blockInfo["blockDetails"]["difficulty"],
-            nonce: blockInfo["blockDetails"]["nonce"],
-          };
-          return obj;
-        });
+//type, name, blockHeight, amount, sender, receiver, floData, hash, confirmations 
+    async function getTxInfo(thisTx) {
+      const responce = await fetch(`${tokenapiUrl}/api/v1.0/getTransactionDetails/${thisTx}`),
+            transaction = await responce.json(),
+            transactionHash = transaction.transactionHash,
+            {flodata, tokenAmount, tokenIdentification, transferType, type} = transaction.parsedFloData,
+            {blockheight, vin, vout, confirmations} = transaction.transactionDetails;
+            let receiver = "",sender = vin[0].addr;
+            for (let i = 0;i < vout.length;i++) {
+              if (vout[i]["scriptPubKey"]["addresses"][0] !== vin[0]["addr"]) {
+                receiver =vout[i]["scriptPubKey"]["addresses"][0];
+              }
+            }
+            return {
+              type: `${transferType} ${type}`,
+              name: tokenIdentification,
+              blockHeight: blockheight,
+              amount: tokenAmount,
+              sender: sender,
+              receiver: receiver,
+              floData: flodata,
+              hash: transactionHash,
+              confirmations: confirmations
+            }
     }
 
   </script>
@@ -1509,7 +1527,7 @@
       }
       else if (typeof (text) == 'string') {
         if (text.length == 34 && text[0] == 'F') {
-          //console.log('data entered in a FLO address');
+          //console.log('data entered is a FLO address');
           inputElement.value = '';
           render("address_page", text)
           appState = {
@@ -1536,10 +1554,10 @@
 
             if (window.ranchimallflo.smartcontractnamelist.includes(text)) {
               inputElement.value = '';
-              render("address_page", contract={name:'',
+              render("contract_page", contract={name:'',
                                                address: ''})
               appState = {
-                page: "address_page",
+                page: "contract_page",
                 thisField: text,
               }
               history.pushState(appState, null, null)
