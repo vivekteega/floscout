@@ -745,6 +745,7 @@ p {
       -ms-flex-align: center;
           align-items: center;
   margin-bottom: 0.5rem;
+  text-transform: capitalize;
 }
 
 .choice-container {
@@ -765,21 +766,6 @@ p {
 
 .status {
   font-size: 0.8rem;
-}
-
-.status.done {
-  background: #00C853;
-  -ms-flex-item-align: center;
-      -ms-grid-row-align: center;
-      align-self: center;
-  color: white;
-}
-
-.status.done .icon {
-  margin-right: 0.5rem;
-  height: 1em;
-  width: 1em;
-  stroke: white;
 }
 
 .status.closed {

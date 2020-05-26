@@ -47,6 +47,9 @@
 
   <script>
     let frag = document.createDocumentFragment();
+    function creation(str) {
+      return document.createRange().createContextualFragment(str)
+    };
     const create = {
       homepage(obj) {
         let { topToken, totalTransactions, walletAddresses, topContract, } = obj,
@@ -263,63 +266,72 @@
         return page;
       },
       contractPage(obj) {
-        let { status, contract, contractType, incAddress, expiration, token, participationFees } = obj,
+        let {status, contract, contractType, contractAddress, expiration, token, participationFees, userChoices, payeeAddress, minAmount, maxAmount} = obj,
           page = document.createElement("div");
         page.classList.add("page");
         page.id = "contract_page";
-        page.innerHTML = `
-              <div class="status closed">Closed</div>
-              <h3 class="uppercase">${contract}</h3>
-              <div class="card">
+        let userChoiceSection = document.createElement('ul'),
+            infoCard = document.createElement('div');
+        infoCard.classList.add('card')
+        userChoiceSection.classList.add('card')
+        userChoiceSection.type = 'circle'
+        if(userChoices){
+          for(choice in userChoices){
+            userChoiceSection.innerHTML += `<li>${userChoices[choice]}</li>`
+          }
+        }
+        page.append(creation( `
+              <div class="status closed">${status}</div>
+              <h3 class="uppercase">${contract}</h3>`))
+        infoCard.innerHTML =`
                   <h5 class="label">Contract Type</h5>
-                  <h4>${contractType}</h4>
-                  <h5 class="label">Incorporation Address</h5>
-                  <h4 class="address">${incAddress}</h4>
-                  <h5 class="label">Expiration</h5>
-                  <h4>${expiration}</h4>
-                  <h5 class="label">Token Used</h5>
-                  <h4 class="uppercase">${token}</h4>
-                  <h5 class="label">Participation Amount</h5>
-                  <h4>${participationFees}</h4>
-              </div>
-              <h3 class="heading">User Choices</h3>
-              <ul class="card" type='circle'>
-                  <li>Narendra Modi Wins</li>
-                  <li>Narendra Modi Loses</li>
-              </ul>
-              <div class="tabs">
-                  <h4 class="tab active" data-rank="1" data-target="participant_container">Participants</h4>
-                  <h4 class="tab" data-rank="2" data-target="winners_container">Winners</h4>
-                  <h4 class="tab" data-rank="3" data-target="losers_container">losers</h4>
-                  <div class="line"></div>
-              </div>
-              <ul id="participant_container" data-tab-group="token" class="card">
-                  <li class="contract-choice" >
-                      <h5 class="breakable label">F6EMAHjivqrcrdAHNABq2R1FLNkx8xfEaT</h5>
-                      <h3>narendra modi wins</h3>
-                      <h4>0.0000023333 RMT</h4>
-                  </li>
-                  <li class="balance">
-                      <h5 class="breakable label">F6EMAHjivqrcrdAHNABq2R1FLNkx8xfEaT</h5>
-                      <h4>0.0000023333 RMT</h4>
-                  </li>
-              </ul>
-              <ul id="winners_container" data-tab-group="token" class="card hide-completely">
-                  <li class="contract-choice winner" >
-                      <h5 class="breakable label">F6EMAHjivqrcrdAHNABq2R1FLNkx8xfEaT</h5>
-                      <h3>narendra modi wins</h3>
-                      <h4>0.0000023333 RMT</h4>
-                  </li>
-              </ul>
-              <ul id="losers_container" data-tab-group="token" class="card hide-completely">
-                  <li class="contract-choice winner" >
-                      <h5 class="breakable label">F6EMAHjivqrcrdAHNABq2R1FLNkx8xfEaT</h5>
-                      <h3>narendra modi wins</h3>
-                      <h4>0.0000023333 RMT</h4>
-                  </li>
-              </ul>
-              `;
+                  <h4>${replaceDash(contractType)}</h4>
+                  <h5 class="label">Contract Address</h5>
+                  <h4 class="address">${contractAddress}</h4>`
+        if(expiration)
+          infoCard.append(creation( `
+            <h5 class="label">Expiration</h5>
+            <h4>${expiration}</h4>`))
+        if(payeeAddress)
+          infoCard.append(creation( `
+            <h5 class="label">Payee Address</h5>
+            <h4>${payeeAddress}</h4>`))
+        if(minAmount)
+          infoCard.append(creation( `
+            <h5 class="label">Min. Subscription Amount</h5>
+            <h4>${minAmount}</h4>`))
+        if(maxAmount)
+          infoCard.append(creation( `
+            <h5 class="label">Max. Subscription Amount</h5>
+            <h4>${maxAmount}</h4>`))
+        if(participationFees)
+          infoCard.append(creation( `
+            <h5 class="label">Participation Amount</h5>
+            <h4>${participationFees}</h4>`))
+        infoCard.append(creation( `<h5 class="label">Token Used</h5>
+                  <h4 class="uppercase">${token}</h4>`))
+        page.append(infoCard)
+        if(userChoices){
+          page.append(creation( `
+          <h3 class="heading">User Choices</h3>`))
+          page.append(userChoiceSection)
+        }
+        page.append(creation( `<div class="tabs">
+            <h4 class="tab active" data-rank="1" data-target="participant_container">Participants</h4>
+            <h4 class="tab" data-rank="2" data-target="winners_container">Winners</h4>
+            <div class="line"></div>
+        </div>
+        <ul id="participant_container" data-tab-group="token" class="card"></ul>
+        <ul id="winners_container" data-tab-group="token" class="card hide-completely"></ul>`));
         return page;
+      },
+      contractChoiceCard(address, token, choice, amount, action){
+        let card = document.createElement('li')
+        card.innerHTML = `                      
+                      <h5 class="breakable label">${address}</h5>
+                      <h4>${choice}</h4>
+                      <h4>${amount} ${token} ${action}</h4>`
+        return card;
       },
       contractTransferCard(obj) {
         let { hash, blockHeight, token, sender, receiver, amount, contractName, userChoice } = obj,
@@ -541,19 +553,10 @@
         };
 
         let [contractInfo, contractTransactions, contractParticipants] = await Promise.all([getContractInfo(contract), getContractTransactions(contract), getContractParticipants(contract)])
-
         // todo : check the type of contract & then further checks like fetching details of contractParticipant 
-        let obj = {
-          status: "closed",
-          contract: "india-elections-2019",
-          contractType: "one-time-event",
-          incAddress: "F7osBpjDDV1mSSnMNrLudEQQ3cwDJ2dPR1",
-          expiration: "wed may 22 2019 21:00:00 gmt+0530",
-          token: "rmt",
-          participationFees: "0.001 RMT",
-        };
-        pageContainer.append(create.contractPage(obj));
+        pageContainer.append(create.contractPage(contractInfo));
         pageTitle.textContent = "Contract";
+
         loading()
       }
 
@@ -1062,14 +1065,14 @@
     }
 
     async function getTokenBalances(tokenName) {
-      const responce = await fetch(`${tokenapiUrl}/api/v1.0/getTokenBalances?token=` + tokenName),
-            messeges = await responce.json()
+      const response = await fetch(`${tokenapiUrl}/api/v1.0/getTokenBalances?token=` + tokenName),
+            messeges = await response.json()
       return messeges.balances
     }
 
     async function getTokenTransactions(tokenName) {
-      const responce = await fetch(`${tokenapiUrl}/api/v1.0/getTokenTransactions?token=` + tokenName),
-            transactions = await responce.json()
+      const response = await fetch(`${tokenapiUrl}/api/v1.0/getTokenTransactions?token=` + tokenName),
+            transactions = await response.json()
       return transactions.transactions
 
     }
@@ -1097,76 +1100,40 @@
 
 
 
-    function getContractInfo(contract) {
-      return fetch(
-        `${tokenapiUrl}/api/v1.0/getSmartContractInfo?contractName=${contract.name}&contractAddress=${contract.address}`
-      )
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (contractInfo) {
-
-          /*let obj = {
-            blockHeight: blockInfo["height"],
-            size: blockInfo["size"],
-            transactions: "",
-            reward: blockInfo["reward"],
-            hash: blockInfo["hash"],
-            difficulty: blockInfo["difficulty"],
-            nonce: blockInfo["nonce"],
-          }; */
-
-          /* type 1
-          expirytime	payeeaddress	minimumsubscriptionamount	maximumsubscriptionamount	contractamount
-
-          // type 2
-          expirytime	userchoices	contractamount	minimumsubscriptionamount	maximumsubscriptionamount
-          */
-
-          return obj = {};
-        });
+    async function getContractInfo(contract) {
+      try{
+        const response = await fetch(`${tokenapiUrl}/api/v1.0/getSmartContractInfo?contractName=${contract.name}&contractAddress=${contract.address}`),
+            info = await response.json(),
+            {contractInfo, contractAddress, contractName} = info
+            return {
+              contract: contractName,
+              contractAddress: contractAddress,
+              contractType: contractInfo.contractType,
+              status: contractInfo.status,
+              expiration: contractInfo?.expiryTime,
+              payeeAddress: contractInfo?.payeeAddress,
+              userChoices: contractInfo?.userChoice,
+              token: contractInfo?.tokenIdentification,
+              participationFees: contractInfo?.contractAmount,
+              minAmount: contractInfo?.minimumsubscriptionamount,
+              maxAmount: contractInfo?.maximumsubscriptionamount
+            }
+      }
+      catch(error){
+        console.log(error)
+      }
     }
 
-    function getContractParticipants(contract) {
-      return fetch(
-        `${tokenapiUrl}/api/v1.0/getSmartContractParticipants?contractName=${contract.name}&contractAddress=${contract.address}`
-      )
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (contractParticipants) {
-          /*let obj = {
-            blockHeight: blockInfo["height"],
-            size: blockInfo["size"],
-            transactions: "",
-            reward: blockInfo["reward"],
-            hash: blockInfo["hash"],
-            difficulty: blockInfo["difficulty"],
-            nonce: blockInfo["nonce"],
-          };*/
-          return obj = {};
-        });
+    async function getContractParticipants(contract) {
+      const response = await fetch(`${tokenapiUrl}/api/v1.0/getSmartContractParticipants?contractName=${contract.name}&contractAddress=${contract.address}`),
+            participants = await response.json()
+        return participants.participantInfo
     }
 
-    function getContractTransactions(contract) {
-      return fetch(
-        `${tokenapiUrl}/api/v1.0/getSmartContractTransactions?contractName=${contract.name}&contractAddress=${contract.address}`
-      )
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (contractTxs) {
-          /*let obj = {
-            blockHeight: blockInfo["height"],
-            size: blockInfo["size"],
-            transactions: "",
-            reward: blockInfo["reward"],
-            hash: blockInfo["hash"],
-            difficulty: blockInfo["difficulty"],
-            nonce: blockInfo["nonce"],
-          };*/
-          return obj = {};
-        });
+    async function getContractTransactions(contract) {
+      const response = await fetch(`${tokenapiUrl}/api/v1.0/getSmartContractTransactions?contractName=${contract.name}&contractAddress=${contract.address}`),
+            transactions = await response.json()
+        return transactions.contractTransactions
     }
 
     function getViewallBlocks() {
@@ -1255,8 +1222,8 @@
     }
 
     async function getAddressBalance(floAddress) {
-      const responce =  await fetch(`${floapiUrl}/api/addr/${floAddress}/balance`),
-            balance = await responce.json()
+      const response =  await fetch(`${floapiUrl}/api/addr/${floAddress}/balance`),
+            balance = await response.json()
       return balance;
     }
 
@@ -1284,8 +1251,8 @@
     }
 //type, name, blockHeight, amount, sender, receiver, floData, hash, confirmations 
     async function getTxInfo(thisTx) {
-      const responce = await fetch(`${tokenapiUrl}/api/v1.0/getTransactionDetails/${thisTx}`),
-            transaction = await responce.json(),
+      const response = await fetch(`${tokenapiUrl}/api/v1.0/getTransactionDetails/${thisTx}`),
+            transaction = await response.json(),
             transactionHash = transaction.transactionHash,
             {flodata, tokenAmount, tokenIdentification, transferType, type} = transaction.parsedFloData,
             {blockheight, vin, vout, confirmations} = transaction.transactionDetails;
