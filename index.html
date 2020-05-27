@@ -36,13 +36,7 @@
                 </svg>
                 <input type="search" placeholder="Search block, transactions, address, token or contract">
             </label>
-        </div>
-            <div id="all_transations" class="">
-
-            </div>
-            <div id="all_blocks" class="">
-
-            </div>  -->
+        </div>  -->
   </main>
 
   <script>
@@ -221,7 +215,7 @@
       tokenBalanceCard(token, balance) {
         let card = document.createElement('li')
         card.innerHTML = `
-                  <h5 class="label">${token}</h5>
+                  <h5 class="label uppercase">${token}</h5>
                   <h4>${balance}</h4>
                 `
         return card
@@ -468,7 +462,7 @@
                               </div>
                               <div class="contract-info">
                                   <h5 class="label">Incorporation address</h5>
-                                  <h4>${incAddress}</h4>
+                                  <h4 class="address">${incAddress}</h4>
                                   <h5 class="label">token name</h5>
                                   <h4 class="uppercase">${token}</h4>
                                   <h5 class="label">supply</h5>
@@ -504,7 +498,7 @@
                                   <h5 class="label">Winning Choice</h5>
                                   <h4>${winningChoice}</h4>
                                   <h5 class="label">committee address</h5>
-                                  <h4>${committeeAddress}</h4>
+                                  <h4 class="address">${committeeAddress}</h4>
                               </div>`;
         return card;
       },
@@ -543,6 +537,17 @@
                               </div>`;
         return card;
       },
+      blockCard(blockHeight, transactions){
+        let card = document.createElement('div'),
+            pural = '';
+        card.classList.add('card')
+        if(parseInt(transactions) > 1)
+          pural ='s'
+        card.innerHTML = `
+          <h4 class="block-height">${blockHeight}</h4>
+          <h4>${transactions} Transaction${pural}</h4>`
+        return card;
+      }
     };
 
     const pageTitle = document.getElementById("page_title"),
@@ -685,7 +690,7 @@
 
       if (pageId === "homepage") {
         pageHeader.classList.add("hide-completely");
-        let [data, latestTxs, latestBlocks] = await Promise.all([getBannerData(), getLatestTxs(), getLatestBlocks()])
+        let [data, latestTxs, latestBlocks] = await Promise.all([getBannerData(), getLatestTxs(), getAllBlocks(6)])
         pageContainer.append(create.homepage(data));
         loading();
 
@@ -733,12 +738,20 @@
         document.getElementById("top_transaction_container").append(frag);
 
         // todo - add latest blocks
+        for(block in latestBlocks){
+          frag.append(create.blockCard(latestBlocks[block].height, latestBlocks[block].tx.length))
+        }
+        document.getElementById('top_blocks_container').append(frag)
       } else pageHeader.classList.remove("hide-completely");
 
-      if (pageId === "viewallblocks") {
-        let latest100blocks = await getLatestBlocks();
-
+      if (pageId === "all_blocks_page") {
+        let allBlocks = await getAllBlocks(100);
+        pageContainer.append(create.AllBlocksPage())
         pageTitle.textContent = "All Blocks";
+        for(block in allBlocks){
+          frag.append(create.blockCard(allBlocks[block].height, allBlocks[block].tx.length))
+        }
+        document.getElementById('all_blocks_page').append(frag)
         loading()
       }
 
@@ -834,6 +847,14 @@
           render('all_transactions_page')
           appState = {
             page: "all_transactions_page",
+            thisField: null,
+          }
+          history.pushState(appState, null, null)
+        }
+        if (e.target.closest('#all_blocks_btn')) {
+          render('all_blocks_page')
+          appState = {
+            page: "all_blocks_page",
             thisField: null,
           }
           history.pushState(appState, null, null)
@@ -1427,25 +1448,10 @@
       }
     }
 
-    function getAllBlocks() {
-      return fetch(
-        `${tokenapiUrl}/api/v1.0/getLatestBlockDetails?limit=100`
-      )
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (contractTxs) {
-          /*let obj = {
-            blockHeight: blockInfo["height"],
-            size: blockInfo["size"],
-            transactions: "",
-            reward: blockInfo["reward"],
-            hash: blockInfo["hash"],
-            difficulty: blockInfo["difficulty"],
-            nonce: blockInfo["nonce"],
-          }; */
-          return obj;
-        });
+    async function getAllBlocks(number) {
+      const response = await fetch(`${tokenapiUrl}/api/v1.0/getLatestBlockDetails?limit=${number}`),
+            allBlocks = await response.json()
+      return allBlocks.latestBlocks
     }
 
     async function getAllTxs() {
