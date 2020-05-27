@@ -131,6 +131,10 @@ h3 {
   text-transform: uppercase !important;
 }
 
+.capitalise {
+  text-transform: capitalize !important;
+}
+
 .toggle {
   position: relative;
   cursor: pointer;
@@ -249,6 +253,15 @@ ul .balance:last-of-type {
 
 .card h2 {
   margin-bottom: 1.5rem;
+}
+
+.transaction-container {
+  display: -ms-grid;
+  display: grid;
+  margin-top: 1.5rem;
+  gap: 1.5rem;
+  -ms-grid-columns: (minmax(20rem, 1fr))[auto-fit];
+      grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
 }
 
 .label {
@@ -784,8 +797,12 @@ p {
 }
 
 .tabs {
-  position: relative;
-  margin-top: 2rem;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  padding: 1rem 0 1rem 0;
+  background: rgba(var(--foreground), 1);
+  z-index: 2;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -795,10 +812,10 @@ p {
 .tabs .tab {
   cursor: pointer;
   opacity: 0.6;
-  padding-bottom: 0.5rem;
-  margin-right: 1rem;
+  margin-right: 1.5rem;
   -webkit-tap-highlight-color: transparent;
   white-space: nowrap;
+  font-size: 1.2rem;
 }
 
 .tabs .tab:last-of-type {
@@ -811,7 +828,7 @@ p {
 
 .tabs .line {
   position: absolute;
-  height: 0.1em;
+  height: 0.16rem;
   background: rgba(var(--text), 1);
   width: 1px;
   bottom: 0;
@@ -822,17 +839,14 @@ p {
 }
 
 .contract-choice {
+  display: -ms-grid;
+  display: grid;
+  gap: 0.5rem 1rem;
   margin-bottom: 2rem;
 }
 
 .contract-choice:last-of-type {
   margin-bottom: 0;
-}
-
-.contract-choice h3 {
-  text-transform: capitalize;
-  font-weight: 400;
-  margin-bottom: 0.5rem;
 }
 
 #homepage {
@@ -865,12 +879,6 @@ p {
   }
 }
 
-#top_transaction_container {
-  display: -ms-grid;
-  display: grid;
-  gap: 1.5em;
-}
-
 .transaction {
   display: -ms-grid;
   display: grid;
@@ -880,6 +888,8 @@ p {
   -ms-grid-columns: min-content 1fr;
       grid-template-columns: -webkit-min-content 1fr;
       grid-template-columns: min-content 1fr;
+  -ms-grid-rows: auto 1fr;
+      grid-template-rows: auto 1fr;
   background: rgba(var(--text), 0.06);
       grid-template-areas: '. .' 'info info';
 }
@@ -889,6 +899,9 @@ p {
   -ms-grid-column: 1;
   -ms-grid-column-span: 2;
   grid-area: info;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
 }
 
 .transaction h4 {
@@ -903,7 +916,7 @@ p {
   width: 3rem;
   padding: 0.8rem;
   border-radius: 1rem;
-  background: var(--background);
+  background: rgba(var(--foreground), 1);
 }
 
 #loader_page {
@@ -1008,10 +1021,6 @@ p {
   #page_header {
     padding: 1.5rem 0;
   }
-  #top_transaction_container {
-    -ms-grid-columns: (1fr)[2];
-        grid-template-columns: repeat(2, 1fr);
-  }
   #transaction_page {
     display: -ms-grid;
     display: grid;
@@ -1025,6 +1034,13 @@ p {
     -ms-grid-column: 1;
     -ms-grid-column-span: 2;
     grid-area: header;
+  }
+  .contract-choice {
+    -ms-grid-columns: 2fr 1fr 1fr;
+        grid-template-columns: 2fr 1fr 1fr;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
   }
 }
 
@@ -1063,10 +1079,6 @@ p {
     -ms-grid-column: 4;
     grid-area: contract;
   }
-  #top_transaction_container {
-    -ms-grid-columns: (1fr)[3];
-        grid-template-columns: repeat(3, 1fr);
-  }
 }
 
 @media only screen and (min-width: 1920px) {
@@ -1081,10 +1093,6 @@ p {
   }
   .input {
     width: 40% !important;
-  }
-  #top_transaction_container {
-    -ms-grid-columns: (1fr)[4];
-        grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -1103,10 +1111,6 @@ p {
   }
   .input {
     width: 30% !important;
-  }
-  #top_transaction_container {
-    -ms-grid-columns: (1fr)[5];
-        grid-template-columns: repeat(5, 1fr);
   }
 }
 
