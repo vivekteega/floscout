@@ -209,13 +209,14 @@
                     <div class="line"></div>
                 </div>
                 <ul id="address_transaction_container" data-tab-group="address" class="transaction-container"></ul>
-                <ul id="token_balance_container" data-tab-group="address" class="card hide-completely"></ul>`;
+                <ul id="token_balance_container" data-tab-group="address" class="hide-completely"></ul>`;
         return page;
       },
       tokenBalanceCard(token, balance) {
         let card = document.createElement('li')
+        card.classList.add('card')
         card.innerHTML = `
-                  <h5 class="label uppercase">${token}</h5>
+                  <h5 class="label uppercase token">${token}</h5>
                   <h4>${balance}</h4>
                 `
         return card

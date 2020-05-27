@@ -467,6 +467,7 @@ p{
     color: white;
     border-radius: 0.5rem;
     padding: 2rem 1.5rem;
+    margin-bottom: 1rem;
     .flo-logo{
         grid-area: logo;
         fill: white;
@@ -547,7 +548,7 @@ p{
         margin-right: 1.5rem;
         -webkit-tap-highlight-color: transparent;
         white-space: nowrap;
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         &:last-of-type{
             margin-right: 0;
         }
@@ -557,7 +558,7 @@ p{
     }
     .line{
         position: absolute;
-        height: 0.16rem;
+        height: 0.12rem;
         background: rgba(var(--text), 1);
         width: 1px;
         bottom: 0;
@@ -571,10 +572,6 @@ p{
     &:last-of-type{
         margin-bottom: 0;
     }
-}
-.block-card{
-    padding: 1.5rem;
-
 }
 #homepage{
     margin: 0 1.5rem;
@@ -650,13 +647,16 @@ p{
     }
 
 }
-#all_blocks_page, #top_blocks_container{
+#all_blocks_page, #top_blocks_container, #token_balance_container{
     display: grid;
     gap: 1rem;
     grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
     .card{
         margin: 0;
     }
+}
+#token_balance_container{
+    margin-top: 1.5rem;
 }
 @media only screen and (min-width: 640px){
     .margin, .page{
