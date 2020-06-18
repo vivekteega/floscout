@@ -782,7 +782,7 @@
 
     window.addEventListener("load", () => {
       render("homepage");
-      history.pushState(appState, null, null);
+      history.pushState(appState, null, 'home');
 
       this.addEventListener("click", (e) => {
         if (e.target.closest(".address") && prevField !== e.target.textContent) {
@@ -791,7 +791,7 @@
             page: "address_page",
             thisField: e.target.textContent,
           };
-          history.pushState(appState, null, null)
+          history.pushState(appState, null, `address?value=${e.target.textContent}`)
         }
         if (e.target.closest(".token") && prevField !== e.target.textContent) {
           render("token_page", e.target.textContent.toLowerCase());
@@ -799,15 +799,15 @@
             page: "token_page",
             thisField: e.target.textContent
           };
-          history.pushState(appState, null, null)
+          history.pushState(appState, null, `token?value=${e.target.textContent}`)
         }
         if (e.target.closest(".hash") && prevField !== e.target.textContent) {
-          render("transaction_page", e.target.textContent);
+          render("block_page", e.target.textContent);
           appState = {
-            page: "transaction_page",
+            page: "block_page",
             thisField: e.target.textContent,
           };
-          history.pushState(appState, null, null)
+          history.pushState(appState, null, `block?value=${e.target.textContent}`)
         }
         if (!e.target.classList.contains("token") && !e.target.classList.contains("address") && e.target.closest(".transaction") && prevField !== e.target.textContent) {
           render("transaction_page", e.target.closest(".transaction").id);
@@ -815,7 +815,7 @@
             page: "transaction_page",
             thisField: e.target.closest(".transaction").id,
           };
-          history.pushState(appState, null, null)
+          history.pushState(appState, null, `tx?value=${e.target.textContent}`)
         }
         if (e.target.closest(".block-height") && prevField !== e.target.textContent) {
           render("block_page", e.target.textContent);
@@ -823,7 +823,7 @@
             page: "block_page",
             thisField: e.target.textContent
           };
-          history.pushState(appState, null, null);
+          history.pushState(appState, null, `block?value=${e.target.textContent}`);
         }
         if (e.target.closest(".contract") && prevField !== e.target.textContent) {
           render("contract_page", { name: replaceSpace(e.target.textContent), address: e.target.dataset.contractAddress })
@@ -831,7 +831,7 @@
             page: "contract_page",
             thisField: { name: replaceSpace(e.target.textContent), address: e.target.dataset.contractAddress },
           }
-          history.pushState(appState, null, null)
+          history.pushState(appState, null, `smartcontract?value=${e.target.textContent}`)
         }
         if (e.target.closest(".tab")) {
           showTab(e.target.closest(".tab"));
@@ -850,7 +850,7 @@
             page: "all_transactions_page",
             thisField: null,
           }
-          history.pushState(appState, null, null)
+          history.pushState(appState, null, `viewalltx`)
         }
         if (e.target.closest('#all_blocks_btn')) {
           render('all_blocks_page')
@@ -858,7 +858,7 @@
             page: "all_blocks_page",
             thisField: null,
           }
-          history.pushState(appState, null, null)
+          history.pushState(appState, null, `viewallblocks`)
         }
       });
     });
