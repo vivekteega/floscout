@@ -39,6 +39,12 @@
         </div>  -->
   </main>
 
+  <!-- Set urls for token and flo Apis -->
+  <script>
+    window.tokenapiUrl = 'https://ranchimallflo.duckdns.org'
+    window.floapiUrl = 'https://flosight.duckdns.org'
+  </script>
+
   <script>
     let frag = document.createDocumentFragment();
 
@@ -728,7 +734,7 @@
           }
         });
 
-        getAllSuggestions()
+        // getAllSuggestions()
 
         latestTxs.forEach(tx => {
           if (tx["type"] == "tokentransfer")
@@ -781,8 +787,19 @@
     function renderTransactions() { }
 
     window.addEventListener("load", () => {
-      render("homepage");
-      history.pushState(appState, null, '');
+
+      var hashvalue = location.hash.slice(1);
+      if(hashvalue==''){
+        debugger;
+        render("homepage");
+        history.pushState(appState, null, '');
+        getAllSuggestions();
+      }
+      else{
+        debugger;
+        getAllSuggestions();
+        categoriseText(hashvalue);
+      }
 
       this.addEventListener("click", (e) => {
         if (e.target.closest(".address") && prevField !== e.target.textContent) {
@@ -838,6 +855,7 @@
         }
         if (e.target.closest("#secondary_search_btn")) {
           render("homepage")
+          location.hash = ''
         }
         if (e.target.closest('.suggestion')) {
           let searchBox = document.getElementById('main_search_field');
@@ -1225,7 +1243,7 @@
       }
     }
 
-      async function getContractInfo(contract) {
+    async function getContractInfo(contract) {
         const response = await fetch(`${tokenapiUrl}/api/v1.0/getSmartContractInfo?contractName=${contract.name}&contractAddress=${contract.address}`),
           info = await response.json(),
           {
@@ -1505,13 +1523,171 @@
         confirmations: confirmations
       }
     }
+  
+  
+    // THIS TAG CONTAINS CODE REQUIRED FOR THE NAVBAR TO FUNCTION
+    function returnHexaNumber(s) {
+      var regExp = /^[-+]?[0-9A-Fa-f]+\.?[0-9A-Fa-f]*?$/;
+      return (typeof s === 'string' && regExp.test(s));
+    }
+
+    function isInt(n) {
+      return Number(n) === n && n % 1 === 0;
+    }
+
+    function isFloat(n) {
+      return Number(n) === n && n % 1 !== 0;
+    }
+
+    function splitContractNameAddress(value, index) {
+      var tempArray = [];
+      tempArray[0] = value.substring(0, index);
+      tempArray[1] = value.substring(index + 1);
+      return tempArray
+    }
+
+    function categoriseText(text, inputElement) {
+
+      if (!isNaN(text) && isInt(Number(text))) {
+        //console.log('this is a block number');
+        inputElement.value = '';
+        render("block_page", text);
+        appState = {
+          page: "block_page",
+          thisField: text,
+        }
+        history.pushState(appState, null, null)
+      } else if (typeof (text) == 'string') {
+        if (text.length == 34 && text[0] == 'F') {
+          //console.log('data entered is a FLO address');
+          inputElement.value = '';
+          render("address_page", text)
+          appState = {
+            page: "address_page",
+            thisField: text,
+          }
+          history.pushState(appState, null, null)
+        } else if (window.ranchimallflo.tokenlist.includes(text)) {
+          //console.log('data entered is a token name');
+          inputElement.value = '';
+          render("token_page", text)
+          appState = {
+            page: "token_page",
+            thisField: text,
+          }
+          history.pushState(appState, null, null)
+        } else if (window.ranchimallflo.smartcontractnamelist.includes(text)) {
+          //console.log('data entered is a smart contract name');
+          for (var i = 0; i < window.ranchimallflo.smartcontractnameaddresslist.length; i++) {
+
+            var contractSplit = splitContractNameAddress(window.ranchimallflo.smartcontractnameaddresslist[i], window.ranchimallflo.smartcontractnameaddresslist[i].lastIndexOf('-'));
+
+            if (window.ranchimallflo.smartcontractnamelist.includes(text)) {
+              inputElement.value = '';
+              render("contract_page", contract = {
+                name: '',
+                address: ''
+              })
+              appState = {
+                page: "contract_page",
+                thisField: text,
+              }
+              history.pushState(appState, null, null)
+            }
+          }
+
+
+        } else if (text.length == 64 && returnHexaNumber(text)) {
+
+          fetch(`${window.tokenapiUrl}/api/v1.0/categoriseString/` + text)
+            .then(function (response) {
+              return response.json();
+            })
+            .then(function (myJson) {
+              if (myJson['type'] == 'transaction') {
+                //console.log('data entered is a transaction hash');
+                inputElement.value = '';
+                render("transaction_page", text);
+                appState = {
+                  page: "transaction_page",
+                  thisField: text,
+                }
+                history.pushState(appState, null, null)
+              } else if (myJson['type'] == 'block') {
+                //console.log('data entered is a block hash');
+                inputElement.value = '';
+                render("block_page", text)
+                appState = {
+                  page: "block_page",
+                  thisField: text,
+                }
+                history.pushState(appState, null, null)
+              } else {
+                //console.log('data entered is noise');
+              }
+            });
+
+        } else {
+          //console.log('data entered is noise')
+        }
+
+      }
+    }
+
+    function processNavbarSearch() {
+      userinput = document.getElementById('main_search_field');
+      if (userinput.value != '') {
+        categoriseText(userinput.value, userinput);
+      }
+    }
+  
+    async function getAllSuggestions() {
+      window.data = [];
+      let response = await fetch(`${window.tokenapiUrl}/api/v1.0/getTokenSmartContractList`);
+      let myJson = await response.json();        
+
+      //console.log('first line of the fetch result');
+      window.ranchimallflo = {};
+      ranchimallflo.tokenlist = myJson['tokens'];
+      ranchimallflo.smartcontractlist = myJson['smartContracts'];
+      ranchimallflo.smartcontractnamelist = [];
+      ranchimallflo.smartcontractnameaddresslist = [];
+      //console.log(ranchimallflo.smartcontractlist.length);
+      for (var i = 0; i < ranchimallflo.smartcontractlist.length; i++) {
+        //ranchimallflo.smartcontractnamelist.append(ranchimallflo.smartcontractlist[i]['contractName']);
+        data.push(ranchimallflo.smartcontractlist[i]['contractName']);
+        ranchimallflo.smartcontractnamelist.push(ranchimallflo.smartcontractlist[i]['contractName']);
+        ranchimallflo.smartcontractnameaddresslist.push(ranchimallflo.smartcontractlist[i]['contractName'] + '-' + ranchimallflo.smartcontractlist[i]['contractAddress']);
+      }
+
+      for (var i = 0; i < ranchimallflo.tokenlist.length; i++) {
+        //ranchimallflo.smartcontractnamelist.append(ranchimallflo.smartcontractlist[i]['contractName']);
+        data.push(ranchimallflo.tokenlist[i]);
+      }
+
+      window.index = new FlexSearch({
+        encode: "advanced",
+        tokenize: "reverse",
+        suggest: true
+      });
+
+      for (var i = 0; i < data.length; i++) {
+        index.add(i, data[i]);
+      }
+
+      window.suggestion = function (str) {
+        let li = document.createElement('li')
+        li.textContent = str
+        li.tabIndex = 0
+        li.classList.add('suggestion')
+        return li;
+      }       
+        
+    }
+  
   </script>
 
-  <!-- Set urls for token and flo Apis -->
-  <script>
-    window.tokenapiUrl = 'https://ranchimallflo.duckdns.org'
-    window.floapiUrl = 'https://flosight.duckdns.org'
-  </script>
+  
 
   <!-- Flex search content -->
   <script>
@@ -2536,213 +2712,7 @@
     }()), this);
   </script>
 
-  <!-- Navbar functionality -->
-  <script>
-    // THIS TAG CONTAINS CODE REQUIRED FOR THE NAVBAR TO FUNCTION
-    function returnHexaNumber(s) {
-      var regExp = /^[-+]?[0-9A-Fa-f]+\.?[0-9A-Fa-f]*?$/;
-      return (typeof s === 'string' && regExp.test(s));
-    }
-
-    function isInt(n) {
-      return Number(n) === n && n % 1 === 0;
-    }
-
-    function isFloat(n) {
-      return Number(n) === n && n % 1 !== 0;
-    }
-
-    function splitContractNameAddress(value, index) {
-      var tempArray = [];
-      tempArray[0] = value.substring(0, index);
-      tempArray[1] = value.substring(index + 1);
-      return tempArray
-    }
-
-    function categoriseText(text, inputElement) {
-
-      if (!isNaN(text) && isInt(Number(text))) {
-        //console.log('this is a block number');
-        inputElement.value = '';
-        render("block_page", text);
-        appState = {
-          page: "block_page",
-          thisField: text,
-        }
-        history.pushState(appState, null, null)
-      } else if (typeof (text) == 'string') {
-        if (text.length == 34 && text[0] == 'F') {
-          //console.log('data entered is a FLO address');
-          inputElement.value = '';
-          render("address_page", text)
-          appState = {
-            page: "address_page",
-            thisField: text,
-          }
-          history.pushState(appState, null, null)
-        } else if (window.ranchimallflo.tokenlist.includes(text)) {
-          //console.log('data entered is a token name');
-          inputElement.value = '';
-          render("token_page", text)
-          appState = {
-            page: "token_page",
-            thisField: text,
-          }
-          history.pushState(appState, null, null)
-        } else if (window.ranchimallflo.smartcontractnamelist.includes(text)) {
-          //console.log('data entered is a smart contract name');
-          for (var i = 0; i < window.ranchimallflo.smartcontractnameaddresslist.length; i++) {
-
-            var contractSplit = splitContractNameAddress(window.ranchimallflo.smartcontractnameaddresslist[i], window.ranchimallflo.smartcontractnameaddresslist[i].lastIndexOf('-'));
-
-            if (window.ranchimallflo.smartcontractnamelist.includes(text)) {
-              inputElement.value = '';
-              render("contract_page", contract = {
-                name: '',
-                address: ''
-              })
-              appState = {
-                page: "contract_page",
-                thisField: text,
-              }
-              history.pushState(appState, null, null)
-            }
-          }
-
-
-        } else if (text.length == 64 && returnHexaNumber(text)) {
-
-          fetch(`${window.tokenapiUrl}/api/v1.0/categoriseString/` + text)
-            .then(function (response) {
-              return response.json();
-            })
-            .then(function (myJson) {
-              if (myJson['type'] == 'transaction') {
-                //console.log('data entered is a transaction hash');
-                inputElement.value = '';
-                render("transaction_page", text);
-                appState = {
-                  page: "transaction_page",
-                  thisField: text,
-                }
-                history.pushState(appState, null, null)
-              } else if (myJson['type'] == 'block') {
-                //console.log('data entered is a block hash');
-                inputElement.value = '';
-                render("block_page", text)
-                appState = {
-                  page: "block_page",
-                  thisField: text,
-                }
-                history.pushState(appState, null, null)
-              } else {
-                //console.log('data entered is noise');
-              }
-            });
-
-        } else {
-          //console.log('data entered is noise')
-        }
-
-      }
-    }
-
-    function processNavbarSearch() {
-      userinput = document.getElementById('main_search_field');
-      if (userinput.value != '') {
-        categoriseText(userinput.value, userinput);
-      }
-    }
-
-    // function runScriptJs() {
-    //   var $cell = $('.card');
-
-    //   //open and close card when clicked on card
-    //   $cell.find('.js-expander').click(function () {
-
-    //     var $thisCell = $(this).closest('.card');
-
-    //     if ($thisCell.hasClass('is-collapsed')) {
-    //       $cell.not($thisCell).removeClass('is-expanded').addClass('is-collapsed').addClass('is-inactive');
-    //       $thisCell.removeClass('is-collapsed').addClass('is-expanded');
-
-    //       if ($cell.not($thisCell).hasClass('is-inactive')) {
-    //         //do nothing
-    //       } else {
-    //         $cell.not($thisCell).addClass('is-inactive');
-    //       }
-
-    //     } else {
-    //       $thisCell.removeClass('is-expanded').addClass('is-collapsed');
-    //       $cell.not($thisCell).removeClass('is-inactive');
-    //     }
-    //   });
-
-    //   //close card when click on cross
-    //   $cell.find('.js-collapser').click(function () {
-
-    //     var $thisCell = $(this).closest('.card');
-
-    //     $thisCell.removeClass('is-expanded').addClass('is-collapsed');
-    //     $cell.not($thisCell).removeClass('is-inactive');
-
-    //   });
-    // }
-
-
-    // First load
-    // console.log('Cursor right before the first fetch call');
-
-    // loading of global variables which contains name of all tokens and smart contracts
-
-    function getAllSuggestions() {
-      window.data = [];
-      fetch(`${window.tokenapiUrl}/api/v1.0/getTokenSmartContractList`)
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (myJson) {
-
-          //console.log('first line of the fetch result');
-
-          window.ranchimallflo = {};
-          ranchimallflo.tokenlist = myJson['tokens'];
-          ranchimallflo.smartcontractlist = myJson['smartContracts'];
-          ranchimallflo.smartcontractnamelist = [];
-          ranchimallflo.smartcontractnameaddresslist = [];
-          //console.log(ranchimallflo.smartcontractlist.length);
-          for (var i = 0; i < ranchimallflo.smartcontractlist.length; i++) {
-            //ranchimallflo.smartcontractnamelist.append(ranchimallflo.smartcontractlist[i]['contractName']);
-            data.push(ranchimallflo.smartcontractlist[i]['contractName']);
-            ranchimallflo.smartcontractnamelist.push(ranchimallflo.smartcontractlist[i]['contractName']);
-            ranchimallflo.smartcontractnameaddresslist.push(ranchimallflo.smartcontractlist[i]['contractName'] + '-' + ranchimallflo.smartcontractlist[i]['contractAddress']);
-          }
-
-          for (var i = 0; i < ranchimallflo.tokenlist.length; i++) {
-            //ranchimallflo.smartcontractnamelist.append(ranchimallflo.smartcontractlist[i]['contractName']);
-            data.push(ranchimallflo.tokenlist[i]);
-          }
-
-          window.index = new FlexSearch({
-            encode: "advanced",
-            tokenize: "reverse",
-            suggest: true
-          });
-
-          for (var i = 0; i < data.length; i++) {
-            index.add(i, data[i]);
-          }
-
-          window.suggestion = function (str) {
-            let li = document.createElement('li')
-            li.textContent = str
-            li.tabIndex = 0
-            li.classList.add('suggestion')
-            return li;
-          }
-        });
-    }
-  </script>
+  
 </body>
 
 </html>
