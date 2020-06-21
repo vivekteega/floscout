@@ -119,8 +119,9 @@ h3 {
 }
 
 .breakable {
-  overflow-wrap: break-word;
-  letter-spacing: 0.06em;
+  word-break: break-word;
+  font-weight: 500;
+  letter-spacing: 0.06rem;
 }
 
 .other-font {
@@ -322,6 +323,58 @@ ul .balance:last-of-type {
   min-height: 100vh;
 }
 
+#search_page h1 {
+  margin-top: 2rem;
+  font-weight: 500;
+  font-size: 3rem;
+}
+
+#search_page .input {
+  -webkit-animation: fade 0.4s;
+          animation: fade 0.4s;
+}
+
+#search_page .input input:valid ~ #suggestions {
+  opacity: 1;
+  pointer-events: all;
+  -webkit-transform: none;
+          transform: none;
+}
+
+#search_page #suggestions {
+  opacity: 0;
+  pointer-events: none;
+  -webkit-transform: translateY(-0.5rem);
+          transform: translateY(-0.5rem);
+  -webkit-transition: opacity 0.3s, -webkit-transform 0.3s;
+  transition: opacity 0.3s, -webkit-transform 0.3s;
+  transition: transform 0.3s, opacity 0.3s;
+  transition: transform 0.3s, opacity 0.3s, -webkit-transform 0.3s;
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  background: var(--background);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0;
+  max-height: 30vh;
+  overflow-y: auto;
+  margin-top: 0.5rem;
+}
+
+#search_page #suggestions:empty {
+  padding: 0;
+}
+
+#search_page .suggestion {
+  padding: 0.6rem 1.5rem 0.6rem 3rem;
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+#search_page .suggestion:hover, #search_page .suggestion:focus {
+  opacity: 1;
+}
+
 #main_search {
   position: relative;
   display: -webkit-box;
@@ -349,56 +402,12 @@ ul .balance:last-of-type {
   color: rgba(var(--text-light), 1);
 }
 
-#main_search .input {
-  border-radius: 0.5rem;
-}
-
-#main_search .input input:valid ~ #suggestions {
-  opacity: 1;
-  pointer-events: all;
-  -webkit-transform: none;
-          transform: none;
-}
-
 #main_search label {
   position: relative;
 }
 
-#main_search #suggestions {
-  opacity: 0;
-  pointer-events: none;
-  -webkit-transform: translateY(-0.5rem);
-          transform: translateY(-0.5rem);
-  -webkit-transition: opacity 0.3s, -webkit-transform 0.3s;
-  transition: opacity 0.3s, -webkit-transform 0.3s;
-  transition: transform 0.3s, opacity 0.3s;
-  transition: transform 0.3s, opacity 0.3s, -webkit-transform 0.3s;
-  position: absolute;
-  top: 100%;
-  width: 100%;
-  background: var(--background);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0;
-  max-height: 30vh;
-  overflow-y: auto;
-  margin-top: 0.5rem;
-}
-
-#main_search #suggestions:empty {
-  padding: 0;
-}
-
-#main_search .suggestion {
-  padding: 0.6rem 1.5rem 0.6rem 3rem;
-  opacity: 0.8;
-  cursor: pointer;
-}
-
-#main_search .suggestion:hover, #main_search .suggestion:focus {
-  opacity: 1;
-}
-
 .input {
+  border-radius: 0.2rem;
   position: relative;
   display: -ms-grid;
   display: grid;
@@ -425,15 +434,46 @@ ul .balance:last-of-type {
 }
 
 .icon {
-  height: 1.2rem;
+  height: 1rem;
   overflow: visible;
-  width: 1.2rem;
+  width: 1rem;
   fill: none;
   stroke: rgba(var(--text), 1);
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 6;
-  opacity: 0.8;
+}
+
+.copy-row {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr auto;
+      grid-template-columns: 1fr auto;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 0.5rem;
+}
+
+.copy-row .icon {
+  cursor: pointer;
+}
+
+#textCopied {
+  padding: 1rem;
+  border-radius: 2rem;
+  background: rgba(var(--text), 0.2);
+  color: rgba(var(--text), 1);
+  position: fixed;
+  bottom: 0;
+  pointer-events: none;
+  margin: 2rem 0;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  -webkit-transition: 0.3s opacity ease;
+  transition: 0.3s opacity ease;
+  z-index: 20;
 }
 
 @-webkit-keyframes flyInLeft {
@@ -663,8 +703,17 @@ ul .balance:last-of-type {
 }
 
 #page_header .icon {
-  height: 2rem;
-  width: 2rem;
+  height: 1.8rem;
+  width: 1.8rem;
+  cursor: pointer;
+}
+
+#page_header .icon:first-of-type {
+  margin-right: 1rem;
+  padding: 0.4rem 0.4rem 0.4rem 0;
+}
+
+#page_header .icon:nth-of-type(2) {
   padding: 0.4rem 0 0.4rem 0.4rem;
 }
 
@@ -909,7 +958,7 @@ p {
   font-weight: 500;
 }
 
-.transaction .icon {
+.transaction > .icon:first-of-type {
   stroke-width: 4;
   -ms-grid-column-align: center;
       justify-self: center;
