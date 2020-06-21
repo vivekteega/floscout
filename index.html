@@ -790,13 +790,11 @@
 
       var hashvalue = location.hash.slice(1);
       if(hashvalue==''){
-        debugger;
         render("homepage");
         history.pushState(appState, null, '');
         getAllSuggestions();
       }
       else{
-        debugger;
         await getAllSuggestions();
         categoriseText(hashvalue);
       }
@@ -832,7 +830,7 @@
             page: "transaction_page",
             thisField: e.target.closest(".transaction").id,
           };
-          history.pushState(appState, null, `#${e.target.textContent}`)
+          history.pushState(appState, null, `#${appState.thisField}`)
         }
         if (e.target.closest(".block-height") && prevField !== e.target.textContent) {
           render("block_page", e.target.textContent);
