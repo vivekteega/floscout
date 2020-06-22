@@ -110,7 +110,7 @@
                   <h2 class="token">${topToken}</h2>
               </div>
               <div class="highlight-item">
-                  <h4 class="label">total transactions</h4>
+                  <h4 class="label">Latest transactions</h4>
                   <h2>${totalTransactions}</h2>
               </div>
               <div class="highlight-item">
@@ -166,7 +166,7 @@
                   <h5 class="label">${size}</h5>
                   <h5 class="label">Reward</h5>
                   <h4>${reward}</h4>
-                  <h5 class="label">Hash</h5>
+                  <h5 class="label">Transaction ID</h5>
                   <h4 class="breakable">${hash}</h4>
                   <h5 class="label">Difficulty</h5>
                   <h4>${difficulty}</h4>
@@ -233,7 +233,7 @@
               <div class='head'>
                   	<h5 class="label">${type}</h5>
                   	<h2 class="token uppercase">${name}</h2>
-					<h5 class="label">Hash</h5>
+					<h5 class="label">Transaction ID</h5>
 					<div class="copy-row">
                     	<h4 class="breakable copy">${hash}</h4>
                         <svg class="icon" onclick="copyToClipboard(this.parentNode)" viewBox="0 0 54 64">
@@ -425,14 +425,7 @@
                                   <h4 class="token uppercase">${token}</h4>
                               </div>`
         contractInfo.innerHTML = `    
-									<h5 class="label">Hash</h5>
-									<div class="copy-row">
-										<h4 class="breakable copy hash">${hash}</h4>
-										<svg class="icon" onclick="copyToClipboard(this.parentNode)" viewBox="0 0 54 64">
-											<title>Copy</title>
-											<path d="M53,0H22.14a6,6,0,0,0-6,6v5H11a6,6,0,0,0-6,6V58a6,6,0,0,0,6,6H41.86a6,6,0,0,0,6-6V53H53a6,6,0,0,0,6-6V6A6,6,0,0,0,53,0ZM43.89,58a2,2,0,0,1-2,2H11a2,2,0,0,1-2-2V17.06a2,2,0,0,1,2-2H41.86a2,2,0,0,1,2,2ZM55,46.94a2,2,0,0,1-2,2H47.89V17.06a6,6,0,0,0-6-6H20.11V6a2,2,0,0,1,2-2H53a2,2,0,0,1,2,2Z" transform="translate(-5)"/>
-										</svg>
-									</div>
+									
 									<h5 class="label">Sender</h5>
 									<h4 class="address">${sender}</h4>
 									<h5 class="label">receiver</h5>
@@ -440,7 +433,15 @@
 									<h5 class="label">amount</h5>
 									<h4 class="uppercase">${amount} ${token}</h4>
 									<h5 class="label">Contract name</h5>
-									<h4>${contractName}</h4>`;
+                  <h4>${contractName}</h4>
+                  <h5 class="label">Transaction ID</h5>
+									<div class="copy-row">
+										<h6 class="breakable copy hash">${hash}</h6>
+										<svg class="icon" onclick="copyToClipboard(this.parentNode)" viewBox="0 0 54 64">
+											<title>Copy</title>
+											<path d="M53,0H22.14a6,6,0,0,0-6,6v5H11a6,6,0,0,0-6,6V58a6,6,0,0,0,6,6H41.86a6,6,0,0,0,6-6V53H53a6,6,0,0,0,6-6V6A6,6,0,0,0,53,0ZM43.89,58a2,2,0,0,1-2,2H11a2,2,0,0,1-2-2V17.06a2,2,0,0,1,2-2H41.86a2,2,0,0,1,2,2ZM55,46.94a2,2,0,0,1-2,2H47.89V17.06a6,6,0,0,0-6-6H20.11V6a2,2,0,0,1,2-2H53a2,2,0,0,1,2,2Z" transform="translate(-5)"/>
+										</svg>
+									</div>`;
         card.append(contractInfo)
         return card;
       },
@@ -465,21 +466,22 @@
                                   <h4 class="token uppercase">${token}</h4>
                               </div>
                               <div class="contract-info">
-									<h5 class="label">Hash</h5>
-									<div class="copy-row">
-										<h4 class="breakable copy hash">${hash}</h4>
-										<svg class="icon" onclick="copyToClipboard(this.parentNode)" viewBox="0 0 54 64">
-											<title>Copy</title>
-											<path d="M53,0H22.14a6,6,0,0,0-6,6v5H11a6,6,0,0,0-6,6V58a6,6,0,0,0,6,6H41.86a6,6,0,0,0,6-6V53H53a6,6,0,0,0,6-6V6A6,6,0,0,0,53,0ZM43.89,58a2,2,0,0,1-2,2H11a2,2,0,0,1-2-2V17.06a2,2,0,0,1,2-2H41.86a2,2,0,0,1,2,2ZM55,46.94a2,2,0,0,1-2,2H47.89V17.06a6,6,0,0,0-6-6H20.11V6a2,2,0,0,1,2-2H53a2,2,0,0,1,2,2Z" transform="translate(-5)"/>
-										</svg>
-									</div>
+									
 									<h5 class="label">Sender</h5>
 									<h4 class="address">${sender}</h4>
 									<h5 class="label">receiver</h5>
 									<h4 class="address">${receiver}</h4>
 									<h5 class="label">amount</h5>
-									<h4 class="uppercase">${amount} ${token}</h4>
-                              </div>`;
+                  <h4 class="uppercase">${amount} ${token}</h4>
+                  <h5 class="label">Transaction ID</h5>
+									<div class="copy-row">
+										<h6 class="breakable copy hash">${hash}</h6>
+										<svg class="icon" onclick="copyToClipboard(this.parentNode)" viewBox="0 0 54 64">
+											<title>Copy</title>
+											<path d="M53,0H22.14a6,6,0,0,0-6,6v5H11a6,6,0,0,0-6,6V58a6,6,0,0,0,6,6H41.86a6,6,0,0,0,6-6V53H53a6,6,0,0,0,6-6V6A6,6,0,0,0,53,0ZM43.89,58a2,2,0,0,1-2,2H11a2,2,0,0,1-2-2V17.06a2,2,0,0,1,2-2H41.86a2,2,0,0,1,2,2ZM55,46.94a2,2,0,0,1-2,2H47.89V17.06a6,6,0,0,0-6-6H20.11V6a2,2,0,0,1,2-2H53a2,2,0,0,1,2,2Z" transform="translate(-5)"/>
+										</svg>
+									</div>
+                  </div>`;
         return card;
       },
       tokenCreationCard(obj) {
@@ -505,21 +507,22 @@
                                   <h4 class="token uppercase">${token}</h4>
                               </div>
                               <div class="contract-info">
-							  		<h5 class="label">Hash</h5>
-							  		<div class="copy-row">
-										<h4 class="breakable copy hash">${hash}</h4>
-										<svg class="icon" onclick="copyToClipboard(this.parentNode)" viewBox="0 0 54 64">
-											<title>Copy</title>
-											<path d="M53,0H22.14a6,6,0,0,0-6,6v5H11a6,6,0,0,0-6,6V58a6,6,0,0,0,6,6H41.86a6,6,0,0,0,6-6V53H53a6,6,0,0,0,6-6V6A6,6,0,0,0,53,0ZM43.89,58a2,2,0,0,1-2,2H11a2,2,0,0,1-2-2V17.06a2,2,0,0,1,2-2H41.86a2,2,0,0,1,2,2ZM55,46.94a2,2,0,0,1-2,2H47.89V17.06a6,6,0,0,0-6-6H20.11V6a2,2,0,0,1,2-2H53a2,2,0,0,1,2,2Z" transform="translate(-5)"/>
-										</svg>
-									</div>
+							  	
 									<h5 class="label">Incorporation address</h5>
 									<h4 class="address">${incAddress}</h4>
 									<h5 class="label">token name</h5>
 									<h4 class="uppercase">${token}</h4>
 									<h5 class="label">supply</h5>
-									<h4>${supply}</h4>
-                              </div>`;
+                  <h4>${supply}</h4>
+                  <h5 class="label">Transaction ID</h5>
+							  	<div class="copy-row">
+										<h6 class="breakable copy hash">${hash}</h6>
+										<svg class="icon" onclick="copyToClipboard(this.parentNode)" viewBox="0 0 54 64">
+											<title>Copy</title>
+											<path d="M53,0H22.14a6,6,0,0,0-6,6v5H11a6,6,0,0,0-6,6V58a6,6,0,0,0,6,6H41.86a6,6,0,0,0,6-6V53H53a6,6,0,0,0,6-6V6A6,6,0,0,0,53,0ZM43.89,58a2,2,0,0,1-2,2H11a2,2,0,0,1-2-2V17.06a2,2,0,0,1,2-2H41.86a2,2,0,0,1,2,2ZM55,46.94a2,2,0,0,1-2,2H47.89V17.06a6,6,0,0,0-6-6H20.11V6a2,2,0,0,1,2-2H53a2,2,0,0,1,2,2Z" transform="translate(-5)"/>
+										</svg>
+                  </div>
+                  </div>`;
         return card;
       },
       contractTriggerCard(obj) {
@@ -542,15 +545,9 @@
                                   <h5 class="label">smart contract </h5>
                                   <h4 class="uppercase">trigger</h4>
                               </div>
-							  <h5 class="label">Hash</h5>
+							  
                               <div class="contract-info">
-							  		<div class="copy-row">
-										<h4 class="breakable copy hash">${hash}</h4>
-										<svg class="icon" onclick="copyToClipboard(this.parentNode)" viewBox="0 0 54 64">
-											<title>Copy</title>
-											<path d="M53,0H22.14a6,6,0,0,0-6,6v5H11a6,6,0,0,0-6,6V58a6,6,0,0,0,6,6H41.86a6,6,0,0,0,6-6V53H53a6,6,0,0,0,6-6V6A6,6,0,0,0,53,0ZM43.89,58a2,2,0,0,1-2,2H11a2,2,0,0,1-2-2V17.06a2,2,0,0,1,2-2H41.86a2,2,0,0,1,2,2ZM55,46.94a2,2,0,0,1-2,2H47.89V17.06a6,6,0,0,0-6-6H20.11V6a2,2,0,0,1,2-2H53a2,2,0,0,1,2,2Z" transform="translate(-5)"/>
-										</svg>
-									</div>
+                    
 									<h5 class="label">Contract name</h5>
 									<h4>${contractName}</h4>
 									<h5 class="label">contract address</h5>
@@ -558,7 +555,15 @@
 									<h5 class="label">Winning Choice</h5>
 									<h4>${winningChoice}</h4>
 									<h5 class="label">committee address</h5>
-									<h4 class="address">${committeeAddress}</h4>
+                  <h4 class="address">${committeeAddress}</h4>
+                  <h5 class="label">Transaction ID</h5>
+							  		<div class="copy-row">
+										<h6 class="breakable copy hash">${hash}</h6>
+										<svg class="icon" onclick="copyToClipboard(this.parentNode)" viewBox="0 0 54 64">
+											<title>Copy</title>
+											<path d="M53,0H22.14a6,6,0,0,0-6,6v5H11a6,6,0,0,0-6,6V58a6,6,0,0,0,6,6H41.86a6,6,0,0,0,6-6V53H53a6,6,0,0,0,6-6V6A6,6,0,0,0,53,0ZM43.89,58a2,2,0,0,1-2,2H11a2,2,0,0,1-2-2V17.06a2,2,0,0,1,2-2H41.86a2,2,0,0,1,2,2ZM55,46.94a2,2,0,0,1-2,2H47.89V17.06a6,6,0,0,0-6-6H20.11V6a2,2,0,0,1,2-2H53a2,2,0,0,1,2,2Z" transform="translate(-5)"/>
+										</svg>
+									</div>
                               </div>`;
         return card;
       },
@@ -582,14 +587,7 @@
                                   <h4 class="token uppercase">${token}</h4>
                               </div>
                               <div class="contract-info">
-							  		<h5 class="label">Hash</h5>
-									<div class="copy-row">
-										<h4 class="breakable copy hash">${hash}</h4>
-										<svg class="icon" onclick="copyToClipboard(this.parentNode)" viewBox="0 0 54 64">
-											<title>Copy</title>
-											<path d="M53,0H22.14a6,6,0,0,0-6,6v5H11a6,6,0,0,0-6,6V58a6,6,0,0,0,6,6H41.86a6,6,0,0,0,6-6V53H53a6,6,0,0,0,6-6V6A6,6,0,0,0,53,0ZM43.89,58a2,2,0,0,1-2,2H11a2,2,0,0,1-2-2V17.06a2,2,0,0,1,2-2H41.86a2,2,0,0,1,2,2ZM55,46.94a2,2,0,0,1-2,2H47.89V17.06a6,6,0,0,0-6-6H20.11V6a2,2,0,0,1,2-2H53a2,2,0,0,1,2,2Z" transform="translate(-5)"/>
-										</svg>
-									</div>
+							  		
                                   <h5 class="label">Contract name</h5>
                                   <h4>${contractName}</h4>
                                   <h5 class="label">Contract address</h5>
@@ -602,6 +600,14 @@
                                   <h4 class="capitalise">${expiration}</h4>
                                   <h5 class="label">participation amount</h5>
                                   <h4 class="uppercase">${participationFees} ${token}</h4>
+                                  <h5 class="label">Transaction ID</h5>
+                                  <div class="copy-row">
+                                    <h6 class="breakable copy hash">${hash}</h6>
+                                    <svg class="icon" onclick="copyToClipboard(this.parentNode)" viewBox="0 0 54 64">
+                                      <title>Copy</title>
+                                      <path d="M53,0H22.14a6,6,0,0,0-6,6v5H11a6,6,0,0,0-6,6V58a6,6,0,0,0,6,6H41.86a6,6,0,0,0,6-6V53H53a6,6,0,0,0,6-6V6A6,6,0,0,0,53,0ZM43.89,58a2,2,0,0,1-2,2H11a2,2,0,0,1-2-2V17.06a2,2,0,0,1,2-2H41.86a2,2,0,0,1,2,2ZM55,46.94a2,2,0,0,1-2,2H47.89V17.06a6,6,0,0,0-6-6H20.11V6a2,2,0,0,1,2-2H53a2,2,0,0,1,2,2Z" transform="translate(-5)"/>
+                                    </svg>
+                                  </div>
                               </div>`;
         return card;
       },
@@ -1657,8 +1663,8 @@
           var contractSplit = splitContractNameAddress(text, text.lastIndexOf('-'));
 
           render("contract_page", contract = {
-            name: contractSplit.name,
-            address: contractSplit.address
+            name: contractSplit,
+            address: contractSplit[1]
           })
           appState = {
             page: "contract_page",
