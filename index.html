@@ -8,7 +8,7 @@
 	<link rel="stylesheet" href="css/main.css" />
 </head>
 
-<body data-theme="dark">
+<body data-theme="light">
 	<h5 id="textCopied" class="hide">
 		Copied
 	</h5>
@@ -19,6 +19,26 @@
 		</svg>
 		<h4>Loading</h4>
 	</div>
+	<div class="page hide" id="search_page">
+		<header class="flex">
+			<h1 class="other-font">Search</h1>
+			<svg id="close_search_btn" class="icon" viewBox="0 0 64 64">
+				<title>close</title>
+				<line x1="64" y1="0" x2="0" y2="64" />
+				<line x1="64" y1="64" x2="0" y2="0" />
+			</svg>
+		</header>
+		<label id="secondary_search" class="input">
+			<svg class="icon" viewBox="0 0 64 64">
+				<title>search icon</title>
+				<circle cx="25.34" cy="25.34" r="24.84" />
+				<line x1="63.65" y1="63.65" x2="42.91" y2="42.91" />
+			</svg>
+			<input id='main_search_field' autocomplete="off" type="search"
+				placeholder="block, transactions, address, token or contract">
+			<ul id="suggestions"></ul>
+		</label>
+	</div>
 	<header id="page_header" class="flex margin">
 		<svg class="icon" onclick="history.back()" viewBox="0 0 64 64">
 			<title>back_arrow</title>
@@ -26,7 +46,30 @@
 			<line x1="20" y1="32" x2="64" y2="32" />
 		</svg>
 		<h3 id="page_title"></h3>
-		<svg id="secondary_search_btn" class="icon margin-left-auto hover" viewBox="0 0 64 64">
+		<label class="toggle" style="margin-left: auto" title="Change theme">
+			<input type="checkbox" name="theme toggle" id="theme_toggle">
+			<div class="switch">
+				<svg class="circle" viewBox="0 0 64 64">
+					<title>dark theme</title>
+					<path
+						d="M48.25,45.45A27.26,27.26,0,0,1,20.82,18.37,26.75,26.75,0,0,1,27.47.71a31.71,31.71,0,0,0-27,31.2,31.8,31.8,0,0,0,32,31.59A32,32,0,0,0,63.12,41.12,27.59,27.59,0,0,1,48.25,45.45Z"
+						transform="translate(0 0)" />
+				</svg>
+				<svg class="circle" viewBox="0 0 64 64">
+					<title>light theme</title>
+					<circle cx="32" cy="32" r="13.9" />
+					<line x1="32" y1="6.86" x2="32" />
+					<line x1="32" y1="64" x2="32" y2="57.14" />
+					<line x1="57.14" y1="32" x2="64" y2="32" />
+					<line y1="32" x2="6.86" y2="32" />
+					<line x1="49.78" y1="14.22" x2="54.63" y2="9.37" />
+					<line x1="9.37" y1="54.63" x2="14.22" y2="49.78" />
+					<line x1="49.78" y1="49.78" x2="54.63" y2="54.63" />
+					<line x1="9.37" y1="9.37" x2="14.22" y2="14.22" />
+				</svg>
+			</div>
+		</label>
+		<svg id="secondary_search_btn" class="icon hover" viewBox="0 0 64 64">
 			<title>
 				search for block, transactions, address, token or contract
 			</title>
@@ -70,32 +113,11 @@
                       </svg>
                       <h4>RanchiMall</h4>
                   </div>
-                  <label class="toggle" style="margin-left: auto" title="Change theme">
-                      <input type="checkbox" name="theme toggle" id="theme_toggle">
-                      <div class="switch">
-                          <svg class="circle" viewBox="0 0 64 64">
-                              <title>dark theme</title>
-                              <path d="M48.25,45.45A27.26,27.26,0,0,1,20.82,18.37,26.75,26.75,0,0,1,27.47.71a31.71,31.71,0,0,0-27,31.2,31.8,31.8,0,0,0,32,31.59A32,32,0,0,0,63.12,41.12,27.59,27.59,0,0,1,48.25,45.45Z" transform="translate(0 0)"/>
-                          </svg>
-                          <svg class="circle" viewBox="0 0 64 64">
-                              <title>light theme</title>
-                              <circle cx="32" cy="32" r="13.9"/>
-                              <line x1="32" y1="6.86" x2="32"/>
-                              <line x1="32" y1="64" x2="32" y2="57.14"/>
-                              <line x1="57.14" y1="32" x2="64" y2="32"/>
-                              <line y1="32" x2="6.86" y2="32"/>
-                              <line x1="49.78" y1="14.22" x2="54.63" y2="9.37"/>
-                              <line x1="9.37" y1="54.63" x2="14.22" y2="49.78"/>
-                              <line x1="49.78" y1="49.78" x2="54.63" y2="54.63"/>
-                              <line x1="9.37" y1="9.37" x2="14.22" y2="14.22"/>
-                          </svg>
-                      </div>
-                  </label>
               </header>
               <div id="main_search">
                   <h2 class="other-font">FLO SCOUT</h2>
                   <h4>Search for<br>block, transaction, address,<br>token and contract</h4>
-                  <label id="primary_search" class="input" onclick="render('search_page')">
+                  <label id="primary_search" class="input">
                       <svg class="icon" viewBox="0 0 64 64">
                           <title>search icon</title>
                           <circle cx="25.34" cy="25.34" r="24.84"/>
@@ -266,16 +288,7 @@
 				page.classList.add("page");
 				page.id = "search_page";
 				page.innerHTML = `
-				<h1 class="other-font">Search</h1>
-				<label id="secondary_search" class="input">
-					<svg class="icon" viewBox="0 0 64 64">
-						<title>search icon</title>
-						<circle cx="25.34" cy="25.34" r="24.84"/>
-						<line x1="63.65" y1="63.65" x2="42.91" y2="42.91"/>
-					</svg>
-					<input id='main_search_field' autocomplete="off" type="search" placeholder="block, transactions, address, token or contract" required>
-					<ul id="suggestions"></ul>
-				</label>
+				
 				`
 				return page;
 			},
@@ -627,8 +640,7 @@
 		const pageTitle = document.getElementById("page_title"),
 			pageContainer = document.getElementById("page_container"),
 			pageHeader = document.getElementById("page_header");
-		let currentPage = "homepage",
-			prevField = "";
+		let prevField = "";
 
 		function removePage() {
 			if (pageContainer.firstElementChild)
@@ -643,10 +655,12 @@
 			return str.replace(/ /g, "-");
 		}
 
-		let appState = {
-			page: "homepage",
-			thisField: null,
-		};
+		function showPage(page){
+			document.getElementById(page).classList.remove('hide')
+		}
+		function hidePage(page){
+			document.getElementById(page).classList.add('hide')
+		}
 
 		window.onpopstate = (e) => {
 			if (e.state !== null) {
@@ -761,50 +775,12 @@
 				pageTitle.textContent = "block";
 				loading()
 			}
-			if (pageId === "search_page") {
-				pageTitle.textContent = "";
-				pageHeader.querySelector('#secondary_search_btn').classList.add("hide-completely");
-				pageContainer.append(create.searchPage());
-				document.getElementById("main_search_field").addEventListener("keydown", function (e) {
-					if (e.key === 'Enter') {
-						processNavbarSearch();
-					}
-				});
-				loading()
-			} else pageHeader.querySelector('#secondary_search_btn').classList.remove("hide-completely");
 
 			if (pageId === "homepage") {
 				pageHeader.classList.add("hide-completely");
 				let [data, latestTxs, latestBlocks] = await Promise.all([getBannerData(), getLatestTxs(), getAllBlocks(6)])
 				pageContainer.append(create.homepage(data));
 				loading();
-
-				let themeToggler = document.getElementById("theme_toggle"),
-					body = document.querySelector("body");
-				if (localStorage.theme === "dark") {
-					nightlight();
-					themeToggler.checked = true;
-				} else {
-					daylight();
-					themeToggler.checked = false;
-				}
-
-				function daylight() {
-					body.setAttribute("data-theme", "light");
-				}
-
-				function nightlight() {
-					body.setAttribute("data-theme", "dark");
-				}
-				themeToggler.addEventListener("change", () => {
-					if (themeToggler.checked) {
-						nightlight();
-						localStorage.setItem("theme", "dark");
-					} else {
-						daylight();
-						localStorage.setItem("theme", "light");
-					}
-				});
 
 				// getAllSuggestions()
 
@@ -848,8 +824,6 @@
 				pageTitle.textContent = "transaction";
 				loading()
 			}
-
-			currentPage = pageId;
 			prevField = field;
 			if (pageContainer.querySelector('.tab.active'))
 				pageContainer.querySelector('.tab.active').click()
@@ -857,25 +831,57 @@
 		}
 
 		window.addEventListener("load", async () => {
+			document.getElementById("main_search_field").addEventListener("keydown", function (e) {
+				if (e.key === 'Enter') {
+					processNavbarSearch();
+				}
+			});
+			let themeToggler = document.getElementById("theme_toggle"),
+				body = document.querySelector("body");
+			if (localStorage.theme === "dark") {
+				nightlight();
+				themeToggler.checked = true;
+			} else {
+				daylight();
+				themeToggler.checked = false;
+			}
 
-			//debugger;
+			function daylight() {
+				body.setAttribute("data-theme", "light");
+			}
+
+			function nightlight() {
+				body.setAttribute("data-theme", "dark");
+			}
+			themeToggler.addEventListener("change", () => {
+				if (themeToggler.checked) {
+					nightlight();
+					localStorage.setItem("theme", "dark");
+				} else {
+					daylight();
+					localStorage.setItem("theme", "light");
+				}
+			});
+
+			appState = {
+				page: "homepage",
+				thisField: null,
+			};
+			history.pushState(appState, null, '');
 
 			var hashvalue = location.hash.slice(1);
 			if (hashvalue == '') {
+
 				render("homepage");
 				getAllSuggestions();
 			}
 			else {
 				await getAllSuggestions();
-				appState = {
-					page: "homepage",
-					thisField: null,
-				};
-				history.pushState(appState, null, '');
 				categoriseText(hashvalue);
 			}
 
 			this.addEventListener("click", (e) => {
+
 				if (e.target.closest(".address") && prevField !== e.target.textContent) {
 					render("address_page", e.target.textContent)
 					appState = {
@@ -914,7 +920,7 @@
 						name: e.target.textContent.split(' ').join('-'),
 						address: e.target.dataset.contractAddress
 					}
-					render("contract_page", { name: contract.name, address: contract.address })
+					render("contract_page", contract)
 					appState = {
 						page: "contract_page",
 						thisField: { name: contract.name, address: contract.address },
@@ -925,12 +931,10 @@
 					showTab(e.target.closest(".tab"));
 				}
 				if (e.target.closest("#secondary_search_btn") || e.target.closest("#primary_search")) {
-					render("search_page")
-					appState = {
-						page: "search_page",
-						thisField: null,
-					}
-					history.pushState(appState, null, null)
+					showPage('search_page')
+				}
+				if (e.target.closest("#close_search_btn")) {
+					hidePage('search_page')
 				}
 				if (e.target.closest('.suggestion')) {
 					let searchBox = document.getElementById('main_search_field');
@@ -956,7 +960,7 @@
 			});
 		});
 
-		window.addEventListener('keyup', e => {
+		window.addEventListener('input', e => {
 			if (e.target.closest('.suggestion') && e.key === 'Enter') {
 				processNavbarSearch()
 			}
@@ -1639,9 +1643,6 @@
 		}
 
 		function categoriseText(text, metadata = null) {
-
-			//debugger;
-
 			if (!isNaN(text) && isInt(Number(text))) {
 				//console.log('this is a block number');
 				render("block_page", text);
@@ -1670,13 +1671,11 @@
 					history.pushState(appState, null, `#${text}`)
 				} else if (window.ranchimallflo.smartcontractnameaddresslist.includes(text)) {
 
-					//console.log('data entered is a smart contract name');
-					//debugger;
 					var contractSplit = splitContractNameAddress(text, text.lastIndexOf('-'));
 
 					render("contract_page", contract = {
-						name: contractSplit,
-						address: contractSplit[1]
+						name: contractSplit.name,
+						address: contractSplit.address
 					})
 					appState = {
 						page: "contract_page",
@@ -1749,7 +1748,6 @@
 			//console.log(ranchimallflo.smartcontractlist.length);
 			for (var i = 0; i < ranchimallflo.smartcontractlist.length; i++) {
 				//ranchimallflo.smartcontractnamelist.append(ranchimallflo.smartcontractlist[i]['contractName']);
-				//debugger;
 				data.push(`${ranchimallflo.smartcontractlist[i]['contractName']}-${ranchimallflo.smartcontractlist[i]['contractAddress']}`);
 				ranchimallflo.smartcontractnamelist.push(ranchimallflo.smartcontractlist[i]['contractName']);
 				ranchimallflo.smartcontractnameaddresslist.push(`${ranchimallflo.smartcontractlist[i]['contractName']}-${ranchimallflo.smartcontractlist[i]['contractAddress']}`);

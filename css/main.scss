@@ -234,14 +234,34 @@ ul{
     min-height: 100vh;
 }
 #search_page{
-    h1{
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 20;
+    margin: 0;
+    background: rgba(var(--foreground), 1);
+    padding: 1.5rem 8vw;
+    header{
+        align-items: center;
+        justify-content: space-between;
         margin-top: 2rem;
+        .icon{
+            margin: 0;
+            cursor: pointer;
+            height: 2.2rem;
+            width: 2.2rem;
+            padding: 0.6rem;
+        }
+    }
+    h1{
         font-weight: 500;
         font-size: 3rem;
     }
     .input{
         animation: fade 0.4s;
-        input:valid ~ #suggestions{
+        input:focus ~ #suggestions{
             opacity: 1;
             pointer-events: all;
             transform: none;
@@ -799,6 +819,9 @@ p{
     #homepage{
         margin: 0 12vw;
     }
+    #search_page{
+        padding: 1.5rem 12vw;
+    }
     .input{
         width: 40% !important;
     }
@@ -812,6 +835,9 @@ p{
     }
     #homepage{
         margin: 0 24vw;
+    }
+    #search_page{
+        padding: 1.5rem 24vw;
     }
     #first_section{
         min-height: auto;
