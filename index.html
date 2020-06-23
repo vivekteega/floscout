@@ -132,7 +132,7 @@
                   <h2 class="token">${topToken}</h2>
               </div>
               <div class="highlight-item">
-                  <h4 class="label">Latest transactions</h4>
+                  <h4 class="label">Total transactions</h4>
                   <h2>${totalTransactions}</h2>
               </div>
               <div class="highlight-item">
@@ -772,10 +772,11 @@
 			}
 
 			if (pageId === "block_page") {
-				let blockInfo = await getBlockInfo(field);
+				let [blockInfo, blockTransactions] = await Promise.all([getBlockInfo(field), getBlockTransactions(field)])
 				pageContainer.append(create.blockPage(blockInfo));
 				pageTitle.textContent = "block";
 				loading()
+				appendTransactions('block_transaction_container', blockTransactions)
 			}
 
 			if (pageId === "homepage") {
@@ -1323,7 +1324,6 @@
 			const response = await fetch(`${tokenapiUrl}/api/v1.0/getTokenTransactions?token=` + tokenName),
 				transactions = await response.json()
 			return transactions.transactions
-
 		}
 
 		async function getBlockInfo(thisBlock) {
@@ -1339,6 +1339,13 @@
 				difficulty: difficulty,
 				nonce: nonce,
 			}
+		}
+
+
+		async function getBlockTransactions(thisBlock) {
+			const response = await fetch(`${tokenapiUrl}/api/v1.0/getBlockTransactions/${thisBlock}`),
+				transactions = await response.json()
+			return transactions.transactions
 		}
 
 		async function getContractInfo(contract) {
@@ -1399,28 +1406,16 @@
 								let transferType = txList[txids[i]]["parsedFloData"]["transferType"]
 								if (transferType == "token") {
 									let receiveraddress = "";
-									for (
-										let i = 0,
-										voutlist =
-											txList[txids[i]][
-											"transactionDetails"
-											]["vout"]; i < voutlist.length; i++
-									) {
-										if (
-											voutlist[i]["scriptPubKey"]["addresses"][0] !=
-											txList[txids[i]][
-											"transactionDetails"
-											]["vin"][0]["addr"]
-										) {
-											receiveraddress =
-												voutlist[i]["scriptPubKey"]["addresses"][0];
-										}
+									for (let i = 0, voutlist = txList[txids[i]]["transactionDetails"]["vout"]; i<voutlist.length; i++) {
+										if(txList[txids[i]] != undefined){
+											if (voutlist[i]["scriptPubKey"]["addresses"][0] != txList[txids[i]]["transactionDetails"]["vin"][0]["addr"]) {
+												receiveraddress = voutlist[i]["scriptPubKey"]["addresses"][0];
+											}		
+										}								
 									}
 
 									obj = Object.assign({}, obj, {
-										sender: txList[txids[i]][
-											"transactionDetails"
-										]["vin"][0]["addr"],
+										sender: txList[txids[i]]["transactionDetails"]["vin"][0]["addr"],
 										receiver: receiveraddress,
 										amount: `${
 											txList[txids[i]][
@@ -1544,7 +1539,7 @@
 						}
 
 						obj = Object.assign({}, obj, {
-							hash: txList[txids[i]]['txid'],
+							hash: txList[txids[i]]['transactionDetails']['txid'],
 							blockHeight: txList[txids[i]]['transactionDetails']['blockheight'],
 							contractName: txList[txids[i]]['parsedFloData']['contractName'],
 							contractAddress: receiver,
