@@ -657,9 +657,11 @@
 
 		function showPage(page){
 			document.getElementById(page).classList.remove('hide')
+			document.getElementById('page_container').classList.add('hide-completely')
 		}
 		function hidePage(page){
 			document.getElementById(page).classList.add('hide')
+			document.getElementById('page_container').classList.remove('hide-completely')
 		}
 
 		window.onpopstate = (e) => {
