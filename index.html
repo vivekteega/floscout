@@ -858,10 +858,12 @@
 
     window.addEventListener("load", async () => {
 
+      debugger;
+
       var hashvalue = location.hash.slice(1);
       if (hashvalue == '') {
         render("homepage");
-        history.pushState(appState, null, '');
+        //history.pushState(appState, null, '');
         getAllSuggestions();
       }
       else {
@@ -879,12 +881,13 @@
           history.pushState(appState, null, `#${e.target.textContent}`)
         }
         if (e.target.closest(".token") && prevField !== e.target.textContent) {
-          render("token_page", e.target.textContent.toLowerCase());
+          let tokenname = e.target.textContent.toLowerCase();
+          render("token_page", tokenname);
           appState = {
             page: "token_page",
-            thisField: e.target.textContent
+            thisField: tokenname
           };
-          history.pushState(appState, null, `#${e.target.textContent}`)
+          history.pushState(appState, null, `#${tokenname}`)
         }
         if (e.target.closest(".hash") && prevField !== e.target.textContent) {
           render("transaction_page", e.target.closest(".transaction").id);
@@ -903,17 +906,21 @@
           history.pushState(appState, null, `#${e.target.textContent}`);
         }
         if (e.target.closest(".contract") && prevField !== e.target.textContent) {
-          render("contract_page", { name: replaceSpace(e.target.textContent), address: e.target.dataset.contractAddress })
+          let contract = {
+            name: e.target.textContent.split(' ').join('-'),
+            address: e.target.dataset.contractAddress
+          }
+          render("contract_page", { name: contract.name, address: contract.address })
           appState = {
             page: "contract_page",
-            thisField: { name: replaceSpace(e.target.textContent), address: e.target.dataset.contractAddress },
+            thisField: { name: contract.name, address: contract.address },
           }
-          history.pushState(appState, null, `#${e.target.textContent}`)
+          history.pushState(appState, null, `#${contract.name}-${contract.address}`)
         }
         if (e.target.closest(".tab")) {
           showTab(e.target.closest(".tab"));
         }
-        if (e.target.closest("#secondary_search_btn")) {
+        if (e.target.closest("#secondary_search_btn") || e.target.closest("#primary_search")) {
           render("search_page")
           appState = {
             page: "search_page",
@@ -1648,8 +1655,9 @@
             thisField: text,
           }
           history.pushState(appState, null, `#${text}`)
-        } else if (window.ranchimallflo.tokenlist.includes(text)) {
+        } else if (window.ranchimallflo.tokenlist.includes(text.toLowerCase())) {
           //console.log('data entered is a token name');
+          text = text.toLowerCase()
           render("token_page", text)
           appState = {
             page: "token_page",
@@ -1769,8 +1777,6 @@
     }
 
   </script>
-
-
 
   <!-- Flex search content -->
   <script>
@@ -2794,7 +2800,6 @@
       }
     }()), this);
   </script>
-
 
 </body>
 
