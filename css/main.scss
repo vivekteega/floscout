@@ -208,13 +208,14 @@ ul{
     }
 }
 .header{
-    align-items: center;
-    padding: 2em 0;
+    justify-items: center;
+    flex-direction: column;
 }
 #logo{
     display: inline-flex;
     letter-spacing: 0.1em;
     align-items: center;
+    cursor: pointer;
     h4{
         font-weight: 400;
     }
@@ -230,8 +231,11 @@ ul{
 }
 #first_section{
     display: grid;
-    grid-template-rows: auto 1fr auto;
-    min-height: 100vh;
+    grid-template-rows: 1fr auto;
+    min-height: calc(100vh - 8rem);
+}
+header.grid-2{
+    margin-top: 2rem;
 }
 #search_page{
     position: fixed;
@@ -478,6 +482,12 @@ ul{
         z-index: 2;
     }
 }
+#main_header{
+    & > .flex:first-of-type{
+        margin-top: 1.5rem;
+    }
+    height: 8rem;
+}
 #page_header{
     padding: 1rem 0;
     align-items: center;
@@ -498,7 +508,7 @@ ul{
         padding: 0.4rem 0 0.4rem 0.4rem;
     }
     #secondary_search_btn{
-        margin-left: 1rem;
+        margin-left: auto;
     }
 }
 .page{
@@ -634,9 +644,6 @@ p{
         margin-bottom: 0;
     }
 }
-#homepage{
-    margin: 0 1.5rem;
-}
 @keyframes fade{
     from{
         opacity: 0;
@@ -712,6 +719,7 @@ p{
     display: grid;
     gap: 1rem;
     grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    margin-top: 1rem;
     .card{
         margin: 0;
     }
@@ -721,9 +729,6 @@ p{
 }
 @media only screen and (min-width: 640px){
     .margin, .page{
-        margin: 0 6vw;
-    }
-    #homepage{
         margin: 0 4vw;
     }
     .input{
@@ -784,10 +789,7 @@ p{
 }
 @media only screen and (min-width: 1280px){
     .margin, .page{
-       margin: 0 16vw;
-    }
-    #homepage{
-        margin: 0 8vw;
+       margin: 0 12vw;
     }
     .input{
         width: 50% !important;
@@ -817,10 +819,7 @@ p{
         font-size: 24px;
     }
     .margin, .page{
-        margin: 0 26vw;
-    }
-    #homepage{
-        margin: 0 12vw;
+        margin: 0 16vw;
     }
     #search_page{
         padding: 1.5rem 12vw;
@@ -834,10 +833,7 @@ p{
         font-size: 24px;
     }
     .margin, .page{
-        margin: 0 32vw;
-    }
-    #homepage{
-        margin: 0 24vw;
+        margin: 0 26vw;
     }
     #search_page{
         padding: 1.5rem 24vw;

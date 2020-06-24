@@ -284,10 +284,11 @@ ul .balance:last-of-type {
 }
 
 .header {
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  padding: 2em 0;
+  justify-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 
 #logo {
@@ -298,6 +299,7 @@ ul .balance:last-of-type {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  cursor: pointer;
 }
 
 #logo h4 {
@@ -318,9 +320,13 @@ ul .balance:last-of-type {
 #first_section {
   display: -ms-grid;
   display: grid;
-  -ms-grid-rows: auto 1fr auto;
-      grid-template-rows: auto 1fr auto;
-  min-height: 100vh;
+  -ms-grid-rows: 1fr auto;
+      grid-template-rows: 1fr auto;
+  min-height: calc(100vh - 8rem);
+}
+
+header.grid-2 {
+  margin-top: 2rem;
 }
 
 #search_page {
@@ -719,6 +725,14 @@ ul .balance:last-of-type {
   z-index: 2;
 }
 
+#main_header {
+  height: 8rem;
+}
+
+#main_header > .flex:first-of-type {
+  margin-top: 1.5rem;
+}
+
 #page_header {
   padding: 1rem 0;
   -webkit-box-align: center;
@@ -747,7 +761,7 @@ ul .balance:last-of-type {
 }
 
 #page_header #secondary_search_btn {
-  margin-left: 1rem;
+  margin-left: auto;
 }
 
 .page {
@@ -932,10 +946,6 @@ p {
   margin-bottom: 0;
 }
 
-#homepage {
-  margin: 0 1.5rem;
-}
-
 @-webkit-keyframes fade {
   from {
     opacity: 0;
@@ -1061,6 +1071,7 @@ p {
   gap: 1rem;
   -ms-grid-columns: (minmax(12rem, 1fr))[auto-fill];
       grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  margin-top: 1rem;
 }
 
 #all_blocks_page .card, #top_blocks_container .card, #token_balance_container .card {
@@ -1073,9 +1084,6 @@ p {
 
 @media only screen and (min-width: 640px) {
   .margin, .page {
-    margin: 0 6vw;
-  }
-  #homepage {
     margin: 0 4vw;
   }
   .input {
@@ -1145,10 +1153,7 @@ p {
 
 @media only screen and (min-width: 1280px) {
   .margin, .page {
-    margin: 0 16vw;
-  }
-  #homepage {
-    margin: 0 8vw;
+    margin: 0 12vw;
   }
   .input {
     width: 50% !important;
@@ -1185,10 +1190,7 @@ p {
     font-size: 24px;
   }
   .margin, .page {
-    margin: 0 26vw;
-  }
-  #homepage {
-    margin: 0 12vw;
+    margin: 0 16vw;
   }
   #search_page {
     padding: 1.5rem 12vw;
@@ -1203,10 +1205,7 @@ p {
     font-size: 24px;
   }
   .margin, .page {
-    margin: 0 32vw;
-  }
-  #homepage {
-    margin: 0 24vw;
+    margin: 0 26vw;
   }
   #search_page {
     padding: 1.5rem 24vw;
