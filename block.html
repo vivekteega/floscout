@@ -4,10 +4,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
     <link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
 </head>
 
 <!-- Set urls for token and flo Apis -->
@@ -413,6 +409,178 @@
         box-sizing: border-box;
     }
 
+    .maincontainer {
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .container {
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+
+        /* media query shiz */
+        max-width: 1140px;
+    }
+
+    .navbar {
+        background-color: #fff;
+        position: relative;
+        z-index: 100;
+        padding: 8 16 8 16;
+
+        display: flex;
+        align-items: center;
+        padding: .5rem 1rem;
+        box-shadow: 0 0 30px 0 rgba(21, 53, 80, .12);
+
+        /* media query shiz 992*/
+        flex-flow: row nowrap;
+        -webkit-box-pack: start;
+        -ms-flex-pack: start;
+        justify-content: flex-start;
+    }
+
+    .navbar_container {
+        display: flex;
+        flex-wrap: nowrap;
+        -webkit-box-align: center;
+        align-items: center;
+        -webkit-box-pack: justify;
+        justify-content: space-between;
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+
+        /* media query shiz 1200*/
+        flex-wrap: nowrap;
+        max-width: 1140px;
+    }
+
+    .navbar_brand {
+        color: #fff;
+        margin-left: 0;
+        display: inline-block;
+        padding-top: .3125rem;
+        padding-bottom: .3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar_container a {
+        text-decoration: none;
+        background-color: transparent;
+        -webkit-text-decoration-skip: objects;
+    }
+
+    .navbar_logo {
+        max-height: 28px;
+        width: auto;
+    }
+
+    .navbarmenu_search {
+        flex-grow: 1;
+        -webkit-box-align: center;
+        align-items: center;
+
+        /* media query shiz */
+        display: flex !important;
+        flex-basis: auto;
+    }
+
+    .searchform_container {
+
+        /* media query shiz 1200*/
+        height: 57px;
+        margin-bottom: -8px;
+        margin-top: -8px;
+
+        /* media query inherited shiz 992*/
+        display: flex !important;
+        box-sizing: border-box;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        text-align: left;
+    }
+
+    .search_form {
+        height: 100%;
+        display: flex;
+        flex-flow: row wrap;
+        -webkit-box-align: center;
+        align-items: center;
+
+        /* media query shiz */
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    .searchBar {
+        text-overflow: ellipsis !important;
+        width: 280px;
+        background: #f5f6fa;
+        border-color: #f5f6fa;
+        color: #828ba0;
+        font-size: 14px;
+        height: 50px;
+        padding-left: 38px;
+        padding-right: 8px;
+        position: relative;
+        z-index: 1;
+        overflow: visible;
+        margin: 0;
+        font-family: inherit;
+        box-sizing: border-box;
+        -webkit-appearance: textfield;
+        -webkit-rtl-ordering: logical;
+        cursor: text;
+        letter-spacing: normal;
+        word-spacing: normal;
+        text-transform: none;
+        text-indent: 0px;
+        text-shadow: none;
+        text-rendering: auto;
+        -webkit-box-direction: normal;
+        -webkit-tap-highlight-color: transparent;
+        text-align: center;
+        vertical-align: center;
+
+    }
+
+    .search_button {
+        border-radius: 2px;
+        border: none;
+        display: inline-block;
+        line-height: 1.2;
+        padding: 10px 16px;
+        text-align: center;
+        text-decoration: none;
+        transition: all .4s ease-in-out;
+        white-space: nowrap;
+
+        color: #20b760;
+        background-color: transparent;
+        background-image: none;
+
+        position: absolute;
+        width: 1px;
+        text-transform: none;
+
+        /* media query shiz*/
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
+    }
 
     .main {
         flex-grow: 1;
@@ -426,6 +594,7 @@
         background-color: #5c34a2;
         box-shadow: 0 5px 40px -5px rgba(0, 0, 0, .25);
         margin-top: -3rem;
+        margin-bottom: 3rem;
         overflow: hidden;
         padding: 0;
         position: relative;
@@ -553,13 +722,6 @@
         position: relative;
     }
 
-    .row {
-        display: flex;
-        flex-wrap: wrap;
-        margin-right: -15px;
-        margin-left: -15px;
-    }
-
     .footer-logo-row {
         margin-bottom: 30px;
     }
@@ -571,90 +733,29 @@
         max-width: 100%;
     }
 
-    /* Navbar css */
 
-    .navbar {
+    /*Card Blocks Section */
+
+    .card {
         background-color: #fff;
-        position: relative;
-        z-index: 100;
-        padding: 8 16 8 16;
-
-        display: flex;
-        align-items: center;
-        padding: .5rem 1rem;
-        box-shadow: 0 0 30px 0 rgba(21, 53, 80, .12);
-
-        /* media query shiz 992*/
-        flex-flow: row nowrap;
-        -webkit-box-pack: start;
-        -ms-flex-pack: start;
-        justify-content: flex-start;
-    }
-
-    .navbar_container {
-        display: flex;
-        flex-wrap: nowrap;
-        -webkit-box-align: center;
-        align-items: center;
-        -webkit-box-pack: justify;
-        justify-content: space-between;
-        width: 100%;
-        padding-right: 15px;
-        padding-left: 15px;
-        margin-right: auto;
-        margin-left: auto;
-
-        /* media query shiz 1200*/
-        flex-wrap: nowrap;
-        max-width: 1140px;
-    }
-
-    .navbar_container a {
-        text-decoration: none;
-        background-color: transparent;
-        -webkit-text-decoration-skip: objects;
-    }
-
-    .navbar-search-parent {
-        position: absolute;
-        left: 65%;
-    }
-
-    .navbar-search {
-        position: relative;
-        background-color: #E6E6FA;
-        height: 52px;
-        width: 350px;
-        border-style: none;
-    }
-
-    .searchbutton {
-        position: absolute;
-        height: 100%;
-        width: 50px;
-        background-color: #E6E6FA;
-        border-style: none;
-    }
-
-    .searchbox-parent {
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        left: 50px;
-    }
-
-    /* Navbar css ends */
-
-
-
-    /*Card Blocks Section CSS */
-
-    .blocks-card {
         border-radius: 10px;
         border: none;
+        box-shadow: 0 0 30px 0 rgba(202, 199, 226, .5);
         margin-bottom: 50px;
         position: relative;
     }
+
+
+    /*Card Blocks Section */
+
+    .container1 {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: center;
+        padding: 30px 15px 30px;
+    }
+
 
     .box1class {
         width: 240px;
@@ -685,27 +786,6 @@
 
     }
 
-    .box1class a {
-        font-weight: 700;
-        font-size: 12px;
-        color: #5c34a2;
-        text-decoration: none;
-        background-color: transparent;
-    }
-
-    /*Card Blocks Section CSS ends*/
-
-    .container1 {
-        display: flex;
-        flex-direction: column;
-        flex-wrap: nowrap;
-        justify-content: center;
-        padding: 30px 15px 30px;
-    }
-
-
-
-
 
     @keyframes slidein {
         from {
@@ -718,19 +798,16 @@
     }
 
 
-
+    .box1class a {
+        font-weight: 700;
+        font-size: 12px;
+        color: #5c34a2;
+        text-decoration: none;
+        background-color: transparent;
+    }
 
 
     /* Card Transaction section */
-    .card {
-        background-color: #fff;
-        border-radius: 10px;
-        border: none;
-        box-shadow: 0 0 30px 0 rgba(202, 199, 226, .5);
-        margin-bottom: 50px;
-        position: relative;
-    }
-
     .box2class {
         width: 195px;
         height: 122px;
@@ -774,6 +851,190 @@
     }
 
 
+    .color-block-token-creation {
+        background-color: rgba(239, 211, 96, .1);
+        border-bottom: 1px solid #FB0112;
+        border-right: 1px solid #FB0112;
+        border-top: 1px solid #FB0112;
+        color: #FB0112;
+
+        height: 132px;
+        width: 172px;
+
+        margin-top: -1px;
+        margin-left: -4px;
+        border-radius: 4px 0px 0px 4px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: center;
+    }
+
+    .color-block-token-transfer {
+        background-color: rgba(239, 154, 96, .1);
+        border-bottom: 1px solid #ef9a60;
+        border-right: 1px solid #ef9a60;
+        border-top: 1px solid #ef9a60;
+        color: #ef9a60;
+
+        height: 132px;
+        width: 172px;
+
+        margin-top: -1px;
+        margin-left: -4px;
+        border-radius: 4px 0px 0px 4px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: center;
+    }
+
+    .color-block-contract-creation {
+        background-color: rgba(71, 134, 255, .1);
+        border-bottom: 1px solid #4786ff;
+        border-right: 1px solid #4786ff;
+        border-top: 1px solid #4786ff;
+        color: #4786ff;
+
+        height: 190px;
+        width: 172px;
+
+        margin-top: -1px;
+        margin-left: -4px;
+        border-radius: 4px 0px 0px 4px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: center;
+    }
+
+
+    .color-block-contract-transfer {
+        background-color: rgba(255, 0, 0, 0.1);
+        border-bottom: 1px solid #ff0000d7;
+        border-right: 1px solid #ff0000d7;
+        border-top: 1px solid #ff0000d7;
+        color: #ff0000d7;
+
+        height: 132px;
+        width: 172px;
+
+        margin-top: -1px;
+        margin-left: -4px;
+        border-radius: 4px 0px 0px 4px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: center;
+    }
+
+    .color-block-contract-trigger {
+        background-color: hsla(120, 95%, 39%, 0.1);
+        border-bottom: 1px solid #05c205d7;
+        border-right: 1px solid #05c205d7;
+        border-top: 1px solid #05c205d7;
+        color: #05c205d7;
+
+        height: 132px;
+        width: 172px;
+
+        margin-top: -1px;
+        margin-left: -4px;
+        border-radius: 4px 0px 0px 4px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: center;
+    }
+
+    .transactions {
+        width: auto;
+        border-radius: 4px;
+        border: 1px solid #dee2e6;
+
+        margin-right: 15px;
+        margin-left: 15px;
+        margin-top: 9px;
+        margin-bottom: 9px;
+        flex-shrink: 0;
+
+        color: #a5b2cf;
+
+        font-size: 12px;
+        line-height: 1.4rem;
+    }
+
+    .transactions a {
+        color: #5c34a2;
+        text-decoration: none;
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        font-size: 12px;
+        line-height: 1.4rem;
+        cursor: pointer;
+    }
+
+    .token-transfer {
+        height: 132px;
+        border-left: 4px solid #ef9a60;
+    }
+
+    .token-creation {
+        height: 132px;
+        border-left: 4px solid #FB0112;
+    }
+
+    .transaction {
+        height: 100px;
+        border-left: 4px solid #4786ff;
+    }
+
+
+    .color-block-transaction {
+        background-color: rgba(71, 134, 255, .1);
+        border-bottom: 1px solid #4786ff;
+        border-right: 1px solid #4786ff;
+        border-top: 1px solid #4786ff;
+        color: #4786ff;
+
+        height: 100px;
+        width: 172px;
+
+        margin-top: -1px;
+        margin-left: -4px;
+        border-radius: 4px 0px 0px 4px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: center;
+    }
+
+    .transactions-content {
+        width: 100%;
+        max-width: 66.66666667%;
+        padding: 16px 0px 16px 15px;
+
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+        flex: 0 0 66.66666667%;
+    }
+
 
     .transactions-token-transfer-content {
         width: 100%;
@@ -786,6 +1047,24 @@
         flex: 0 0 66.66666667%;
     }
 
+
+    .blockinfo {
+        text-align: right;
+        padding: 16px 15px 16px 15px;
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center
+    }
+
+    .container2 {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: center;
+        padding: 30px 15px 30px;
+    }
 
     .viewall {
         align-items: center;
@@ -813,6 +1092,10 @@
         margin-bottom: 2rem;
         margin-block-start: 0.83em;
         margin-block-end: 0.83em;
+    }
+
+    .transactions-sub-container {
+        display: flex;
     }
 
     /*Footer Section*/
@@ -880,12 +1163,37 @@
         max-width: 16.66666667%;
     }
 
+    .mr-4 {
+        margin-right: 1.5rem !important;
+    }
+
+    .row {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        margin-right: -15px;
+        margin-left: -15px;
+    }
+
+    dl {
+        margin-bottom: 12px;
+        margin-top: 0;
+        margin-bottom: 1rem;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        display: block;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+    }
+
     .card-tabs {
         -webkit-box-align: center;
         -ms-flex-align: center;
         align-items: center;
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
         border-bottom: 1px solid #e2e5ec;
         display: -webkit-box;
         display: -ms-flexbox;
@@ -894,241 +1202,408 @@
         -ms-flex-pack: start;
         justify-content: flex-start;
         overflow: hidden;
+        padding: 0 25px;
     }
 
-    .hideExpansionCard {
-        display: none;
+    .card-tabs:hover {
+        background-color: rgba(91, 56, 159, 0.2);
+        color: rgba(91, 56, 159, 1);
+        transition-duration: 1s;
     }
 
-    .expansionCard {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        flex-wrap: nowrap;
+    .disable-tab-hover:hover {
+        background-color: #fff;
+        color: #fff;
+        transition-duration: 0s;
     }
 
-    ::placeholder {
-        opacity: 0.7;
-        text-align: center;
+    .card-tab-active {
+        background-color: rgba(91, 56, 159, 1);
+        color: #fff;
+        border-radius: 10px 0px 0px 0px;
     }
 
-    input:focus {
-        outline: none;
+    .navbar_brand {
+        color: #fff;
+        margin-left: 0;
+        display: inline-block;
+        padding-top: .3125rem;
+        padding-bottom: .3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
     }
 
-    /* Card Transaction section */
-    .container2 {
-        display: flex;
-        flex-direction: column;
-        flex-wrap: nowrap;
-        justify-content: center;
-        padding: 30px 15px 30px;
-    }
-
-    .transactions {
+    .navbar_logo {
+        max-height: 28px;
         width: auto;
-        border-radius: 4px;
-        border: 1px solid #dee2e6;
-
-        margin-right: 15px;
-        margin-left: 15px;
-        margin-top: 9px;
-        margin-bottom: 9px;
-        flex-shrink: 0;
-
-        color: #a5b2cf;
-
-        font-size: 12px;
-        line-height: 1.4rem;
     }
 
-    .transactions a {
-        color: #5c34a2;
-        text-decoration: none;
-        overflow: hidden;
+    .navbarmenu_search {
+        flex-grow: 1;
+        -webkit-box-align: center;
+        align-items: center;
 
-        text-overflow: ellipsis;
+        /* media query shiz */
+        display: flex !important;
+        flex-basis: auto;
+    }
+
+    .searchform_container {
+
+        /* media query shiz 1200*/
+        height: 57px;
+        margin-bottom: -8px;
+        margin-top: -8px;
+
+        /* media query inherited shiz 992*/
+        display: flex !important;
+        box-sizing: border-box;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        text-align: left;
+    }
+
+    .search_form {
+        height: 100%;
+        display: flex;
+        flex-flow: row wrap;
+        -webkit-box-align: center;
+        align-items: center;
+
+        /* media query shiz */
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    .searchBar {
+        text-overflow: ellipsis !important;
+        width: 280px;
+        background: #f5f6fa;
+        border-color: #f5f6fa;
+        color: #828ba0;
+        font-size: 14px;
+        height: 50px;
+        padding-left: 38px;
+        padding-right: 8px;
+        position: relative;
+        z-index: 1;
+        overflow: visible;
+        margin: 0;
+        font-family: inherit;
+        box-sizing: border-box;
+        -webkit-appearance: textfield;
+        -webkit-rtl-ordering: logical;
+        cursor: text;
+        letter-spacing: normal;
+        word-spacing: normal;
+        text-transform: none;
+        text-indent: 0px;
+        text-shadow: none;
+        text-rendering: auto;
+        -webkit-box-direction: normal;
+        -webkit-tap-highlight-color: transparent;
+        text-align: center;
+        vertical-align: center;
+
+    }
+
+    .search_button {
+        border-radius: 2px;
+        border: none;
+        display: inline-block;
+        line-height: 1.2;
+        padding: 10px 16px;
+        text-align: center;
+        text-decoration: none;
+        transition: all .4s ease-in-out;
         white-space: nowrap;
 
-        font-size: 12px;
-        line-height: 1.4rem;
-        cursor: pointer;
+        color: #20b760;
+        background-color: transparent;
+        background-image: none;
+
+        position: absolute;
+        width: 1px;
+        text-transform: none;
+
+        /* media query shiz*/
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
     }
 
-    .token-creation {
-        height: 132px;
-        border-left: 4px solid #FB0112;
-    }
 
-    .token-transfer {
-        height: 132px;
-        border-left: 4px solid #ef9a60;
-    }
-
-    .contract-creation {
-        height: 190px;
-        border-left: 4px solid #4786ff;
-    }
-
-    .contract-transfer {
-        height: 132px;
-        border-left: 4px solid #ff0000d7;
-    }
-
-    .contract-trigger {
-        height: 132px;
-        border-left: 4px solid #05c205d7;
-    }
-
-    .transactions-sub-container {
-        display: flex;
-    }
-
-    .color-block-token-creation {
-        background-color: rgba(239, 211, 96, .1);
-        border-bottom: 1px solid #FB0112;
-        border-right: 1px solid #FB0112;
-        border-top: 1px solid #FB0112;
-        color: #FB0112;
-
-        height: 132px;
-        width: 172px;
-
-        margin-top: -1px;
-        margin-left: -4px;
-        border-radius: 4px 0px 0px 4px;
+    .navbar {
+        background-color: #fff;
+        position: relative;
+        z-index: 100;
+        padding: 8 16 8 16;
 
         display: flex;
-        flex-direction: column;
         align-items: center;
-        flex-shrink: 0;
-        justify-content: center;
+        padding: .5rem 1rem;
+        box-shadow: 0 0 30px 0 rgba(21, 53, 80, .12);
+
+        /* media query shiz 992*/
+        flex-flow: row nowrap;
+        -webkit-box-pack: start;
+        -ms-flex-pack: start;
+        justify-content: flex-start;
     }
 
-    .color-block-token-transfer {
-        background-color: rgba(239, 154, 96, .1);
-        border-bottom: 1px solid #ef9a60;
-        border-right: 1px solid #ef9a60;
-        border-top: 1px solid #ef9a60;
-        color: #ef9a60;
-
-        height: 132px;
-        width: 172px;
-
-        margin-top: -1px;
-        margin-left: -4px;
-        border-radius: 4px 0px 0px 4px;
-
+    .navbar_container {
         display: flex;
-        flex-direction: column;
+        flex-wrap: nowrap;
+        -webkit-box-align: center;
         align-items: center;
-        flex-shrink: 0;
-        justify-content: center;
-    }
-
-    .color-block-contract-creation {
-        background-color: rgba(71, 134, 255, .1);
-        border-bottom: 1px solid #4786ff;
-        border-right: 1px solid #4786ff;
-        border-top: 1px solid #4786ff;
-        color: #4786ff;
-
-        height: 190px;
-        width: 172px;
-
-        margin-top: -1px;
-        margin-left: -4px;
-        border-radius: 4px 0px 0px 4px;
-
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        flex-shrink: 0;
-        justify-content: center;
-    }
-
-
-
-    .color-block-contract-transfer {
-        background-color: rgba(255, 0, 0, 0.1);
-        border-bottom: 1px solid #ff0000d7;
-        border-right: 1px solid #ff0000d7;
-        border-top: 1px solid #ff0000d7;
-        color: #ff0000d7;
-
-        height: 132px;
-        width: 172px;
-
-        margin-top: -1px;
-        margin-left: -4px;
-        border-radius: 4px 0px 0px 4px;
-
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        flex-shrink: 0;
-        justify-content: center;
-    }
-
-    .color-block-contract-trigger {
-        background-color: hsla(120, 95%, 39%, 0.1);
-        border-bottom: 1px solid #05c205d7;
-        border-right: 1px solid #05c205d7;
-        border-top: 1px solid #05c205d7;
-        color: #05c205d7;
-
-        height: 132px;
-        width: 172px;
-
-        margin-top: -1px;
-        margin-left: -4px;
-        border-radius: 4px 0px 0px 4px;
-
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        flex-shrink: 0;
-        justify-content: center;
-    }
-
-    .transactions-content {
+        -webkit-box-pack: justify;
+        justify-content: space-between;
         width: 100%;
-        max-width: 66.66666667%;
-        padding: 16px 0px 16px 15px;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
 
-        display: flex;
-        align-items: flex-start;
-        flex-direction: column;
+        /* media query shiz 1200*/
+        flex-wrap: nowrap;
+        max-width: 1140px;
+    }
+
+    .navbar_container a {
+        text-decoration: none;
+        background-color: transparent;
+        -webkit-text-decoration-skip: objects;
+    }
+
+    .navbar-search-parent {
+        position: absolute;
+        left: 65%;
+    }
+
+    .navbar-search {
+        position: relative;
+        background-color: #E6E6FA;
+        height: 52px;
+        width: 350px;
+        border-style: none;
+    }
+
+    .searchbutton {
+        position: absolute;
+        height: 100%;
+        width: 50px;
+        background-color: #E6E6FA;
+        border-style: none;
+    }
+
+    .searchbox-parent {
+        position: absolute;
+        height: 100%;
+        width: 300px;
+        left: 50px;
+    }
+
+    .column1 {
+        padding-right: 0 !important;
+        -webkit-box-flex: 0;
         flex: 0 0 66.66666667%;
+        max-width: 66.66666667%;
+        position: relative;
+        width: 100%;
+        min-height: 1px;
+        padding-left: 15px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        text-align: left;
+        font-size: 12px;
     }
 
-    .tokeninfo-placard-master {
+    .column1-card {
+        background-color: #fff;
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 0 30px 0 rgba(202, 199, 226, .5);
+        margin-bottom: 50px;
+        margin-right: 50px;
+        position: relative;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-clip: border-box;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        text-align: left;
+    }
+
+    .card-body {
+        padding: 30px;
+        -webkit-box-flex: 1;
+        flex: 1 1 auto;
+    }
+
+    .card-title {
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 1.2rem;
+        margin-bottom: 2rem;
+        margin-top: 0;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        display: block;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+    }
+
+    .transaction-details-address {
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 36px;
+        margin-top: 0;
+        margin-bottom: .5rem;
+        display: block;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        -webkit-box-direction: normal;
+        color: #5c34a2;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .tx-detail-column-name {
+        position: relative;
         width: 100%;
-        height: 20px;
+        min-height: 1px;
+        padding-right: 15px;
+        padding-left: 15px;
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 25%;
+        flex: 0 0 25%;
+        max-width: 25%;
+        color: #828ba0 !important;
+        text-align: left;
+    }
+
+    .tx-detail-column-data {
+        display: block;
+        margin-inline-start: 40px;
+        margin: 0;
+        position: relative;
+        width: 100%;
+        min-height: 1px;
+        padding-right: 15px;
+        padding-left: 15px;
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 75%;
+        flex: 0 0 75%;
+        max-width: 75%;
+        text-align: left;
+    }
+
+
+    .column2 {
+        position: relative;
+        width: 100%;
+        min-height: 1px;
+        padding-right: 15px;
+        flex: 0 0 33.33333333%;
+        max-width: 33.33333333%;
+        -webkit-box-flex: 0;
+        display: flex !important;
+        -webkit-box-orient: vertical !important;
+        -webkit-box-direction: normal !important;
+        -ms-flex-direction: column !important;
+        flex-direction: column !important;
+        padding-left: 0 !important;
+    }
+
+    .column2-card1 {
+        flex-grow: 1 !important;
+        background-clip: border-box;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        position: relative;
+        box-shadow: 0 0 30px 0 rgba(202, 199, 226, 0.5);
+        margin-bottom: 50px;
+        border-radius: 10px;
+        border: none;
+        background-color: #5c34a2;
+        color: #fff;
+    }
+
+    .column2-card1-body {
+        color: #fff;
+        flex: 1 1 auto;
+        -webkit-box-flex: 1;
+        padding: 30px;
+        justify-content: space-between;
+        flex-direction: column;
+        -webkit-box-pack: justify;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+    }
+
+    .bottom-card-master {
+        display: block;
+        text-align: center;
+        min-width: 630px;
+        max-width: 1140px;
+        margin: auto;
+    }
+
+    .bottom-card-tabs {
+        height: 70px;
+        margin: auto;
+        border-bottom: 1px solid #e2e5ec;
+        background-color: #fff;
+        border-radius: 10px 10px 0px 0px;
         display: flex;
         flex-direction: row;
     }
 
-    .on-off-colon {
-        font-size: 14px;
-        font-weight: bold;
-        padding: 0px 5px 0px 5px;
-    }
-
-    .blockinfo {
-        text-align: right;
-        padding: 16px 15px 16px 15px;
-        width: 100%;
-
+    .bottom-card-tab {
         display: flex;
-        flex-direction: column;
-        justify-content: center
+        font-size: 14px;
+        font-weight: 400;
+        height: 70px;
+        text-align: center;
+        border-radius: 10px 0px 0px 0px;
     }
 
-    /* Card transaction section CSS ends */
+    .quick_block_details {
+        color: #828ba0 !important;
+        -webkit-box-pack: start !important;
+        justify-content: flex-start !important;
+        -webkit-box-orient: horizontal !important;
+        -webkit-box-direction: normal !important;
+        flex-direction: row !important;
+        display: flex !important;
+    }
 
-    .banner-media-query {
-        display: none;
+    .tx-details-name-extra-padding {
+        padding-left: 28px;
+    }
+
+    .tx-details-data-extra-padding {}
+
+    .inputadd-outputadd-span {
+        display: block !important;
+        margin-bottom: .5rem !important;
     }
 
     .tx-detail-seperator {
@@ -1146,6 +1621,39 @@
         margin-top: 20px;
     }
 
+    .contract-transfer {
+        height: 132px;
+        border-left: 4px solid #ff0000d7;
+    }
+
+    .token-creation {
+        height: 132px;
+        border-left: 4px solid #FB0112;
+    }
+
+    .token-transfer {
+        height: 132px;
+        border-left: 4px solid #ef9a60;
+    }
+
+    .contract-trigger {
+        height: 132px;
+        border-left: 4px solid #05c205d7;
+    }
+
+    .contract-creation {
+        height: 190px;
+        border-left: 4px solid #4786ff;
+    }
+
+    .tokeninfo-placard-master {
+        width: 100%;
+        height: 20px;
+        display: flex;
+        flex-direction: row;
+    }
+
+
 
     @media only screen and (max-width: 600px) {
 
@@ -1160,6 +1668,7 @@
             justify-content: space-between;
             flex-direction: column;
         }
+
 
         /* Navbar css */
 
@@ -1198,6 +1707,7 @@
         .box1class {
             width: 300px;
         }
+
 
         /*Card Blocks Section CSS ends*/
 
@@ -1450,23 +1960,6 @@
             flex-direction: column;
             flex: 0 0 100%;
         }
-
-
-    }
-
-    /* iPads (portrait) ----------- */
-    @media only screen and (min-device-width : 700px) and (max-device-width : 1024px) {
-        /* Styles */
-
-        .box1class {
-            width: 200px;
-        }
-
-        .navbar-search-parent {
-            position: absolute;
-            left: initial;
-            right: 5%;
-        }
     }
 </style>
 
@@ -1546,205 +2039,136 @@
                     </div>
                 </div>
 
+
+
             </div>
         </div>
     </nav>
 
-    <div class="dashboard-banner-container">
-        <div class="dashboard-container">
-            <div class='dashboard-banner'>
-                <div class='dashboard-banner-network-graph'></div>
-                <div class='dashboard-banner-network-plain-container'>
-                    <div class="dashboard-banner-network-stats">
-                        <div class="dashboard-banner-network-stats-item">
-                            <span class="dashboard-banner-network-stats-label">
-                                Top Token </span>
-                            <!--<span class="dashboard-banner-network-stats-value">40 seconds</span>-->
-                            <span id='toptoken' class="dashboard-banner-network-stats-value"><a id="toptoken-value" data-valuetype=''
-                                    class="dashboard-banner-network-stats-value"
-                                    style="text-decoration:none; cursor:pointer"></a></span>
-                        </div>
-                        <div class="dashboard-banner-network-stats-item">
-                            <span class="dashboard-banner-network-stats-label">
-                                Top Contract </span>
-                            <span id='topcontract' data-valuetype=''  class="dashboard-banner-network-stats-value"><a
-                                    id="topcontract-value" class="dashboard-banner-network-stats-value"
-                                    style="text-decoration:none; cursor:pointer"></a></span>
-                        </div>
-                        <div class="dashboard-banner-network-stats-item">
-                            <span class="dashboard-banner-network-stats-label">
-                                Total Transactions </span>
-                            <span id="totaltransactions" class="dashboard-banner-network-stats-value"></span>
-                        </div>
-                        <div class="dashboard-banner-network-stats-item">
-                            <span class="dashboard-banner-network-stats-label">
-                                Wallet addresses </span>
-                            <span id='walletaddresses' class="dashboard-banner-network-stats-value"
-                                data-selector="address-count"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="media-query-banner" class="banner-media-query">
-        <div style="display: flex; flex-direction:row; height: 50%; align-content: center; justify-content: center">
-            <div style="width: 50%; align-content: center; justify-content: center">
-                <div class="dashboard-banner-network-stats-item">
-                    <span class="dashboard-banner-network-stats-label">
-                        Top Token </span>
-                    <span id="toptoken-media" class="dashboard-banner-network-stats-value"><a id="toptoken-media-value"
-                            class="dashboard-banner-network-stats-value"
-                            style="text-decoration:none; cursor:pointer"></a></span>
-                </div>
-            </div>
-            <div style="width: 50%; align-content: center; justify-content: center">
-                <div class="dashboard-banner-network-stats-item">
-                    <span class="dashboard-banner-network-stats-label">
-                        Top Contract </span>
-                    <span id="topcontract-media" class="dashboard-banner-network-stats-value"><a
-                            id="topcontract-media-value" class="dashboard-banner-network-stats-value"
-                            style="text-decoration:none; cursor:pointer"></a></span>
-                </div>
-            </div>
-        </div>
-        <div style="display: flex; flex-direction:row; height: 50%;">
-            <div style="width: 50%; align-content: center; justify-content: center">
-                <div class="dashboard-banner-network-stats-item">
-                    <span class="dashboard-banner-network-stats-label">
-                        Total Transactions </span>
-                    <span id="totaltransactions-media" class="dashboard-banner-network-stats-value"><a
-                            class="dashboard-banner-network-stats-value"
-                            style="text-decoration:none; cursor:pointer"></a></span>
-                </div>
-            </div>
-            <div style="width: 50%; align-content: center; justify-content: center">
-                <div class="dashboard-banner-network-stats-item">
-                    <span class="dashboard-banner-network-stats-label">
-                        Wallet Addresses </span>
-                    <span id="walletaddresses-media" class="dashboard-banner-network-stats-value"><a
-                            class="dashboard-banner-network-stats-value"
-                            style="text-decoration:none; cursor:pointer"></a></span>
-                </div>
-            </div>
-        </div>
-
-    </div>
 
     <!-- Main is the whole section between header and footer-->
     <div id='main'
-        style="-webkit-box-flex: 1; flex-grow: 1; background-color: #fbfafc; padding-top: 3rem!important; padding-bottom: 3rem!important; display: block; -webkit-box-direction: normal;">
-        <section style="max-width: 1140px; width: 100%; margin-right: auto; margin-left: auto; display:block;">
+        style="-webkit-box-flex: 1; flex-grow: 1; background-color: #fbfafc; padding-top: 3rem!important; display: block; -webkit-box-direction: normal;">
+        <section
+            style="max-width: 1140px; width: 100%; padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto; display:block;">
+            <!-- Block details, validators and block rewards -->
+            <section style="display: block; width: 100%">
+                <div id="row" style="display: flex; flex-wrap: wrap; margin-right: -15px; margin-left: -15px;">
+                    <!-- Block details -->
+                    <div
+                        style=" -webkit-box-flex: 0; flex: 0 0 100%; max-width: 100%; position: relative; width: 100%; min-height: 1px; padding-left: 15px; padding-right: 15px;font-weight: 400; line-height: 1.5; color: #212529; text-align: left; font-size: 12px;">
+                        <div
+                            style="background-color: #fff; border-radius: 10px; border: none; box-shadow: 0 0 30px 0 rgba(202,199,226,.5); margin-bottom: 50px; position: relative; display: flex; -webkit-box-orient: vertical; -webkit-box-direction: normal; flex-direction: column; min-width: 0; word-wrap: break-word; background-clip: border-box; font-size: 12px; font-weight: 400; line-height: 1.5; color: #212529; text-align: left;">
+                            <div style="padding: 30px; -webkit-box-flex: 1; flex: 1 1 auto;">
+                                <h1 id='blockdetailsheader' 
+                                    style="font-size: 18px; font-weight: 400; line-height: 1.2rem; margin-bottom: 2rem; margin-top: 0; margin-block-start: 1em; margin-block-end: 1em; display: block; margin-inline-start: 0px; margin-inline-end: 0px;">
+                                    Block Details </h1>
 
-            <!-- Blocks card -->
-            <div class="card">
-                <div class="container1">
-                    <div style="display:flex;justify-content: space-between;">
-                        <h2
-                            style="text-align:left; font-size:18px; font-weight:400;  margin-left:14px; line-height:1.2rem; margin-bottom:2rem; display:block; margin-block-start:0.83em; margin-block-end:0.83em;">
-                            Latest Blocks</h2>
-                        <a class="viewall" href="viewall_block.html">View All Blocks</a>
-                    </div>
+                                <div id='loadingBlockDetails' style="height: 100px; width:100%; position: relative; ">
+                                    <div style="margin: 0;
+                                                        position: absolute;
+                                                        top: 50%;
+                                                        right: 50%;
+                                                        -ms-transform: translateY(-50%);
+                                                        transform: translateY(-50%);"><i class="fa fa-spinner fa-spin"
+                                            style="font-size:24px"></i></div>
+                                </div>
 
-                    <div id="blocks-card" style="display:flex; flex-direction:row; padding-top: 9px" class='cards'>
-
-                        <div id='loadingBlocks' style="height: 100px; width:100%; position: relative; ">
-                            <div style="margin: 0;
-                                        position: absolute;
-                                        top: 50%;
-                                        right: 50%;
-                                        -ms-transform: translateY(-50%);
-                                        transform: translateY(-50%);"><i class="fa fa-spinner fa-spin"
-                                    style="font-size:24px"></i></div>
+                                <div id='blockdetailsdisplay' style='display:none;'>
+                                    <h3 id="blockHeight"
+                                        style="font-size: 14px; font-weight: 600; line-height: 36px; margin-top: 0; margin-bottom: .5rem; display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; -webkit-box-direction: normal;">
+                                        Block Height: </h3>
+                                    <div id="quick_block_details"
+                                        style="color:#828ba0 !important; -webkit-box-pack: start !important; justify-content: flex-start !important; -webkit-box-orient: horizontal !important;
+                                    -webkit-box-direction: normal !important; flex-direction: row !important; display: flex !important; ">
+                                        <span id="numberOfTx" class="mr-4"> </span>
+                                        <span id="numberOfBytes" class="mr-4"> </span>
+                                    </div>
+                                    <hr
+                                        style="display: block; unicode-bidi: isolate; margin-block-start: 0.5em; margin-block-end: 0.5em; margin-inline-start: auto; margin-inline-end: auto; box-sizing: content-box; height: 0; overflow: visible; border-bottom: none; border-left: none; border-right: none; border-top: 1px solid #f5f6fa; margin: 30px 0;">
+                                    <dl class="row">
+                                        <dt
+                                            style="position: relative; width: 100%; min-height: 1px; padding-right: 15px; padding-left: 15px; -webkit-box-flex: 0; -ms-flex: 0 0 25%; flex: 0 0 25%; max-width: 25%; color: #828ba0 !important;">
+                                            Hash</dt>
+                                        <dd
+                                            style="display: block; margin-inline-start: 40px; margin:0; position: relative; width: 100%; min-height: 1px; padding-right: 15px; padding-left: 15px;-webkit-box-flex: 0; -ms-flex: 0 0 75%; flex: 0 0 75%; max-width: 75%;">
+                                            <a id="blockHashValue"
+                                                style="cursor: pointer; background-color: transparent; color: #5c34a2; text-decoration: none;"></a>
+                                        </dd>
+                                    </dl>
+                                    <dl class="row">
+                                        <dt
+                                            style="position: relative; width: 100%; min-height: 1px; padding-right: 15px; padding-left: 15px; -webkit-box-flex: 0; -ms-flex: 0 0 25%; flex: 0 0 25%; max-width: 25%; color: #828ba0 !important;">
+                                            Difficulty</dt>
+                                        <dd
+                                            style="display: block; margin-inline-start: 40px; margin:0; position: relative; width: 100%; min-height: 1px; padding-right: 15px; padding-left: 15px;-webkit-box-flex: 0; -ms-flex: 0 0 75%; flex: 0 0 75%; max-width: 75%;">
+                                            <a id="blockDifficultyValue"
+                                                style="background-color:transparent; color: inherit; text-decoration: none;"></a>
+                                        </dd>
+                                    </dl>
+                                    <dl class="row">
+                                        <dt
+                                            style="position: relative; width: 100%; min-height: 1px; padding-right: 15px; padding-left: 15px; -webkit-box-flex: 0; -ms-flex: 0 0 25%; flex: 0 0 25%; max-width: 25%; color: #828ba0 !important;">
+                                            Nonce</dt>
+                                        <dd
+                                            style="display: block; margin-inline-start: 40px; margin:0; position: relative; width: 100%; min-height: 1px; padding-right: 15px; padding-left: 15px;-webkit-box-flex: 0; -ms-flex: 0 0 75%; flex: 0 0 75%; max-width: 75%;">
+                                            <a id="blockNonceValue"
+                                                style="background-color:transparent; color: inherit; text-decoration: none;"></a>
+                                        </dd>
+                                    </dl>
+                                    <dl class="row">
+                                        <dt
+                                            style="position: relative; width: 100%; min-height: 1px; padding-right: 15px; padding-left: 15px; -webkit-box-flex: 0; -ms-flex: 0 0 25%; flex: 0 0 25%; max-width: 25%; color: #828ba0 !important;">
+                                            Reward</dt>
+                                        <dd
+                                            style="display: block; margin-inline-start: 40px; margin:0; position: relative; width: 100%; min-height: 1px; padding-right: 15px; padding-left: 15px;-webkit-box-flex: 0; -ms-flex: 0 0 75%; flex: 0 0 75%; max-width: 75%;">
+                                            <a id="blockReward"
+                                                style="background-color:transparent; color: inherit; text-decoration: none;"></a>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
                         </div>
-
-                        <!--
-                            <div class='box1class'>
-                                <div style="flex:0 0 30px;text-align: left"><a href="#"
-                                        style="padding:16px 16px 0px 16px; margin-bottom:12px;">345678</a>
-                                </div>
-                                <div
-                                    style="background: #f6f7f9;flex:1 1 100px;text-align: left; padding:12.8px 16px 12.8px 16px">
-                                    <div>1 Transaction</div>
-                                </div>
-                            </div>
-                            <div class='box1class'>
-                                <div style="flex:0 0 30px;text-align: left"><a href="#"
-                                        style="padding:16px 16px 0px 16px; margin-bottom:12px;">345677</a>
-                                </div>
-                                <div
-                                    style="background: #f6f7f9;flex:1 1 100px;text-align: left; padding:12.8px 16px 12.8px 16px">
-                                    <div>3 Transaction</div>
-                                </div>
-                            </div>
-                            <div class='box1class'>
-                                <div style="flex:0 0 30px;text-align: left"><a href="#"
-                                        style="padding:16px 16px 0px 16px; margin-bottom:12px;">345676</a>
-                                </div>
-                                <div
-                                    style="background: #f6f7f9;flex:1 1 100px;text-align: left; padding:12.8px 16px 12.8px 16px">
-                                    <div>0 Transaction</div>
-                                </div>
-                            </div>
-                            <div class='box1class'>
-                                <div style="flex:0 0 30px;text-align: left"><a href="#"
-                                        style="padding:16px 16px 0px 16px; margin-bottom:12px;">345675</a>
-                                </div>
-                                <div
-                                    style="background: #f6f7f9;flex:1 1 100px;text-align: left; padding:12.8px 16px 12.8px 16px">
-                                    <div>2 Transaction</div>
-                                </div>
-                            </div>
-                            -->
-
                     </div>
-
-                    <!-- Expansion card -->
-                    <div id='expansion_card_master' style="position:relative">
-
-                    </div>
-
                 </div>
-            </div>
+            </section>
 
             <div class="card">
                 <div id="transactions-card" class="container2">
                     <div style="display:flex;justify-content: space-between;">
                         <h2 style="    text-align: left;
-                            font-size: 18px;
-                            font-weight: 400;
-                            margin-left: 14px;
-                            line-height: 1.2rem;
-                            margin-bottom: 2rem;
-                            display: block;
-                            margin-block-start: 0.83em;
-                            margin-block-end: 0.83em;">
-                            Latest Transactions</h2>
-                        <a class="viewall" href="viewall_tx.html">View All Transactions</a>
+                                font-size: 18px;
+                                font-weight: 400;
+                                margin-left: 14px;
+                                line-height: 1.2rem;
+                                margin-bottom: 2rem;
+                                display: block;
+                                margin-block-start: 0.83em;
+                                margin-block-end: 0.83em;">
+                            Block Transactions</h2>
                     </div>
 
                     <div id='loadingTransactions' style="height: 100px; width:100%; position: relative; ">
                         <div style="margin: 0;
-                                    position: absolute;
-                                    top: 50%;
-                                    right: 50%;
-                                    -ms-transform: translateY(-50%);
-                                    transform: translateY(-50%);"><i class="fa fa-spinner fa-spin"
+                                            position: absolute;
+                                            top: 50%;
+                                            right: 50%;
+                                            -ms-transform: translateY(-50%);
+                                            transform: translateY(-50%);"><i class="fa fa-spinner fa-spin"
                                 style="font-size:24px"></i></div>
                     </div>
 
                 </div>
             </div>
-
-
         </section>
-
     </div>
+
 
     <div style="width:100%;background:rgb(60,34,106)">
 
         <div class="footer" style="width:80%;margin:auto">
+
+
 
             <div class="navbar-flexbox">
                 <div style="position:relative">
@@ -1800,6 +2224,7 @@
     <script>
 
         // THIS TAG CONTAINS CODE REQUIRED FOR THE NAVBAR TO FUNCTION
+
         function returnHexaNumber(s) {
             var regExp = /^[-+]?[0-9A-Fa-f]+\.?[0-9A-Fa-f]*?$/;
             return (typeof s === 'string' && regExp.test(s));
@@ -1854,7 +2279,7 @@
                 }
                 else if (text.length == 64 && returnHexaNumber(text)) {
 
-                    fetch(`${window.tokenapiUrl}/api/v1.0/categoriseString/` + text)
+                    fetch(`${tokenapiUrl}/api/v1.0/categoriseString/` + text)
                         .then(function (response) {
                             return response.json();
                         })
@@ -1968,14 +2393,14 @@
             });
         }
 
-
         // First load
         //console.log('Cursor right before the first fetch call');
 
         // loading of global variables which contains name of all tokens and smart contracts
 
+
         var data = [];
-        fetch(`${window.tokenapiUrl}/api/v1.0/getTokenSmartContractList`)
+        fetch(`${tokenapiUrl}/api/v1.0/getTokenSmartContractList`)
             .then(function (response) {
                 return response.json();
             })
@@ -2025,7 +2450,6 @@
                 suggestions.addEventListener("click", accept_suggestion, true);
 
                 function show_results() {
-                    debugger;
 
                     var value = this.value;
                     var results = index.search(value, 25);
@@ -2065,7 +2489,6 @@
                 }
 
                 function accept_autocomplete(event) {
-                    debugger;
 
                     if ((event || window.event).keyCode === 13) {
 
@@ -2074,7 +2497,6 @@
                 }
 
                 function accept_suggestion(event) {
-                    debugger;
 
                     var target = (event || window.event).target;
 
@@ -2098,68 +2520,8 @@
 
     </script>
 
+
     <script>
-
-        function appendTransactionDetailsToExpansion(item, msg) {
-            // find the html code which is extention for this transaction's block and
-            // append the transaction to it
-            //console.log('expander-block-' + item['transactionDetails']['blockheight']);
-            cardExtention = 'expansion_card_block_' + item['transactionDetails']['blockheight'];
-
-            if (cardExtention != null) {
-                if (msg == 'tokenTransfer') {
-                    createTokenTransfer(item, cardExtention);
-                }
-                else if (msg == 'contractTransfer') {
-                    createContractTransfer(item, cardExtention);
-                }
-                else if (msg == 'tokenIncorporation') {
-                    createTokenCreation(item, cardExtention);
-                }
-                else if (msg == 'contractIncorporation') {
-                    createContractCreation(item, cardExtention);
-                }
-                else if (msg == 'contractTrigger') {
-                    createContractTrigger(item, cardExtention);
-                }
-            }
-        }
-
-        function createSmallBlock(blockDetails) {
-            // Create block element
-            var parentDiv = document.createElement('div');
-            parentDiv.setAttribute('class', ' blocks-card [ is-collapsed ] ')
-            var primaryCard = document.createElement("div");
-            primaryCard.setAttribute('class', 'box1class class="card__inner [ js-expander ]"');
-            primaryCard.setAttribute('id', 'blocks-card-' + blockDetails['height']);
-            var flexbox = document.createElement("div");
-            flexbox.setAttribute('style', 'flex:0 0 30px;text-align: left');
-            var blockno = document.createElement('a');
-            blockno.setAttribute('style', 'padding:16px 16px 0px 16px; margin-bottom:12px;');
-            blockno.setAttribute('href', 'block.html?height=' + blockDetails['height']);
-            blockno.innerText = blockDetails['height'];
-            flexbox.appendChild(blockno);
-            var transactionBox = document.createElement("div");
-            transactionBox.setAttribute('style', 'background: #f6f7f9;flex:1 1 100px;text-align: left; padding:12.8px 16px 12.8px 16px');
-            transactionNumber = document.createElement("div");
-            if (blockDetails['tx'].length == 1) {
-                transactionNumber.innerText = '1 Transaction';
-            }
-            else {
-                transactionNumber.innerText = blockDetails['tx'].length + ' Transactions';
-            }
-            transactionBox.appendChild(transactionNumber);
-            primaryCard.appendChild(flexbox);
-            primaryCard.appendChild(transactionBox);
-            parentDiv.append(primaryCard);
-            blocksCard = document.getElementById('blocks-card');
-            blocksCard.insertBefore(parentDiv, blocksCard.firstChild);
-            blockExpansionCard = document.createElement('div');
-            blockExpansionCard.setAttribute('id', 'expansion_card_block_' + blockDetails['height']);
-            blockExpansionCard.setAttribute('class', 'hideExpansionCard');
-            // create expansion cards for each block
-            document.getElementById('expansion_card_master').append(blockExpansionCard);
-        }
 
         // 4. Create token creation box (with media queries)
         function createTokenCreation(transactionDetails, parentid) {
@@ -2820,174 +3182,197 @@
 
         }
 
-        // only 2 API calls will give you the details of the last 4 blocks thoroughly and latest transactions
-        //blocks
-
-        fetch(`${window.tokenapiUrl}/api/v1.0/getSystemData`)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (jsonData) {
-
-                if (jsonData['result'] == 'ok') {
-                    document.getElementById('toptoken-value').innerText = 'RMT';
-                    document.getElementById('toptoken-value').href = 'token.html?name=rmt';
-                    document.getElementById('toptoken-media-value').innerText = 'RMT';
-                    document.getElementById('toptoken-media-value').href = 'token.html?name=rmt';
-
-                    document.getElementById('topcontract-value').innerText = 'india-elections-2019';
-                    document.getElementById('topcontract-value').href = 'contract.html?name=india-elections-2019&address=F7osBpjDDV1mSSnMNrLudEQQ3cwDJ2dPR1';
-                    document.getElementById('topcontract-media-value').innerText = 'india-elections-2019';
-                    document.getElementById('topcontract-media-value').href = 'contract.html?name=india-elections-2019&address=F7osBpjDDV1mSSnMNrLudEQQ3cwDJ2dPR1';
-
-                    document.getElementById('totaltransactions').innerText = jsonData['systemTransactionCount'];
-                    document.getElementById('totaltransactions-media').innerText = jsonData['systemTransactionCount'];
-
-                    document.getElementById('walletaddresses').innerText = jsonData['systemAddressCount'];
-                    document.getElementById('walletaddresses-media').innerText = jsonData['systemAddressCount'];
 
 
-                }
+        // process block after fetching the data
+        function processBlock(responseJson) {
+            // update block height on card
+            document.getElementById('blockHeight').innerText = 'Block Height: ' + responseJson['blockDetails']['height'];
+            // update number of transactions 
+            document.getElementById('numberOfTx').innerText = responseJson['blockDetails']['tx'].length + " Transactions";
+            // update number of bytes 
+            document.getElementById('numberOfBytes').innerText = parseInt(responseJson['blockDetails']['bits'], 10) * 0.125 + ' bytes';
+            // update time of block
+            //document.getElementById('blockCreationTime').innerText = new Date(responseJson['blockDetails']['time']);
+            // update block hash 
+            document.getElementById('blockHashValue').innerText = responseJson['blockDetails']['hash'];
+            document.getElementById('blockHashValue').setAttribute('href', `block.html?blockhash=${responseJson['blockDetails']['hash']}`)
+            // update difficulty value
+            document.getElementById('blockDifficultyValue').innerText = responseJson['blockDetails']['difficulty'];
+            // update nonce value 
+            document.getElementById('blockNonceValue').innerText = responseJson['blockDetails']['nonce'];
+            // update reward value 
+            document.getElementById('blockReward').innerText = responseJson['blockDetails']['reward'] + " FLO";
 
-            });
 
-        fetch(`${window.tokenapiUrl}/api/v1.0/getLatestBlockDetails`)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (jsonData) {
+            // Iterate through each transaction, get details, append to tx card 
+            responseJson['blockDetails']['tx'].forEach(function (transactionHash) {
 
+                fetch(`${tokenapiUrl}/api/v1.0/getTransactionDetails/` + transactionHash)
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (item) {
+                        //console.log('result of the api call is ');
+                        //console.log(item);
 
-                // remove the loading icons 
-                document.getElementById('loadingBlocks').remove();
+                        // remove the loading icons 
+                        if (document.getElementById('loadingTransactions')) {
+                            document.getElementById('loadingTransactions').remove();
+                        }
 
-                window.floscout = {};
-                window.floscout.latestBlocks = [];
-                window.floscout.latestBlocksExpansion = {};
+                        if (item['result'] == 'ok') {
 
-                // Iterate through each block, pass the data to create transaction function
-                Object.keys(jsonData["latestBlocks"]).forEach(function (blockDetails, index) {
-
-                    createSmallBlock(jsonData["latestBlocks"][blockDetails]);
-
-                    window.floscout.latestBlocks.push(jsonData["latestBlocks"][blockDetails]['height']);
-                    window.floscout.latestBlocksExpansion["expansion_card_block_" + jsonData["latestBlocks"][blockDetails]['height']] = 'closed';
-
-                    // assign onclick listener to the block
-                    document.getElementById('blocks-card-' + jsonData["latestBlocks"][blockDetails]['height']).addEventListener("click", function () {
-
-                        //console.log('ID of this element is ' + this.id);
-
-                        if (window.screen.width > 600) {
-
-                            // first check if the clicked block expansion is open. If it is close it
-                            if (window.floscout.latestBlocksExpansion["expansion_card_block_" + jsonData["latestBlocks"][blockDetails]['height']] == 'open') {
-                                var expansion_card = document.getElementById("expansion_card_block_" + jsonData["latestBlocks"][blockDetails]['height']);
-                                expansion_card.classList.remove('expansionCard');
-                                expansion_card.classList.add('hideExpansionCard');
-                                window.floscout.latestBlocksExpansion["expansion_card_block_" + jsonData["latestBlocks"][blockDetails]['height']] = 'closed';
-
-                                // put every block card's opacity to 1 
-                                window.floscout.latestBlocks.forEach(function (block, index) {
-
-                                    // change opacity 
-                                    document.getElementById("blocks-card-" + block).style.opacity = 1;
-
-                                });
-
+                            if (item["parsedFloData"]["type"] == "transfer") {
+                                if (item["parsedFloData"]["transferType"] == "token") {
+                                    //console.log('Just found a token transfer type of transaction');
+                                    createTokenTransfer(item, 'transactions-card');
+                                }
+                                else if (item["parsedFloData"]["transferType"] == "smartContract") {
+                                    //console.log('Just found a smart contract transfer type of transaction');
+                                    createContractTransfer(item, 'transactions-card');
+                                }
                             }
-                            else {
+                            else if (item["parsedFloData"]["type"] == 'tokenIncorporation') {
+                                //console.log('Just found a token incorporation type of transaction');
 
-                                // close every other block and change
-                                window.floscout.latestBlocks.forEach(function (block, index) {
-
-                                    // change opacity 
-                                    if ("expansion_card_block_" + block != "expansion_card_block_" + jsonData["latestBlocks"][blockDetails]['height']) {
-
-                                        if (window.floscout.latestBlocksExpansion["expansion_card_block_" + block] == 'open') {
-                                            var block_expansion_card = document.getElementById("expansion_card_block_" + block);
-                                            block_expansion_card.classList.remove('expansionCard');
-                                            block_expansion_card.classList.add('hideExpansionCard');
-                                            window.floscout.latestBlocksExpansion["expansion_card_block_" + block] = 'closed';
-                                        };
-
-
-                                        document.getElementById("blocks-card-" + block).style.opacity = 0.2;
-
-                                    }
-                                });
-
-                                // open current card
-                                var expansion_card = document.getElementById("expansion_card_block_" + jsonData["latestBlocks"][blockDetails]['height']);
-                                expansion_card.classList.remove('hideExpansionCard');
-                                expansion_card.classList.add('expansionCard');
-                                window.floscout.latestBlocksExpansion["expansion_card_block_" + jsonData["latestBlocks"][blockDetails]['height']] = 'open';
-                                document.getElementById("blocks-card-" + jsonData["latestBlocks"][blockDetails]['height']).style.opacity = 1;
-
+                                createTokenCreation(item, 'transactions-card');
+                            }
+                            else if (item["parsedFloData"]["type"] == 'smartContractIncorporation') {
+                                //console.log('just found a smart contract incorporation type of transaction');
+                                createContractCreation(item, 'transactions-card');
+                            }
+                            else if (item["parsedFloData"]["type"] == 'smartContractPays') {
+                                //console.log('Just found a smart contract pays type of transaction');
+                                createContractTrigger(item, 'transactions-card');
                             }
 
                         }
+
+
 
 
                     });
-                });
 
-                //runScriptJs();
             });
 
-        //transaction
-        fetch(`${window.tokenapiUrl}/api/v1.0/getLatestTransactionDetails?numberOfLatestBlocks=4`)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (jsonData) {
+            if (document.getElementById('transactions-card').children.length == 1) {
+                createNoTransaction('heehaw', 'transactions-card')
+            }
+        }
 
-                // remove the loading icons 
-                document.getElementById('loadingTransactions').remove();
 
-                // All the functions to make visual changes on the UI
-                ////console.log('get latestb transactions, before loop');
-                // Iterate through each transaction pass the data to create transaction function
-                ////console.log(typeof jsonData['latestTransactions']);
-                Object.keys(jsonData["latestTransactions"]).forEach(function (item, index) {
+        // fetch the blocknumber 
+        function getQueryVariable(variable) {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] == variable) {
+                    return pair[1];
+                }
+            }
+        }
 
-                    if (jsonData["latestTransactions"][item]["parsedFloData"]["transactionType"] == "transfer") {
-                        if (jsonData["latestTransactions"][item]["parsedFloData"]["transferType"] == "token") {
-                            //console.log('Just found a token transfer type of transaction');
-                            createTokenTransfer(jsonData["latestTransactions"][item], 'transactions-card');
-                            appendTransactionDetailsToExpansion(jsonData["latestTransactions"][item], 'tokenTransfer');
+        var blockHeight = getQueryVariable("height");
+        //console.log('blockNumber is ' + blockHeight);
+
+        var blockHash = getQueryVariable("blockhash");
+        //console.log('blockHash is ' + blockHash);
+
+        if ((blockHeight === undefined) && (blockHash === undefined)) {
+            alert('Specify either height or blockhash');
+        }
+        else if (!(blockHeight === undefined) && !(blockHash === undefined)) {
+            alert('Specify either height or blockhash');
+        }
+        else if ((blockHeight === undefined) && !(blockHash === undefined)) {
+            // First fetch the block's detials 
+
+            fetch(`${tokenapiUrl}/api/v1.0/getBlockDetails/` + blockHash)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (responseJson) {
+                    //console.log('details of the block are');
+                    //console.log(JSON.stringify(responseJson));
+
+                    if (responseJson['result'] == 'ok') {
+
+                        // remove the loading icons 
+                        if (document.getElementById('loadingBlockDetails')) {
+                            document.getElementById('loadingBlockDetails').remove();
+
+                            // make blockdetails card visible
+                            document.getElementById('blockdetailsdisplay').style.display = 'initial';
                         }
-                        else if (jsonData["latestTransactions"][item]["parsedFloData"]["transferType"] == "smartContract") {
-                            //console.log('Just found a smart contract transfer type of transaction');
-                            createContractTransfer(jsonData["latestTransactions"][item], 'transactions-card');
-                            appendTransactionDetailsToExpansion(jsonData["latestTransactions"][item], 'contractTransfer');
-                        }
-                    }
-                    else if (jsonData["latestTransactions"][item]["parsedFloData"]["transactionType"] == 'tokenIncorporation') {
-                        //console.log('Just found a token incorporation type of transaction');
 
-                        createTokenCreation(jsonData["latestTransactions"][item], 'transactions-card');
-                        appendTransactionDetailsToExpansion(jsonData["latestTransactions"][item], 'tokenIncorporation');
+
+                        processBlock(responseJson);
                     }
-                    else if (jsonData["latestTransactions"][item]["parsedFloData"]["transactionType"] == 'smartContractIncorporation') {
-                        //console.log('just found a smart contract incorporation type of transaction');
-                        createContractCreation(jsonData["latestTransactions"][item], 'transactions-card');
-                        appendTransactionDetailsToExpansion(jsonData["latestTransactions"][item], 'contractIncorporation')
+                    else if(responseJson['result'] == 'error'){
+                        // remove the error 2nd card 
+                        document.getElementById('transactions-card').remove();
+
+                        // remove the loading icons 
+                        if (document.getElementById('loadingBlockDetails')) {
+                            document.getElementById('loadingBlockDetails').remove();
+                        }
+
+                        // show the error message 
+                        
                     }
-                    else if (jsonData["latestTransactions"][item]["parsedFloData"]["transactionType"] == 'smartContractPays') {
-                        //console.log('Just found a smart contract pays type of transaction');
-                        createContractTrigger(jsonData["latestTransactions"][item], 'transactions-card');
-                        appendTransactionDetailsToExpansion(jsonData["latestTransactions"][item], 'contractTrigger');
-                    }
+
+
                 });
-            });
+        }
+        else if (!(blockHeight === undefined) && (blockHash === undefined)) {
+            fetch(`${tokenapiUrl}/api/v1.0/getBlockDetails/` + blockHeight)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (responseJson) {
+                    //console.log('details of the block are');
+                    //console.log(JSON.stringify(responseJson));
+
+                    if (responseJson['result'] == 'ok') {
+                        // remove the loading icons 
+                        if (document.getElementById('loadingBlockDetails')) {
+                            document.getElementById('loadingBlockDetails').remove();
+
+                            // make blockdetails card visible
+                            document.getElementById('blockdetailsdisplay').style.display = 'initial';
+                        }
+
+                        processBlock(responseJson);
+                    }
+                    else if(responseJson['result'] == 'error'){
+                        // remove the error 2nd card 
+                        document.getElementById('transactions-card').remove();
+
+                        // remove the loading icons 
+                        if (document.getElementById('loadingBlockDetails')) {
+                            document.getElementById('loadingBlockDetails').remove();
+                        }
+
+                        // show the error message 
+                        document.getElementById('blockdetailsheader').innerText = responseJson['description'];
+
+                    }
+
+
+                });
+        }
+
+
 
 
     </script>
 
-    <!-- partial -->
-    <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-    <script src="script.js"></script>
+    <script>
+
+
+    </script>
 
 </body>
 

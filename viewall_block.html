@@ -4,10 +4,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
     <link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
 </head>
 
 <!-- Set urls for token and flo Apis -->
@@ -30,7 +26,7 @@
     DEBUG = true;
     'use strict'; (function (I, R, v) { let K; (K = v.define) && K.amd ? K([], function () { return R }) : (K = v.modules) ? K[I.toLowerCase()] = R : "object" === typeof exports ? module.exports = R : v[I] = R })("FlexSearch", function ma(I) {
         function v(a, b) { const c = b ? b.id : a && a.id; this.id = c || 0 === c ? c : na++; this.init(a, b); fa(this, "index", function () { return this.a ? Object.keys(this.a.index[this.a.keys[0]].c) : Object.keys(this.c) }); fa(this, "length", function () { return this.index.length }) } function K(a, b, c, d) {
-            this.u !== this.g && (this.o = this.o.concat(c), this.u++ ,
+            this.u !== this.g && (this.o = this.o.concat(c), this.u++,
                 d && this.o.length >= d && (this.u = this.g), this.u === this.g && (this.cache && this.l.set(b, this.o), this.F && this.F(this.o))); return this
         } function S(a) { const b = B(); for (const c in a) if (a.hasOwnProperty(c)) { const d = a[c]; b[c] = E(d) ? d.slice(0) : J(d) ? S(d) : d } return b } function W(a, b) { const c = a.length, d = O(b), e = []; for (let f = 0, g = 0; f < c; f++) { const h = a[f]; if (d && b(h) || !d && !b[h]) e[g++] = h } return e } function P(a, b, c, d, e, f, g, h, l, m) {
             c = ha(c, g ? 0 : e, h, f, b, l, m); let n; h && (h = c.page, n = c.next, c = c.result); if (g) b = this.where(g, null, e, c); else {
@@ -413,6 +409,178 @@
         box-sizing: border-box;
     }
 
+    .maincontainer {
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .container {
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+
+        /* media query shiz */
+        max-width: 1140px;
+    }
+
+    .navbar {
+        background-color: #fff;
+        position: relative;
+        z-index: 100;
+        padding: 8 16 8 16;
+
+        display: flex;
+        align-items: center;
+        padding: .5rem 1rem;
+        box-shadow: 0 0 30px 0 rgba(21, 53, 80, .12);
+
+        /* media query shiz 992*/
+        flex-flow: row nowrap;
+        -webkit-box-pack: start;
+        -ms-flex-pack: start;
+        justify-content: flex-start;
+    }
+
+    .navbar_container {
+        display: flex;
+        flex-wrap: nowrap;
+        -webkit-box-align: center;
+        align-items: center;
+        -webkit-box-pack: justify;
+        justify-content: space-between;
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+
+        /* media query shiz 1200*/
+        flex-wrap: nowrap;
+        max-width: 1140px;
+    }
+
+    .navbar_brand {
+        color: #fff;
+        margin-left: 0;
+        display: inline-block;
+        padding-top: .3125rem;
+        padding-bottom: .3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar_container a {
+        text-decoration: none;
+        background-color: transparent;
+        -webkit-text-decoration-skip: objects;
+    }
+
+    .navbar_logo {
+        max-height: 28px;
+        width: auto;
+    }
+
+    .navbarmenu_search {
+        flex-grow: 1;
+        -webkit-box-align: center;
+        align-items: center;
+
+        /* media query shiz */
+        display: flex !important;
+        flex-basis: auto;
+    }
+
+    .searchform_container {
+
+        /* media query shiz 1200*/
+        height: 57px;
+        margin-bottom: -8px;
+        margin-top: -8px;
+
+        /* media query inherited shiz 992*/
+        display: flex !important;
+        box-sizing: border-box;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        text-align: left;
+    }
+
+    .search_form {
+        height: 100%;
+        display: flex;
+        flex-flow: row wrap;
+        -webkit-box-align: center;
+        align-items: center;
+
+        /* media query shiz */
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    .searchBar {
+        text-overflow: ellipsis !important;
+        width: 280px;
+        background: #f5f6fa;
+        border-color: #f5f6fa;
+        color: #828ba0;
+        font-size: 14px;
+        height: 50px;
+        padding-left: 38px;
+        padding-right: 8px;
+        position: relative;
+        z-index: 1;
+        overflow: visible;
+        margin: 0;
+        font-family: inherit;
+        box-sizing: border-box;
+        -webkit-appearance: textfield;
+        -webkit-rtl-ordering: logical;
+        cursor: text;
+        letter-spacing: normal;
+        word-spacing: normal;
+        text-transform: none;
+        text-indent: 0px;
+        text-shadow: none;
+        text-rendering: auto;
+        -webkit-box-direction: normal;
+        -webkit-tap-highlight-color: transparent;
+        text-align: center;
+        vertical-align: center;
+
+    }
+
+    .search_button {
+        border-radius: 2px;
+        border: none;
+        display: inline-block;
+        line-height: 1.2;
+        padding: 10px 16px;
+        text-align: center;
+        text-decoration: none;
+        transition: all .4s ease-in-out;
+        white-space: nowrap;
+
+        color: #20b760;
+        background-color: transparent;
+        background-image: none;
+
+        position: absolute;
+        width: 1px;
+        text-transform: none;
+
+        /* media query shiz*/
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
+    }
 
     .main {
         flex-grow: 1;
@@ -426,6 +594,7 @@
         background-color: #5c34a2;
         box-shadow: 0 5px 40px -5px rgba(0, 0, 0, .25);
         margin-top: -3rem;
+        margin-bottom: 3rem;
         overflow: hidden;
         padding: 0;
         position: relative;
@@ -553,13 +722,6 @@
         position: relative;
     }
 
-    .row {
-        display: flex;
-        flex-wrap: wrap;
-        margin-right: -15px;
-        margin-left: -15px;
-    }
-
     .footer-logo-row {
         margin-bottom: 30px;
     }
@@ -571,90 +733,31 @@
         max-width: 100%;
     }
 
-    /* Navbar css */
 
-    .navbar {
+    /*Card Blocks Section */
+
+    .card {
         background-color: #fff;
-        position: relative;
-        z-index: 100;
-        padding: 8 16 8 16;
-
-        display: flex;
-        align-items: center;
-        padding: .5rem 1rem;
-        box-shadow: 0 0 30px 0 rgba(21, 53, 80, .12);
-
-        /* media query shiz 992*/
-        flex-flow: row nowrap;
-        -webkit-box-pack: start;
-        -ms-flex-pack: start;
-        justify-content: flex-start;
-    }
-
-    .navbar_container {
-        display: flex;
-        flex-wrap: nowrap;
-        -webkit-box-align: center;
-        align-items: center;
-        -webkit-box-pack: justify;
-        justify-content: space-between;
-        width: 100%;
-        padding-right: 15px;
-        padding-left: 15px;
-        margin-right: auto;
-        margin-left: auto;
-
-        /* media query shiz 1200*/
-        flex-wrap: nowrap;
-        max-width: 1140px;
-    }
-
-    .navbar_container a {
-        text-decoration: none;
-        background-color: transparent;
-        -webkit-text-decoration-skip: objects;
-    }
-
-    .navbar-search-parent {
-        position: absolute;
-        left: 65%;
-    }
-
-    .navbar-search {
-        position: relative;
-        background-color: #E6E6FA;
-        height: 52px;
-        width: 350px;
-        border-style: none;
-    }
-
-    .searchbutton {
-        position: absolute;
-        height: 100%;
-        width: 50px;
-        background-color: #E6E6FA;
-        border-style: none;
-    }
-
-    .searchbox-parent {
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        left: 50px;
-    }
-
-    /* Navbar css ends */
-
-
-
-    /*Card Blocks Section CSS */
-
-    .blocks-card {
         border-radius: 10px;
         border: none;
+        box-shadow: 0 0 30px 0 rgba(202, 199, 226, .5);
         margin-bottom: 50px;
         position: relative;
     }
+
+
+
+
+    /*Card Blocks Section */
+
+    .container1 {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: center;
+        padding: 30px 15px 30px;
+    }
+
 
     .box1class {
         width: 240px;
@@ -685,27 +788,6 @@
 
     }
 
-    .box1class a {
-        font-weight: 700;
-        font-size: 12px;
-        color: #5c34a2;
-        text-decoration: none;
-        background-color: transparent;
-    }
-
-    /*Card Blocks Section CSS ends*/
-
-    .container1 {
-        display: flex;
-        flex-direction: column;
-        flex-wrap: nowrap;
-        justify-content: center;
-        padding: 30px 15px 30px;
-    }
-
-
-
-
 
     @keyframes slidein {
         from {
@@ -718,18 +800,14 @@
     }
 
 
-
-
-
-    /* Card Transaction section */
-    .card {
-        background-color: #fff;
-        border-radius: 10px;
-        border: none;
-        box-shadow: 0 0 30px 0 rgba(202, 199, 226, .5);
-        margin-bottom: 50px;
-        position: relative;
+    .box1class a {
+        font-weight: 700;
+        font-size: 12px;
+        color: #5c34a2;
+        text-decoration: none;
+        background-color: transparent;
     }
+
 
     .box2class {
         width: 195px;
@@ -772,6 +850,12 @@
         flex-direction: column;
         padding-top: 10px;
     }
+
+
+
+
+
+
 
 
 
@@ -880,12 +964,37 @@
         max-width: 16.66666667%;
     }
 
+    .mr-4 {
+        margin-right: 1.5rem !important;
+    }
+
+    .row {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        margin-right: -15px;
+        margin-left: -15px;
+    }
+
+    dl {
+        margin-bottom: 12px;
+        margin-top: 0;
+        margin-bottom: 1rem;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        display: block;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+    }
+
     .card-tabs {
         -webkit-box-align: center;
         -ms-flex-align: center;
         align-items: center;
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
         border-bottom: 1px solid #e2e5ec;
         display: -webkit-box;
         display: -ms-flexbox;
@@ -894,26 +1003,515 @@
         -ms-flex-pack: start;
         justify-content: flex-start;
         overflow: hidden;
+        padding: 0 25px;
+
     }
 
-    .hideExpansionCard {
-        display: none;
+    .card-tabs:hover {
+        background-color: rgba(91, 56, 159, 0.2);
+        color: rgba(91, 56, 159, 1);
+        transition-duration: 1s;
     }
 
-    .expansionCard {
-        width: 100%;
+    .card-tab-active {
+        background-color: rgba(91, 56, 159, 1);
+        color: #fff;
+    }
+
+    .force-border-radius {
+        border-radius: 10px 0px 0px 0px;
+    }
+
+    .navbar_brand {
+        color: #fff;
+        margin-left: 0;
+        display: inline-block;
+        padding-top: .3125rem;
+        padding-bottom: .3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar_logo {
+        max-height: 28px;
+        width: auto;
+    }
+
+    .navbarmenu_search {
+        flex-grow: 1;
+        -webkit-box-align: center;
+        align-items: center;
+
+        /* media query shiz */
+        display: flex !important;
+        flex-basis: auto;
+    }
+
+    .searchform_container {
+
+        /* media query shiz 1200*/
+        height: 57px;
+        margin-bottom: -8px;
+        margin-top: -8px;
+
+        /* media query inherited shiz 992*/
+        display: flex !important;
+        box-sizing: border-box;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        text-align: left;
+    }
+
+    .search_form {
+        height: 100%;
         display: flex;
-        flex-direction: column;
-        flex-wrap: nowrap;
+        flex-flow: row wrap;
+        -webkit-box-align: center;
+        align-items: center;
+
+        /* media query shiz */
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
     }
 
-    ::placeholder {
-        opacity: 0.7;
+    .searchBar {
+        text-overflow: ellipsis !important;
+        width: 280px;
+        background: #f5f6fa;
+        border-color: #f5f6fa;
+        color: #828ba0;
+        font-size: 14px;
+        height: 50px;
+        padding-left: 38px;
+        padding-right: 8px;
+        position: relative;
+        z-index: 1;
+        overflow: visible;
+        margin: 0;
+        font-family: inherit;
+        box-sizing: border-box;
+        -webkit-appearance: textfield;
+        -webkit-rtl-ordering: logical;
+        cursor: text;
+        letter-spacing: normal;
+        word-spacing: normal;
+        text-transform: none;
+        text-indent: 0px;
+        text-shadow: none;
+        text-rendering: auto;
+        -webkit-box-direction: normal;
+        -webkit-tap-highlight-color: transparent;
         text-align: center;
+        vertical-align: center;
+
     }
 
-    input:focus {
-        outline: none;
+    .search_button {
+        border-radius: 2px;
+        border: none;
+        display: inline-block;
+        line-height: 1.2;
+        padding: 10px 16px;
+        text-align: center;
+        text-decoration: none;
+        transition: all .4s ease-in-out;
+        white-space: nowrap;
+
+        color: #20b760;
+        background-color: transparent;
+        background-image: none;
+
+        position: absolute;
+        width: 1px;
+        text-transform: none;
+
+        /* media query shiz*/
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
+    }
+
+
+    .navbar {
+        background-color: #fff;
+        position: relative;
+        z-index: 100;
+        padding: 8 16 8 16;
+
+        display: flex;
+        align-items: center;
+        padding: .5rem 1rem;
+        box-shadow: 0 0 30px 0 rgba(21, 53, 80, .12);
+
+        /* media query shiz 992*/
+        flex-flow: row nowrap;
+        -webkit-box-pack: start;
+        -ms-flex-pack: start;
+        justify-content: flex-start;
+    }
+
+    .navbar_container {
+        display: flex;
+        flex-wrap: nowrap;
+        -webkit-box-align: center;
+        align-items: center;
+        -webkit-box-pack: justify;
+        justify-content: space-between;
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+
+        /* media query shiz 1200*/
+        flex-wrap: nowrap;
+        max-width: 1140px;
+    }
+
+    .navbar_container a {
+        text-decoration: none;
+        background-color: transparent;
+        -webkit-text-decoration-skip: objects;
+    }
+
+    .navbar-search-parent {
+        position: absolute;
+        left: 65%;
+    }
+
+    .navbar-search {
+        position: relative;
+        background-color: #E6E6FA;
+        height: 52px;
+        width: 350px;
+        border-style: none;
+    }
+
+    .searchbutton {
+        position: absolute;
+        height: 100%;
+        width: 50px;
+        background-color: #E6E6FA;
+        border-style: none;
+    }
+
+    .searchbox-parent {
+        position: absolute;
+        height: 100%;
+        width: 300px;
+        left: 50px;
+    }
+
+    .column1 {
+        -webkit-box-flex: 0;
+        flex: 0 0 100%;
+        position: relative;
+        width: 100%;
+        min-height: 1px;
+        padding-left: 15px;
+        padding-right: 15px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        text-align: left;
+        font-size: 12px;
+    }
+
+    .column1-card {
+        background-color: #fff;
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 0 30px 0 rgba(202, 199, 226, .5);
+        margin-bottom: 50px;
+        position: relative;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-clip: border-box;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        text-align: left;
+    }
+
+    .card-body {
+        padding: 30px;
+        -webkit-box-flex: 1;
+        flex: 1 1 auto;
+    }
+
+    .card-title {
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 1.2rem;
+        margin-bottom: 2rem;
+        margin-top: 0;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        display: block;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+    }
+
+    .transaction-details-address {
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 36px;
+        margin-top: 0;
+        margin-bottom: .5rem;
+        display: block;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        -webkit-box-direction: normal;
+        color: #5c34a2;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .tx-detail-column-name {
+        position: relative;
+        width: 100%;
+        min-height: 1px;
+        padding-right: 15px;
+        padding-left: 15px;
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 40%;
+        flex: 0 0 40%;
+        max-width: 40%;
+        color: #5c34a2 !important;
+        text-align: left;
+    }
+
+    .tx-detail-column-data {
+        display: block;
+        margin-inline-start: 40px;
+        margin: 0;
+        position: relative;
+        width: 100%;
+        min-height: 1px;
+        padding-right: 15px;
+        padding-left: 15px;
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 30%;
+        flex: 0 0 30%;
+        max-width: 30%;
+        text-align: left;
+    }
+
+
+    .column2 {
+        position: relative;
+        width: 100%;
+        min-height: 1px;
+        padding-right: 15px;
+        flex: 0 0 33.33333333%;
+        max-width: 33.33333333%;
+        -webkit-box-flex: 0;
+        display: flex !important;
+        -webkit-box-orient: vertical !important;
+        -webkit-box-direction: normal !important;
+        -ms-flex-direction: column !important;
+        flex-direction: column !important;
+        padding-left: 0 !important;
+
+    }
+
+    .column2-card1 {
+        flex-grow: 1 !important;
+        background-clip: border-box;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        position: relative;
+        box-shadow: 0 0 30px 0 rgba(202, 199, 226, 0.5);
+        border: none;
+        background-color: #5c34a2;
+        color: #fff;
+    }
+
+    .column2-card1-body {
+        color: #fff;
+        flex: 1 1 auto;
+        -webkit-box-flex: 1;
+        padding: 15px 120.5px 15px 120.5px;
+        justify-content: space-between;
+        flex-direction: column;
+        -webkit-box-pack: justify;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+    }
+
+    .bottom-card-master {
+        display: block;
+        text-align: center;
+        min-width: 630px;
+        max-width: 1140px;
+        margin: auto;
+    }
+
+    .bottom-card-tabs {
+        height: 70px;
+        margin: auto;
+        border-bottom: 1px solid #e2e5ec;
+        background-color: #fff;
+        border-radius: 10px 10px 0px 0px;
+        display: flex;
+        flex-direction: row;
+    }
+
+    .bottom-card-tab {
+        display: flex;
+        font-size: 14px;
+        font-weight: 400;
+        height: 70px;
+        text-align: center;
+        border-radius: 10px 0px 0px 0px;
+    }
+
+    .quick_block_details {
+        color: #828ba0 !important;
+        -webkit-box-pack: start !important;
+        justify-content: flex-start !important;
+        -webkit-box-orient: horizontal !important;
+        -webkit-box-direction: normal !important;
+        flex-direction: row !important;
+        display: flex !important;
+    }
+
+    .tx-details-name-extra-padding {
+        padding-left: 28px;
+    }
+
+    .tx-details-data-extra-padding {}
+
+    .inputadd-outputadd-span {
+        display: block !important;
+        margin-bottom: .5rem !important;
+    }
+
+    .token-arrows {
+        color: #828ba0 !important;
+        display: inline;
+
+    }
+
+    .balance-arrows {
+        color: #828ba0 !important;
+        display: inline;
+
+    }
+
+    .address-navbar-search {
+        position: relative;
+        background-color: #E6E6FA;
+        height: 52px;
+        width: 350px;
+        border-style: none;
+    }
+
+    .addresssearchbutton {
+        position: absolute;
+        height: 100%;
+        width: 50px;
+        background-color: #E6E6FA;
+        border-style: none;
+    }
+
+    .address-searchbox-parent {
+        position: absolute;
+        height: 100%;
+        width: 300px;
+        left: 50px;
+    }
+
+    .address-navbar-autocomplete {
+        position: absolute;
+        height: 100%;
+        width: 300px;
+        background-color: #E6E6FA;
+        border-style: none;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .hideElement {
+        display: none !important;
+    }
+
+    .banner-placard-master {
+        width: 100%;
+        height: 20px;
+        margin: 6px 0px;
+        display: flex;
+        flex-direction: row;
+    }
+
+
+
+    .banner-absolute-left {
+        position: absolute;
+        left: 0%;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .banner-absolute-right {
+        position: absolute;
+        left: 60%;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .banner-placard-super-master {
+        position: relative;
+        width: 100%;
+        height: 20px;
+        margin-bottom: 10px;
+        display: flex;
+        flex-direction: row;
+    }
+
+
+
+    .placard-holder {
+        font-size: 14px;
+        font-weight: bold;
+        display: inline;
+    }
+
+    .placard-value {
+        font-size: 14px;
+        font-weight: bold;
+        display: inline;
+    }
+
+
+
+    .color-box-token-name {
+        color: inherit;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1.2;
+        text-align: center;
+        padding: 0 5px;
+        cursor: pointer;
+    }
+
+    .banner-extra-height {
+        height: 70px;
     }
 
     /* Card Transaction section */
@@ -978,6 +1576,11 @@
     .contract-trigger {
         height: 132px;
         border-left: 4px solid #05c205d7;
+    }
+
+    .block-creation {
+        height: 132px;
+        border-left: 4px solid #c41b1b;
     }
 
     .transactions-sub-container {
@@ -1091,6 +1694,27 @@
         justify-content: center;
     }
 
+    .color-block-block-creation {
+        background-color: rgb(196, 27, 27, 0.1);
+        border-bottom: 1px solid #c41b1b;
+        border-right: 1px solid #c41b1b;
+        border-top: 1px solid #c41b1b;
+        color: #c41b1b;
+
+        height: 132px;
+        width: 172px;
+
+        margin-top: -1px;
+        margin-left: -4px;
+        border-radius: 4px 0px 0px 4px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: center;
+    }
+
     .transactions-content {
         width: 100%;
         max-width: 66.66666667%;
@@ -1125,15 +1749,6 @@
         justify-content: center
     }
 
-    /* Card transaction section CSS ends */
-
-    .banner-media-query {
-        display: none;
-    }
-
-    .tx-detail-seperator {
-        padding: 0 2px;
-    }
 
     .navbar-flexbox {
         display: flex;
@@ -1161,7 +1776,9 @@
             flex-direction: column;
         }
 
-        /* Navbar css */
+        .transactions a {
+            width: 100%;
+        }
 
         .navbar_container {
             padding: 0;
@@ -1181,26 +1798,249 @@
             display: none;
         }
 
-        /* Navbar css ends */
+        .column1 {
+            padding-right: 15 !important;
+            position: relative;
+            width: 100%;
+            min-height: 1px;
+            padding-left: 15px;
 
-        /*Card Blocks Section CSS */
+            /* remove this later and check */
+            -webkit-box-flex: initial;
+            flex: initial;
+            max-width: initial;
+            font-weight: 400;
+            line-height: initial;
+            color: initial;
+            text-align: initial;
+            font-size: initial;
+        }
 
-        .blocks-card {
+        .column1-card {
+            background-color: #fff;
             border-radius: 10px;
             border: none;
-            margin-bottom: initial;
+            box-shadow: 0 0 30px 0 rgba(202, 199, 226, .5);
+            margin-bottom: 50px;
+            margin-right: 0;
             position: relative;
-            padding-bottom: 8px;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-clip: border-box;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #212529;
+            text-align: left;
+        }
 
+        .card-body {
+            padding: 30px;
+            -webkit-box-flex: 1;
+            flex: 1 1 auto;
+        }
+
+        .tx-detail-column-name {
+            position: relative;
+            width: 100%;
+            min-height: 1px;
+            padding-right: 15px;
+            padding-left: 15px;
+            -webkit-box-flex: 0;
+            -ms-flex: 0 0 25%;
+            flex: 0 0 25%;
+            max-width: 25%;
+            color: #5c34a2 !important;
+            font-weight: normal;
+            display: block;
+            cursor: pointer;
 
         }
 
-        .box1class {
-            width: 300px;
+        .tx-detail-column-data {
+            position: relative;
+            width: 100%;
+            min-height: 1px;
+            padding-right: 15px;
+            padding-left: 15px;
+            margin: 0;
+
+            display: block;
+            margin-inline-start: initial;
+            -webkit-box-direction: normal;
+
+            -webkit-box-flex: initial;
+            -ms-flex: initial;
+            flex: initial;
+            max-width: initial;
         }
 
-        /*Card Blocks Section CSS ends*/
+        .column2 {
+            -webkit-box-orient: vertical !important;
+            -webkit-box-direction: normal !important;
+            -ms-flex-direction: column !important;
+            flex-direction: column !important;
+            display: flex !important;
+            padding-left: 15px !important;
+            position: relative;
+            width: 100%;
+            min-height: 1px;
+            padding-right: 15px;
+            flex: initial;
+            max-width: initial;
+            -webkit-box-flex: initial;
+        }
 
+        .column2-card1 {
+            background-color: #5c34a2;
+            color: #fff;
+            border: none;
+            box-shadow: 0 0 30px 0 rgba(202, 199, 226, 0.5);
+            margin-bottom: 50px;
+            position: relative;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+
+            flex-grow: 1 !important;
+            background-clip: border-box;
+
+        }
+
+        .bottom-card-master {
+            display: block;
+            text-align: initial;
+            min-width: initial;
+            max-width: initial;
+            margin: initial;
+
+            width: 100%;
+            padding-right: 0px;
+            padding-left: 0px;
+            margin-right: auto;
+            margin-left: auto;
+            -webkit-box-direction: normal;
+        }
+
+        .transaction-details-address {
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 36px;
+            margin-top: 0;
+            margin-bottom: .5rem;
+            display: block;
+            margin-block-start: 1em;
+            margin-block-end: 1em;
+            margin-inline-start: 0px;
+            margin-inline-end: 0px;
+            -webkit-box-direction: normal;
+
+            text-overflow: ellipsis;
+            /* Required for text-overflow to do anything */
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .quick_block_details {
+            margin-top: 5px;
+        }
+
+        .tx-details-name-extra-padding {
+            padding-left: 28px;
+        }
+
+        .tx-details-data-extra-padding {
+            padding-left: 28px;
+        }
+
+        .inputadd-outputadd-span {
+            display: block !important;
+            margin-bottom: 1.5rem !important;
+        }
+
+        .token-arrows {
+            color: #828ba0 !important;
+            display: block;
+            padding-left: 70px;
+        }
+
+        .balance-arrows {
+            display: none;
+        }
+
+        .address-navbar-autocomplete {
+            width: 250px;
+        }
+
+        .address-navbar-search {
+            width: 250px;
+        }
+
+        .address-searchbox-parent {
+            width: 250px;
+        }
+
+        .banner-placard-master {
+            flex-direction: column;
+            display: block;
+            height: initial;
+        }
+
+
+
+        .banner-absolute-left {
+            position: relative;
+        }
+
+        .banner-absolute-right {
+            position: relative;
+            left: 0%;
+        }
+
+        .column2-card1-body {
+            padding: 15px;
+        }
+
+        .banner-placard-super-master {
+            position: relative;
+            width: 100%;
+            height: initial;
+            margin-bottom: 0px;
+            flex-direction: column;
+        }
+
+
+
+        .placard-holder {
+            display: block;
+        }
+
+        .placard-value {
+            display: block;
+        }
+
+
+
+
+
+
+        .color-box-token-name {
+            padding: 0px;
+            cursor: pointer;
+        }
+
+
+
+        .banner-extra-height {
+            height: initial;
+        }
 
         /* Card Transaction section */
 
@@ -1219,10 +2059,6 @@
 
             font-size: 12px;
             line-height: 1.4rem;
-        }
-
-        .transactions a {
-            width: 100%;
         }
 
         .token-creation {
@@ -1248,6 +2084,11 @@
         .contract-trigger {
             height: initial;
             border-left: 4px solid #05c205d7;
+        }
+
+        .block-creation {
+            height: initial;
+            border-left: 4px solid #c41b1b;
         }
 
         .transactions-sub-container {
@@ -1388,13 +2229,37 @@
             top: auto;
         }
 
+        .color-block-block-creation {
+            background-color: initial;
+            border-bottom: initial;
+            border-right: initial;
+            border-top: initial;
+            color: #c41b1b;
+
+            height: initial;
+            width: initial;
+            display: flex;
+            flex-shrink: initial;
+            -webkit-box-align: start;
+            -ms-flex-align: start;
+            align-items: flex-start;
+            background: 0 0 !important;
+            border: none !important;
+            bottom: auto;
+            -webkit-box-orient: vertical !important;
+            -webkit-box-direction: normal !important;
+            -ms-flex-direction: column !important;
+            flex-direction: column !important;
+            margin: 0 0 10px;
+            padding-left: 16px;
+            padding-top: 16px;
+            top: auto;
+        }
+
         .tokeninfo-placard-master {
             flex-direction: column;
-            display: flex;
+            display: block;
             height: initial;
-            padding-top: 3px;
-            padding-bottom: 3px;
-            align-items: flex-start;
         }
 
         .on-off-colon {
@@ -1405,68 +2270,7 @@
             text-align: left;
         }
 
-        /* Card Transaction section CSS ends*/
 
-        /* media queries for banner */
-        .dashboard-banner-network-stats-label {
-            color: #dcc8ff;
-            display: block;
-            white-space: nowrap;
-        }
-
-        .dashboard-banner-network-stats-value {
-            color: #fff;
-            display: block;
-            font-size: 1.2rem;
-            font-weight: 200;
-            white-space: nowrap;
-        }
-
-        .banner-media-query {
-            height: 200px;
-            width: 100%;
-            background-color: #8258cd;
-            display: flex;
-            flex-direction: column;
-            padding: 25px;
-            box-shadow: 0 5px 40px -5px rgba(0, 0, 0, .25);
-        }
-
-        .dashboard-banner-container {
-            display: none;
-        }
-
-        .tx-detail-seperator {
-            display: none;
-        }
-
-        .transactions-content {
-            width: 100%;
-            max-width: 100%;
-            padding: 16px 15px 16px 15px;
-
-            display: flex;
-            align-items: flex-start;
-            flex-direction: column;
-            flex: 0 0 100%;
-        }
-
-
-    }
-
-    /* iPads (portrait) ----------- */
-    @media only screen and (min-device-width : 700px) and (max-device-width : 1024px) {
-        /* Styles */
-
-        .box1class {
-            width: 200px;
-        }
-
-        .navbar-search-parent {
-            position: absolute;
-            left: initial;
-            right: 5%;
-        }
     }
 </style>
 
@@ -1546,167 +2350,17 @@
                     </div>
                 </div>
 
+
+
             </div>
         </div>
     </nav>
 
-    <div class="dashboard-banner-container">
-        <div class="dashboard-container">
-            <div class='dashboard-banner'>
-                <div class='dashboard-banner-network-graph'></div>
-                <div class='dashboard-banner-network-plain-container'>
-                    <div class="dashboard-banner-network-stats">
-                        <div class="dashboard-banner-network-stats-item">
-                            <span class="dashboard-banner-network-stats-label">
-                                Top Token </span>
-                            <!--<span class="dashboard-banner-network-stats-value">40 seconds</span>-->
-                            <span id='toptoken' class="dashboard-banner-network-stats-value"><a id="toptoken-value" data-valuetype=''
-                                    class="dashboard-banner-network-stats-value"
-                                    style="text-decoration:none; cursor:pointer"></a></span>
-                        </div>
-                        <div class="dashboard-banner-network-stats-item">
-                            <span class="dashboard-banner-network-stats-label">
-                                Top Contract </span>
-                            <span id='topcontract' data-valuetype=''  class="dashboard-banner-network-stats-value"><a
-                                    id="topcontract-value" class="dashboard-banner-network-stats-value"
-                                    style="text-decoration:none; cursor:pointer"></a></span>
-                        </div>
-                        <div class="dashboard-banner-network-stats-item">
-                            <span class="dashboard-banner-network-stats-label">
-                                Total Transactions </span>
-                            <span id="totaltransactions" class="dashboard-banner-network-stats-value"></span>
-                        </div>
-                        <div class="dashboard-banner-network-stats-item">
-                            <span class="dashboard-banner-network-stats-label">
-                                Wallet addresses </span>
-                            <span id='walletaddresses' class="dashboard-banner-network-stats-value"
-                                data-selector="address-count"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="media-query-banner" class="banner-media-query">
-        <div style="display: flex; flex-direction:row; height: 50%; align-content: center; justify-content: center">
-            <div style="width: 50%; align-content: center; justify-content: center">
-                <div class="dashboard-banner-network-stats-item">
-                    <span class="dashboard-banner-network-stats-label">
-                        Top Token </span>
-                    <span id="toptoken-media" class="dashboard-banner-network-stats-value"><a id="toptoken-media-value"
-                            class="dashboard-banner-network-stats-value"
-                            style="text-decoration:none; cursor:pointer"></a></span>
-                </div>
-            </div>
-            <div style="width: 50%; align-content: center; justify-content: center">
-                <div class="dashboard-banner-network-stats-item">
-                    <span class="dashboard-banner-network-stats-label">
-                        Top Contract </span>
-                    <span id="topcontract-media" class="dashboard-banner-network-stats-value"><a
-                            id="topcontract-media-value" class="dashboard-banner-network-stats-value"
-                            style="text-decoration:none; cursor:pointer"></a></span>
-                </div>
-            </div>
-        </div>
-        <div style="display: flex; flex-direction:row; height: 50%;">
-            <div style="width: 50%; align-content: center; justify-content: center">
-                <div class="dashboard-banner-network-stats-item">
-                    <span class="dashboard-banner-network-stats-label">
-                        Total Transactions </span>
-                    <span id="totaltransactions-media" class="dashboard-banner-network-stats-value"><a
-                            class="dashboard-banner-network-stats-value"
-                            style="text-decoration:none; cursor:pointer"></a></span>
-                </div>
-            </div>
-            <div style="width: 50%; align-content: center; justify-content: center">
-                <div class="dashboard-banner-network-stats-item">
-                    <span class="dashboard-banner-network-stats-label">
-                        Wallet Addresses </span>
-                    <span id="walletaddresses-media" class="dashboard-banner-network-stats-value"><a
-                            class="dashboard-banner-network-stats-value"
-                            style="text-decoration:none; cursor:pointer"></a></span>
-                </div>
-            </div>
-        </div>
-
-    </div>
 
     <!-- Main is the whole section between header and footer-->
     <div id='main'
         style="-webkit-box-flex: 1; flex-grow: 1; background-color: #fbfafc; padding-top: 3rem!important; padding-bottom: 3rem!important; display: block; -webkit-box-direction: normal;">
-        <section style="max-width: 1140px; width: 100%; margin-right: auto; margin-left: auto; display:block;">
-
-            <!-- Blocks card -->
-            <div class="card">
-                <div class="container1">
-                    <div style="display:flex;justify-content: space-between;">
-                        <h2
-                            style="text-align:left; font-size:18px; font-weight:400;  margin-left:14px; line-height:1.2rem; margin-bottom:2rem; display:block; margin-block-start:0.83em; margin-block-end:0.83em;">
-                            Latest Blocks</h2>
-                        <a class="viewall" href="viewall_block.html">View All Blocks</a>
-                    </div>
-
-                    <div id="blocks-card" style="display:flex; flex-direction:row; padding-top: 9px" class='cards'>
-
-                        <div id='loadingBlocks' style="height: 100px; width:100%; position: relative; ">
-                            <div style="margin: 0;
-                                        position: absolute;
-                                        top: 50%;
-                                        right: 50%;
-                                        -ms-transform: translateY(-50%);
-                                        transform: translateY(-50%);"><i class="fa fa-spinner fa-spin"
-                                    style="font-size:24px"></i></div>
-                        </div>
-
-                        <!--
-                            <div class='box1class'>
-                                <div style="flex:0 0 30px;text-align: left"><a href="#"
-                                        style="padding:16px 16px 0px 16px; margin-bottom:12px;">345678</a>
-                                </div>
-                                <div
-                                    style="background: #f6f7f9;flex:1 1 100px;text-align: left; padding:12.8px 16px 12.8px 16px">
-                                    <div>1 Transaction</div>
-                                </div>
-                            </div>
-                            <div class='box1class'>
-                                <div style="flex:0 0 30px;text-align: left"><a href="#"
-                                        style="padding:16px 16px 0px 16px; margin-bottom:12px;">345677</a>
-                                </div>
-                                <div
-                                    style="background: #f6f7f9;flex:1 1 100px;text-align: left; padding:12.8px 16px 12.8px 16px">
-                                    <div>3 Transaction</div>
-                                </div>
-                            </div>
-                            <div class='box1class'>
-                                <div style="flex:0 0 30px;text-align: left"><a href="#"
-                                        style="padding:16px 16px 0px 16px; margin-bottom:12px;">345676</a>
-                                </div>
-                                <div
-                                    style="background: #f6f7f9;flex:1 1 100px;text-align: left; padding:12.8px 16px 12.8px 16px">
-                                    <div>0 Transaction</div>
-                                </div>
-                            </div>
-                            <div class='box1class'>
-                                <div style="flex:0 0 30px;text-align: left"><a href="#"
-                                        style="padding:16px 16px 0px 16px; margin-bottom:12px;">345675</a>
-                                </div>
-                                <div
-                                    style="background: #f6f7f9;flex:1 1 100px;text-align: left; padding:12.8px 16px 12.8px 16px">
-                                    <div>2 Transaction</div>
-                                </div>
-                            </div>
-                            -->
-
-                    </div>
-
-                    <!-- Expansion card -->
-                    <div id='expansion_card_master' style="position:relative">
-
-                    </div>
-
-                </div>
-            </div>
+        <section style="max-width: 1140px; width: 100%;margin-right: auto; margin-left: auto; display:block;">
 
             <div class="card">
                 <div id="transactions-card" class="container2">
@@ -1720,17 +2374,17 @@
                             display: block;
                             margin-block-start: 0.83em;
                             margin-block-end: 0.83em;">
-                            Latest Transactions</h2>
-                        <a class="viewall" href="viewall_tx.html">View All Transactions</a>
+                            Verified Blocks</h2>
+                        <!--<a class="viewall" href="#">View All Blocks</a>-->
                     </div>
 
-                    <div id='loadingTransactions' style="height: 100px; width:100%; position: relative; ">
+                    <div id='loadingBlocks' style="height: 100px; width:100%; position: relative; ">
                         <div style="margin: 0;
-                                    position: absolute;
-                                    top: 50%;
-                                    right: 50%;
-                                    -ms-transform: translateY(-50%);
-                                    transform: translateY(-50%);"><i class="fa fa-spinner fa-spin"
+                                        position: absolute;
+                                        top: 50%;
+                                        right: 50%;
+                                        -ms-transform: translateY(-50%);
+                                        transform: translateY(-50%);"><i class="fa fa-spinner fa-spin"
                                 style="font-size:24px"></i></div>
                     </div>
 
@@ -1741,6 +2395,8 @@
         </section>
 
     </div>
+
+
 
     <div style="width:100%;background:rgb(60,34,106)">
 
@@ -1800,6 +2456,7 @@
     <script>
 
         // THIS TAG CONTAINS CODE REQUIRED FOR THE NAVBAR TO FUNCTION
+
         function returnHexaNumber(s) {
             var regExp = /^[-+]?[0-9A-Fa-f]+\.?[0-9A-Fa-f]*?$/;
             return (typeof s === 'string' && regExp.test(s));
@@ -1854,7 +2511,7 @@
                 }
                 else if (text.length == 64 && returnHexaNumber(text)) {
 
-                    fetch(`${window.tokenapiUrl}/api/v1.0/categoriseString/` + text)
+                    fetch(`${tokenapiUrl}/api/v1.0/categoriseString/` + text)
                         .then(function (response) {
                             return response.json();
                         })
@@ -1968,14 +2625,14 @@
             });
         }
 
-
         // First load
         //console.log('Cursor right before the first fetch call');
 
         // loading of global variables which contains name of all tokens and smart contracts
 
+
         var data = [];
-        fetch(`${window.tokenapiUrl}/api/v1.0/getTokenSmartContractList`)
+        fetch(`${tokenapiUrl}/api/v1.0/getTokenSmartContractList`)
             .then(function (response) {
                 return response.json();
             })
@@ -2025,7 +2682,6 @@
                 suggestions.addEventListener("click", accept_suggestion, true);
 
                 function show_results() {
-                    debugger;
 
                     var value = this.value;
                     var results = index.search(value, 25);
@@ -2065,7 +2721,6 @@
                 }
 
                 function accept_autocomplete(event) {
-                    debugger;
 
                     if ((event || window.event).keyCode === 13) {
 
@@ -2074,7 +2729,6 @@
                 }
 
                 function accept_suggestion(event) {
-                    debugger;
 
                     var target = (event || window.event).target;
 
@@ -2098,242 +2752,156 @@
 
     </script>
 
+
     <script>
+        // get data when the page first loads 
 
-        function appendTransactionDetailsToExpansion(item, msg) {
-            // find the html code which is extention for this transaction's block and
-            // append the transaction to it
-            //console.log('expander-block-' + item['transactionDetails']['blockheight']);
-            cardExtention = 'expansion_card_block_' + item['transactionDetails']['blockheight'];
+        // first we define a few functions which will help us with the job
 
-            if (cardExtention != null) {
-                if (msg == 'tokenTransfer') {
-                    createTokenTransfer(item, cardExtention);
-                }
-                else if (msg == 'contractTransfer') {
-                    createContractTransfer(item, cardExtention);
-                }
-                else if (msg == 'tokenIncorporation') {
-                    createTokenCreation(item, cardExtention);
-                }
-                else if (msg == 'contractIncorporation') {
-                    createContractCreation(item, cardExtention);
-                }
-                else if (msg == 'contractTrigger') {
-                    createContractTrigger(item, cardExtention);
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        // 1. fetch contract name and address 
+        function getQueryVariable(variable) {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] == variable) {
+                    return pair[1];
                 }
             }
+            alert('Query Variable ' + variable + ' not entered');
         }
 
-        function createSmallBlock(blockDetails) {
-            // Create block element
-            var parentDiv = document.createElement('div');
-            parentDiv.setAttribute('class', ' blocks-card [ is-collapsed ] ')
-            var primaryCard = document.createElement("div");
-            primaryCard.setAttribute('class', 'box1class class="card__inner [ js-expander ]"');
-            primaryCard.setAttribute('id', 'blocks-card-' + blockDetails['height']);
-            var flexbox = document.createElement("div");
-            flexbox.setAttribute('style', 'flex:0 0 30px;text-align: left');
-            var blockno = document.createElement('a');
-            blockno.setAttribute('style', 'padding:16px 16px 0px 16px; margin-bottom:12px;');
-            blockno.setAttribute('href', 'block.html?height=' + blockDetails['height']);
-            blockno.innerText = blockDetails['height'];
-            flexbox.appendChild(blockno);
-            var transactionBox = document.createElement("div");
-            transactionBox.setAttribute('style', 'background: #f6f7f9;flex:1 1 100px;text-align: left; padding:12.8px 16px 12.8px 16px');
-            transactionNumber = document.createElement("div");
+        // 2. Update one time transaction 
+        function updateOneTimeTransaction(contractDetails) {
+
+            document.getElementById('tx-type-big').innerText = contractDetails['contractInfo']['contractName'].toUpperCase();
+            document.getElementById('info-contract-status').innerText = contractDetails['contractInfo']['status'];
+            document.getElementById('info-contract-address').innerText = contractDetails['contractInfo']['contractAddress'];
+            document.getElementById('info-contract-token').innerText = contractDetails['contractInfo']['tokenIdentification'].toUpperCase();
+            document.getElementById('info-contract-type').innerText = contractDetails['contractInfo']['contractType'];
+            document.getElementById('info-contract-expiry').innerText = contractDetails['contractInfo']['expiryTime'];
+            document.getElementById('info-contract-amount').innerText = contractDetails['contractInfo']['contractAmount'] + ' ' + contractDetails['contractInfo']['tokenIdentification'].toUpperCase();
+
+            conditionList = document.createElement('ul');
+            conditionList.style = 'padding-left:16px;';
+            for (var i = 0; i < contractDetails['contractInfo']['userChoice'].length; i++) {
+                listitem = document.createElement('li');
+                listitem.innerText = contractDetails['contractInfo']['userChoice'][i];
+                conditionList.append(listitem.cloneNode(true));
+            }
+            document.getElementById('info-contract-choices').append(conditionList);
+        }
+
+        // 3. Update participant details 
+        function updateParticipants(participantDetails) {
+
+            for (var i = 0; i < Object.keys(participantDetails['participantInfo']).length; i++) {
+
+                var vdl = document.createElement('dl');
+                vdl.setAttribute('class', 'row');
+
+                var vdt = document.createElement('dt');
+                vdt.setAttribute('class', 'tx-detail-column-name tx-details-name-extra-padding');
+                var href_a = document.createElement('a');
+                href_a.setAttribute('style', 'text-decoration:none; cursor:pointer; color: #5c34a2 !important;')
+                href_a.innerText = participantDetails['participantInfo'][i + 1]['participantFloAddress'];
+                href_a.setAttribute('href', 'address.html?address=' + href_a.innerText);
+                vdt.append(href_a);
+
+                var vdd1 = document.createElement('dd');
+                vdd1.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+                var vdd1_a = document.createElement('a');
+                vdd1_a.style = 'background-color: transparent; text-decoration: none;';
+                vdd1_a.innerText = participantDetails['participantInfo'][i + 1]['userChoice'];
+                vdd1.append(vdd1_a.cloneNode(true));
+
+                var vdd2 = document.createElement('dd');
+                vdd2.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+                var vdd2_a = document.createElement('a');
+                vdd2_a.style = 'background-color: transparent; text-decoration: none;';
+                vdd2_a.innerText = participantDetails['participantInfo'][i + 1]['tokenAmount'];
+                vdd2.append(vdd2_a.cloneNode(true));
+
+                vdl.append(vdt.cloneNode(true));
+                vdl.append(vdd1.cloneNode(true));
+                vdl.append(vdd2.cloneNode(true));
+
+                document.getElementById('transactions-card1-sub').append(vdl.cloneNode(true));
+
+                if (participantDetails['participantInfo'][i + 1]['winningAmount'] != null) {
+                    var vdl = document.createElement('dl');
+                    vdl.setAttribute('class', 'row');
+
+                    var vdd2 = document.createElement('dd');
+                    vdd2.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+                    var vdd2_a = document.createElement('a');
+                    vdd2_a.style = 'background-color: transparent; text-decoration: none;';
+                    vdd2_a.innerText = participantDetails['participantInfo'][i + 1]['winningAmount'];
+                    vdd2.append(vdd2_a.cloneNode(true));
+
+                    vdl.append(vdt.cloneNode(true));
+                    vdl.append(vdd1.cloneNode(true));
+                    vdl.append(vdd2.cloneNode(true));
+                    document.getElementById('transactions-card2-sub').append(vdl.cloneNode(true));
+                }
+
+            }
+
+
+        }
+
+        // Create block creation box (with media queries)
+        function createBlock(blockDetails, parentid) {
+
+            var mainCard = document.createElement('div');
+            mainCard.setAttribute('class', 'transactions block-creation');
+
+            var subCard = document.createElement('div');
+            subCard.setAttribute('class', 'transactions-sub-container');
+
+            var colorBlock = document.createElement('div');
+            colorBlock.setAttribute('class', 'color-block-block-creation');
+            colorBlock_line1 = document.createElement('span');
+            colorBlock_line1.setAttribute('style', 'color:#c41b1b; font-size: 12px; font-weight: 700; line-height: 1.2; margin: 0 0 2px; text-align: center;');
+            colorBlock_line1.innerText = 'Block';
+            colorBlock_line2 = document.createElement('span');
+            var colorBlock_line2_a = document.createElement('a');
+            colorBlock_line2_a.setAttribute('href', 'block.html?height=' + blockDetails.height);
+            colorBlock_line2_a.setAttribute('style', 'color:#c41b1b; font-size: 12px; font-weight: 700; line-height: 1.2; margin: 0 0 2px; text-align: center;');
+            colorBlock_line2_a.innerText = '#' + blockDetails.height;
+            colorBlock_line2.append(colorBlock_line2_a);
+            colorBlock.append(colorBlock_line1);
+            colorBlock.append(colorBlock_line2);
+
+            var transactionsContent = document.createElement('div');
+            transactionsContent.setAttribute('class', 'transactions-content');
+
+            var transactionHash = document.createElement('a');
+            transactionHash.innerText = blockDetails['hash'];
+            transactionHash.setAttribute('href', 'block.html?blockhash=' + blockDetails.hash);
+
+            var inputOutputAddress = document.createElement('div');
+            inputOutputAddress.setAttribute('class', 'tokeninfo-placard-master');
+            var inputAddress = document.createElement('a');
+            inputAddress.setAttribute('style', 'color: #333; cursor: initial');
             if (blockDetails['tx'].length == 1) {
-                transactionNumber.innerText = '1 Transaction';
+                inputAddress.innerText = blockDetails['tx'].length + ' Transaction';
             }
             else {
-                transactionNumber.innerText = blockDetails['tx'].length + ' Transactions';
+                inputAddress.innerText = blockDetails['tx'].length + ' Transactions';
             }
-            transactionBox.appendChild(transactionNumber);
-            primaryCard.appendChild(flexbox);
-            primaryCard.appendChild(transactionBox);
-            parentDiv.append(primaryCard);
-            blocksCard = document.getElementById('blocks-card');
-            blocksCard.insertBefore(parentDiv, blocksCard.firstChild);
-            blockExpansionCard = document.createElement('div');
-            blockExpansionCard.setAttribute('id', 'expansion_card_block_' + blockDetails['height']);
-            blockExpansionCard.setAttribute('class', 'hideExpansionCard');
-            // create expansion cards for each block
-            document.getElementById('expansion_card_master').append(blockExpansionCard);
-        }
-
-        // 4. Create token creation box (with media queries)
-        function createTokenCreation(transactionDetails, parentid) {
-
-            var mainCard = document.createElement('div');
-            mainCard.setAttribute('class', 'transactions token-creation');
-
-            var subCard = document.createElement('div');
-            subCard.setAttribute('class', 'transactions-sub-container');
-
-            var colorBlock = document.createElement('div');
-            colorBlock.setAttribute('class', 'color-block-token-creation');
-            colorBlock_line1 = document.createElement('span');
-            colorBlock_line1.setAttribute('style', 'color:#FB0112; font-size: 12px; font-weight: 700; line-height: 1.2; margin: 0 0 2px; text-align: center;');
-            colorBlock_line1.innerText = 'Token Creation';
-            colorBlock_line2 = document.createElement('span');
-            var colorBlock_line2_a = document.createElement('a');
-            colorBlock_line2_a.setAttribute('href', 'token.html?name=' + transactionDetails.parsedFloData.tokenIdentification);
-            colorBlock_line2_a.setAttribute('style', 'color:#FB0112; font-size: 12px; font-weight: 700; line-height: 1.2; margin: 0 0 2px; text-align: center;');
-            colorBlock_line2_a.innerText = transactionDetails.parsedFloData.tokenIdentification.toUpperCase();
-            colorBlock_line2.append(colorBlock_line2_a);
-            colorBlock.append(colorBlock_line1);
-            colorBlock.append(colorBlock_line2);
-
-            var transactionsContent = document.createElement('div');
-            transactionsContent.setAttribute('class', 'transactions-content');
-
-            var transactionHash = document.createElement('a');
-            transactionHash.innerText = transactionDetails['transactionDetails']['txid'];
-            transactionHash.setAttribute('href', 'transaction.html?txhash=' + transactionHash.innerText);
-
-            var incorpAddressMaster = document.createElement('div');
-            incorpAddressMaster.setAttribute('class', 'tokeninfo-placard-master');
-            var incorpAddressPlacard = document.createElement('a');
-            incorpAddressPlacard.setAttribute('style', 'color: #333; cursor: initial');
-            incorpAddressPlacard.innerText = 'Incorporation Address';
-            var incorpAddressSeperator = document.createElement('span');
-            incorpAddressSeperator.setAttribute('class', 'on-off-colon');
-            incorpAddressSeperator.innerText = ':';
-            var incorpAddressData = document.createElement('a');
-            incorpAddressData.innerText = transactionDetails['transactionDetails']['vin'][0]['addr'];
-            incorpAddressData.setAttribute('href', 'address.html?address=' + incorpAddressData.innerText);
-            incorpAddressMaster.append(incorpAddressPlacard);
-            incorpAddressMaster.append(incorpAddressSeperator);
-            incorpAddressMaster.append(incorpAddressData);
-
-            var tokenNameMaster = document.createElement('div');
-            tokenNameMaster.setAttribute('class', 'tokeninfo-placard-master');
-            var tokenNamePlacard = document.createElement('a');
-            tokenNamePlacard.setAttribute('style', 'color: #333; cursor: initial');
-            tokenNamePlacard.innerText = 'Token name';
-            var tokenNameSeperator = document.createElement('span');
-            tokenNameSeperator.setAttribute('class', 'tx-detail-seperator');
-            tokenNameSeperator.innerText = ':';
-            var tokenNameData = document.createElement('a');
-            tokenNameData.innerText = transactionDetails['parsedFloData']['tokenIdentification'].toUpperCase();
-            tokenNameData.setAttribute('href', 'token.html?name=' + transactionDetails['parsedFloData']['tokenIdentification']);
-            tokenNameMaster.append(tokenNamePlacard);
-            tokenNameMaster.append(tokenNameSeperator);
-            tokenNameMaster.append(tokenNameData);
-
-            var tokenSupplyMaster = document.createElement('div');
-            tokenSupplyMaster.setAttribute('class', 'tokeninfo-placard-master');
-            var tokenSupplyPlacard = document.createElement('a');
-            tokenSupplyPlacard.setAttribute('style', 'color: #333; cursor: initial');
-            tokenSupplyPlacard.innerText = 'Supply';
-            var tokenSupplySeperator = document.createElement('span');
-            tokenSupplySeperator.setAttribute('class', 'tx-detail-seperator');
-            tokenSupplySeperator.innerText = ':';
-            var tokenSupplyData = document.createElement('a');
-            tokenSupplyData.setAttribute('style', 'color: #333; cursor: initial;');
-            tokenSupplyData.innerText = transactionDetails['parsedFloData']['tokenAmount'];
-            tokenSupplyMaster.append(tokenSupplyPlacard);
-            tokenSupplyMaster.append(tokenSupplySeperator);
-            tokenSupplyMaster.append(tokenSupplyData);
-
-            var flodataMaster = document.createElement('div');
-            flodataMaster.setAttribute('class', 'tokeninfo-placard-master');
-            var flodataPlacard = document.createElement('a');
-            flodataPlacard.setAttribute('style', 'color: #333; cursor: initial');
-            flodataPlacard.innerText = 'FLO data';
-            var flodataSeperator = document.createElement('span');
-            flodataSeperator.setAttribute('class', 'tx-detail-seperator');
-            flodataSeperator.innerText = ':';
-            var flodataData = document.createElement('a');
-            flodataData.setAttribute('style', 'color: #333; cursor: initial;');
-            flodataData.innerText = transactionDetails['parsedFloData']['flodata'];
-            flodataMaster.append(flodataPlacard);
-            flodataMaster.append(flodataSeperator);
-            flodataMaster.append(flodataData);
-
-            transactionsContent.append(transactionHash);
-            transactionsContent.append(incorpAddressMaster);
-            transactionsContent.append(tokenNameMaster);
-            transactionsContent.append(tokenSupplyMaster);
-            transactionsContent.append(flodataMaster);
-
-            var blockinfoMaster = document.createElement('div');
-            blockinfoMaster.setAttribute('class', 'blockinfo');
-            var blockNumber = document.createElement('a');
-            blockNumber.setAttribute('style', 'color: #5c34a2; text-decoration:none;background-color: transparent; font-size: 12px; line-height: 1.4rem;');
-            blockNumber.innerText = 'Block #' + transactionDetails['transactionDetails']['blockheight'];
-            blockNumber.setAttribute('href', 'block.html?height=' + transactionDetails['transactionDetails']['blockheight'])
-            var blockTime = document.createElement('div');
-            blockTime.setAttribute('style', 'font-weight:400; color:#828ba0;');
-            blockTime.innerText = '1 min ago';
-            blockinfoMaster.append(blockNumber);
-            //blockinfoMaster.append(blockTime);
-
-            subCard.append(colorBlock);
-            subCard.append(transactionsContent);
-            subCard.append(blockinfoMaster);
-            mainCard.append(subCard);
-
-            document.getElementById(parentid).append(mainCard);
-
-        }
-
-        // 5. Create token transfer box (with media queries)
-        function createTokenTransfer(transactionDetails, parentid) {
-
-            var mainCard = document.createElement('div');
-            mainCard.setAttribute('class', 'transactions token-transfer');
-
-            var subCard = document.createElement('div');
-            subCard.setAttribute('class', 'transactions-sub-container');
-
-            var colorBlock = document.createElement('div');
-            colorBlock.setAttribute('class', 'color-block-token-transfer');
-            colorBlock_line1 = document.createElement('span');
-            colorBlock_line1.setAttribute('style', 'color:#ef9a60; font-size: 12px; font-weight: 700; line-height: 1.2; margin: 0 0 2px; text-align: center;');
-            colorBlock_line1.innerText = 'Token Transfer';
-            colorBlock_line2 = document.createElement('span');
-            var colorBlock_line2_a = document.createElement('a');
-            colorBlock_line2_a.setAttribute('href', 'token.html?name=' + transactionDetails.parsedFloData.tokenIdentification);
-            colorBlock_line2_a.setAttribute('style', 'color:#ef9a60; font-size: 12px; font-weight: 700; line-height: 1.2; margin: 0 0 2px; text-align: center;');
-            colorBlock_line2_a.innerText = transactionDetails.parsedFloData.tokenIdentification.toUpperCase();
-            colorBlock_line2.append(colorBlock_line2_a);
-            colorBlock.append(colorBlock_line1);
-            colorBlock.append(colorBlock_line2);
-
-            var transactionsContent = document.createElement('div');
-            transactionsContent.setAttribute('class', 'transactions-content');
-
-            var transactionHash = document.createElement('a');
-            transactionHash.innerText = transactionDetails['transactionDetails']['txid'];
-            transactionHash.setAttribute('href', 'transaction.html?txhash=' + transactionHash.innerText);
-
-            var inputOutputAddress = document.createElement('div');
-            inputOutputAddress.setAttribute('class', 'tokeninfo-placard-master');
-            var inputAddress = document.createElement('a');
-            inputAddress.innerText = transactionDetails['transactionDetails']['vin'][0]['addr'];
-            inputAddress.setAttribute('href', 'address.html?address=' + inputAddress.innerText);
-            var incorpAddressSeperator = document.createElement('i');
-            incorpAddressSeperator.setAttribute('class', 'fas fa-long-arrow-alt-right');
-            incorpAddressSeperator.style = 'text-align: center; vertical-align: bottom; padding:0 2px';
             var outputAddress = document.createElement('a');
-            var outputAmount = 0;
-            for (var i = 0; i < transactionDetails['transactionDetails']['vout'].length; i++) {
-                if (transactionDetails['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0] != inputAddress.innerText) {
-                    outputAddress.innerText = transactionDetails['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0];
-                    outputAmount = transactionDetails['transactionDetails']['vout'][i]['value'];
-                }
-            }
             outputAddress.setAttribute('href', 'address.html?address=' + outputAddress.innerText);
             inputOutputAddress.append(inputAddress);
-            inputOutputAddress.append(incorpAddressSeperator);
-            inputOutputAddress.append(outputAddress);
 
             var tokenNameMaster = document.createElement('div');
             tokenNameMaster.setAttribute('class', 'tokeninfo-placard-master');
             var tokenNamePlacard = document.createElement('a');
             tokenNamePlacard.setAttribute('style', 'color: #333; cursor: initial');
-            tokenNamePlacard.innerText = outputAmount + ' ' + transactionDetails['parsedFloData']['tokenIdentification'].toUpperCase();
+            tokenNamePlacard.innerText = blockDetails.confirmations + ' Confirmations';
             var tokenNameSeperator = document.createElement('span');
             tokenNameSeperator.setAttribute('style', 'padding:0 2px; display:none');
             tokenNameSeperator.innerText = ':';
@@ -2349,13 +2917,13 @@
             flodataMaster.setAttribute('class', 'tokeninfo-placard-master');
             var flodataPlacard = document.createElement('a');
             flodataPlacard.setAttribute('style', 'color: #333; cursor: initial');
-            flodataPlacard.innerText = 'FLO data';
+            flodataPlacard.innerText = 'Nonce';
             var flodataSeperator = document.createElement('span');
-            flodataSeperator.setAttribute('class', 'tx-detail-seperator');
+            flodataSeperator.setAttribute('style', 'padding:0 2px');
             flodataSeperator.innerText = ':';
             var flodataData = document.createElement('a');
             flodataData.setAttribute('style', 'color: #333; cursor: initial;');
-            flodataData.innerText = transactionDetails['parsedFloData']['flodata'];
+            flodataData.innerText = blockDetails.nonce;
             flodataMaster.append(flodataPlacard);
             flodataMaster.append(flodataSeperator);
             flodataMaster.append(flodataData);
@@ -2369,8 +2937,8 @@
             blockinfoMaster.setAttribute('class', 'blockinfo');
             var blockNumber = document.createElement('a');
             blockNumber.setAttribute('style', 'color: #5c34a2; text-decoration:none;background-color: transparent; font-size: 12px; line-height: 1.4rem;');
-            blockNumber.innerText = 'Block #' + transactionDetails['transactionDetails']['blockheight'];
-            blockNumber.setAttribute('href', 'block.html?height=' + transactionDetails['transactionDetails']['blockheight'])
+            blockNumber.innerText = 'Block #' + blockDetails['height'];
+            blockNumber.setAttribute('href', 'block.html?height=' + blockDetails['height'])
             var blockTime = document.createElement('div');
             blockTime.setAttribute('style', 'font-weight:400; color:#828ba0;');
             blockTime.innerText = '1 min ago';
@@ -2386,608 +2954,29 @@
 
         }
 
-        // 6. Create smart contract creation box (with media queries)
-        function createContractCreation(transactionDetails, parentid) {
 
-
-            var mainCard = document.createElement('div');
-            mainCard.setAttribute('class', 'transactions contract-creation');
-
-            var subCard = document.createElement('div');
-            subCard.setAttribute('class', 'transactions-sub-container');
-
-            var colorBlock = document.createElement('div');
-            colorBlock.setAttribute('class', 'color-block-contract-creation');
-            colorBlock_line1 = document.createElement('span');
-            colorBlock_line1.setAttribute('style', 'color:#4786ff; font-size: 12px; font-weight: 700; line-height: 1.2; margin: 0 0 2px; text-align: center;');
-            colorBlock_line1.innerText = 'Smart Contract Creation';
-            colorBlock_line2 = document.createElement('span');
-            var colorBlock_line2_a = document.createElement('a');
-            colorBlock_line2_a.setAttribute('href', 'token.html?name=' + transactionDetails.parsedFloData.tokenIdentification);
-            colorBlock_line2_a.setAttribute('style', 'color:#4786ff; font-size: 12px; font-weight: 700; line-height: 1.2; margin: 0 0 2px; text-align: center;');
-            colorBlock_line2_a.innerText = transactionDetails.parsedFloData.tokenIdentification.toUpperCase();
-            colorBlock_line2.append(colorBlock_line2_a);
-            colorBlock.append(colorBlock_line1);
-            colorBlock.append(colorBlock_line2);
-
-
-            var transactionsContent = document.createElement('div');
-            transactionsContent.setAttribute('class', 'transactions-content');
-
-            var transactionHash = document.createElement('a');
-            transactionHash.innerText = transactionDetails['transactionDetails']['txid'];
-            transactionHash.setAttribute('href', 'transaction.html?txhash=' + transactionHash.innerText);
-
-            var contractNameMaster = document.createElement('div');
-            contractNameMaster.setAttribute('class', 'tokeninfo-placard-master');
-            var contractNamePlacard = document.createElement('a');
-            contractNamePlacard.setAttribute('style', 'color: #333; cursor: initial');
-            contractNamePlacard.innerText = 'Contract name';
-            var contractNameSeperator = document.createElement('span');
-            contractNameSeperator.setAttribute('class', 'tx-detail-seperator');
-            contractNameSeperator.innerText = ':';
-            var contractNameValue = document.createElement('a');
-            contractNameValue.innerText = transactionDetails['parsedFloData']['contractName'];
-            contractNameValue.setAttribute('href', 'contract.html?name=' + contractNameValue.innerText + '&address=' + transactionDetails['parsedFloData']['contractAddress']);
-            contractNameMaster.append(contractNamePlacard);
-            contractNameMaster.append(contractNameSeperator);
-            contractNameMaster.append(contractNameValue);
-
-
-            var incorpAddressMaster = document.createElement('div');
-            incorpAddressMaster.setAttribute('class', 'tokeninfo-placard-master');
-            var incorpAddressPlacard = document.createElement('a');
-            incorpAddressPlacard.setAttribute('style', 'color: #333; cursor: initial');
-            incorpAddressPlacard.innerText = 'Incorporation Address';
-            var incorpSeperator = document.createElement('span');
-            incorpSeperator.setAttribute('class', 'tx-detail-seperator');
-            incorpSeperator.innerText = ':';
-            var incorpData = document.createElement('a');
-            incorpData.innerText = transactionDetails['parsedFloData']['contractAddress'];
-            incorpData.setAttribute('href', 'address.html?address=' + incorpData.innerText);
-            incorpAddressMaster.append(incorpAddressPlacard);
-            incorpAddressMaster.append(incorpSeperator);
-            incorpAddressMaster.append(incorpData);
-
-            var tokenMaster = document.createElement('div');
-            tokenMaster.setAttribute('class', 'tokeninfo-placard-master');
-            var tokenPlacard = document.createElement('a');
-            tokenPlacard.setAttribute('style', 'color: #333; cursor: initial');
-            tokenPlacard.innerText = 'Token used';
-            var tokenSeperator = document.createElement('span');
-            tokenSeperator.setAttribute('class', 'tx-detail-seperator');
-            tokenSeperator.innerText = ':';
-            var tokenData = document.createElement('a');
-            tokenData.innerText = transactionDetails['parsedFloData']['tokenIdentification'].toUpperCase();
-            tokenData.setAttribute('href', 'token.html?name=' + transactionDetails['parsedFloData']['tokenIdentification']);
-            tokenMaster.append(tokenPlacard);
-            tokenMaster.append(tokenSeperator);
-            tokenMaster.append(tokenData);
-
-            var typeMaster = document.createElement('div');
-            typeMaster.setAttribute('class', 'tokeninfo-placard-master');
-            var typePlacard = document.createElement('a');
-            typePlacard.setAttribute('style', 'color: #333; cursor: initial');
-            typePlacard.innerText = 'Contract type';
-            var typeSeperator = document.createElement('span');
-            typeSeperator.setAttribute('class', 'tx-detail-seperator');
-            typeSeperator.innerText = ':';
-            var typeData = document.createElement('a');
-            typeData.style = "color: #333; cursor: initial;";
-            typeData.innerText = transactionDetails['parsedFloData']['contractType'];
-            typeMaster.append(typePlacard);
-            typeMaster.append(typeSeperator);
-            typeMaster.append(typeData);
-
-            var expiryMaster = document.createElement('div');
-            expiryMaster.setAttribute('class', 'tokeninfo-placard-master');
-            var expiryPlacard = document.createElement('a');
-            expiryPlacard.setAttribute('style', 'color: #333; cursor: initial');
-            expiryPlacard.innerText = 'Expiry';
-            var expirySeperator = document.createElement('span');
-            expirySeperator.setAttribute('class', 'tx-detail-seperator');
-            expirySeperator.innerText = ':';
-            var expiryData = document.createElement('a');
-            expiryData.style = "color: #333; cursor: initial;";
-            expiryData.innerText = transactionDetails['parsedFloData']['contractConditions']['expiryTime'];
-            expiryMaster.append(expiryPlacard);
-            expiryMaster.append(expirySeperator);
-            expiryMaster.append(expiryData);
-
-            var participationMaster = document.createElement('div');
-            participationMaster.setAttribute('class', 'tokeninfo-placard-master');
-            var participationPlacard = document.createElement('a');
-            participationPlacard.setAttribute('style', 'color: #333; cursor: initial');
-            participationPlacard.innerText = 'Participation amount';
-            var participationSeperator = document.createElement('span');
-            participationSeperator.setAttribute('class', 'tx-detail-seperator');
-            participationSeperator.innerText = ':';
-            var participationData = document.createElement('a');
-            participationData.style = "color: #333; cursor: initial;";
-            participationData.innerText = transactionDetails['parsedFloData']['contractConditions']['contractAmount'] + ' ' + transactionDetails['parsedFloData']['tokenIdentification'].toUpperCase();
-            participationMaster.append(participationPlacard);
-            participationMaster.append(participationSeperator);
-            participationMaster.append(participationData);
-
-            var choiceMaster = document.createElement('div');
-            choiceMaster.setAttribute('class', 'tokeninfo-placard-master');
-            var choicePlacard = document.createElement('a');
-            choicePlacard.setAttribute('style', 'color: #333; cursor: initial');
-            choicePlacard.innerText = 'User choice';
-            var choiceSeperator = document.createElement('span');
-            choiceSeperator.setAttribute('class', 'tx-detail-seperator');
-            choiceSeperator.innerText = ':';
-            var choiceData = document.createElement('a');
-            choiceData.style = "color: #333; cursor: initial;";
-            var choiceText = '';
-            for (var i = 0; i < Object.keys(transactionDetails['parsedFloData']['contractConditions']['userchoices']).length; i++) {
-                if (i - 1 == Object.keys(transactionDetails['parsedFloData']['contractConditions']['userchoices']).length) {
-                    choiceText = choiceText + transactionDetails['parsedFloData']['contractConditions']['userchoices'][i];
-                }
-                else {
-                    choiceText = choiceText + transactionDetails['parsedFloData']['contractConditions']['userchoices'][i] + ' | ';
-                }
-
-            }
-            choiceData.innerText = choiceText;
-            choiceMaster.append(choicePlacard);
-            choiceMaster.append(choiceSeperator);
-            choiceMaster.append(choiceData);
-
-            transactionsContent.append(transactionHash);
-            transactionsContent.append(contractNameMaster);
-            transactionsContent.append(incorpAddressMaster);
-            transactionsContent.append(tokenMaster);
-            transactionsContent.append(typeMaster);
-            transactionsContent.append(expiryMaster);
-            transactionsContent.append(participationMaster);
-            transactionsContent.append(choiceMaster);
-
-            var blockinfoMaster = document.createElement('div');
-            blockinfoMaster.setAttribute('class', 'blockinfo');
-            var blockNumber = document.createElement('a');
-            blockNumber.setAttribute('style', 'color: #5c34a2; text-decoration:none;background-color: transparent; font-size: 12px; line-height: 1.4rem;');
-            blockNumber.innerText = 'Block #' + transactionDetails['transactionDetails']['blockheight'];
-            blockNumber.setAttribute('href', 'block.html?height=' + transactionDetails['transactionDetails']['blockheight'])
-            var blockTime = document.createElement('div');
-            blockTime.setAttribute('style', 'font-weight:400; color:#828ba0;');
-            blockTime.innerText = '1 min ago';
-            blockinfoMaster.append(blockNumber);
-            //blockinfoMaster.append(blockTime);
-
-            subCard.append(colorBlock);
-            subCard.append(transactionsContent);
-            subCard.append(blockinfoMaster);
-            mainCard.append(subCard);
-
-            document.getElementById(parentid).append(mainCard);
-
-        }
-
-        // 7. Create contract transfer box (with media queries)
-        function createContractTransfer(transactionDetails, parentid) {
-
-
-            var mainCard = document.createElement('div');
-            mainCard.setAttribute('class', 'transactions contract-transfer');
-
-            var subCard = document.createElement('div');
-            subCard.setAttribute('class', 'transactions-sub-container');
-
-            var colorBlock = document.createElement('div');
-            colorBlock.setAttribute('class', 'color-block-contract-transfer');
-            colorBlock_line1 = document.createElement('span');
-            colorBlock_line1.setAttribute('style', 'color:#ff0000d7; font-size: 12px; font-weight: 700; line-height: 1.2; margin: 0 0 2px; text-align: center;');
-            colorBlock_line1.innerText = 'Smart Contract Transfer';
-            colorBlock_line2 = document.createElement('span');
-            var colorBlock_line2_a = document.createElement('a');
-            colorBlock_line2_a.setAttribute('href', 'token.html?name=' + transactionDetails.parsedFloData.tokenIdentification);
-            colorBlock_line2_a.setAttribute('style', 'color:#ff0000d7; font-size: 12px; font-weight: 700; line-height: 1.2; margin: 0 0 2px; text-align: center;');
-            colorBlock_line2_a.innerText = transactionDetails.parsedFloData.tokenIdentification.toUpperCase();
-            colorBlock_line2.append(colorBlock_line2_a);
-            colorBlock.append(colorBlock_line1);
-            colorBlock.append(colorBlock_line2);
-
-            var transactionsContent = document.createElement('div');
-            transactionsContent.setAttribute('class', 'transactions-content');
-
-            var transactionHash = document.createElement('a');
-            transactionHash.innerText = transactionDetails['transactionDetails']['txid'];
-            transactionHash.setAttribute('href', 'transaction.html?txhash=' + transactionHash.innerText);
-
-
-            var inputOutputAddress = document.createElement('div');
-            inputOutputAddress.setAttribute('class', 'tokeninfo-placard-master');
-            var inputAddress = document.createElement('a');
-            inputAddress.innerText = transactionDetails['transactionDetails']['vin'][0]['addr'];
-            inputAddress.setAttribute('href', 'address.html?address=' + inputAddress.innerText);
-            var incorpAddressSeperator = document.createElement('i');
-            incorpAddressSeperator.setAttribute('class', 'fas fa-long-arrow-alt-right');
-            incorpAddressSeperator.style = 'text-align: center; vertical-align: bottom; padding:0 2px';
-            var outputAddress = document.createElement('a');
-            var outputAmount = 0;
-            for (var i = 0; i < transactionDetails['transactionDetails']['vout'].length; i++) {
-                if (transactionDetails['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0] != inputAddress.innerText) {
-                    outputAddress.innerText = transactionDetails['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0];
-                    outputAmount = transactionDetails['transactionDetails']['vout'][i]['value'];
-
-                }
-            }
-            outputAddress.setAttribute('href', 'address.html?address=' + outputAddress.innerText);
-            inputOutputAddress.append(inputAddress);
-            inputOutputAddress.append(incorpAddressSeperator);
-            inputOutputAddress.append(outputAddress);
-
-            var tokenNameMaster = document.createElement('div');
-            tokenNameMaster.setAttribute('class', 'tokeninfo-placard-master');
-            var tokenNamePlacard = document.createElement('a');
-            tokenNamePlacard.setAttribute('style', 'color: #333; cursor: initial');
-            tokenNamePlacard.innerText = outputAmount + ' ' + transactionDetails['parsedFloData']['tokenIdentification'].toUpperCase();
-            tokenNamePlacard.setAttribute('href', 'token.html?name=' + transactionDetails['parsedFloData']['tokenIdentification']);
-            var tokenNameSeperator = document.createElement('span');
-            tokenNameSeperator.setAttribute('style', 'padding:0 2px; display:none');
-            tokenNameSeperator.innerText = ':';
-            var tokenNameData = document.createElement('a');
-            tokenNameData.style = "color: #333; cursor: initial; display:none";
-            tokenNameData.innerText = 'doesnt matter';
-            tokenNameMaster.append(tokenNamePlacard);
-            tokenNameMaster.append(tokenNameSeperator);
-            tokenNameMaster.append(tokenNameData);
-
-
-            var contractNameMaster = document.createElement('div');
-            contractNameMaster.setAttribute('class', 'tokeninfo-placard-master');
-            var contractNamePlacard = document.createElement('a');
-            contractNamePlacard.setAttribute('style', 'color: #333; cursor: initial');
-            contractNamePlacard.innerText = 'Contract name';
-            var contractNameSeperator = document.createElement('span');
-            contractNameSeperator.setAttribute('class', 'tx-detail-seperator');
-            contractNameSeperator.innerText = ':';
-            var contractNameValue = document.createElement('a');
-            contractNameValue.innerText = transactionDetails['parsedFloData']['contractName'];
-            contractNameValue.setAttribute('href', 'contract.html?name=' + transactionDetails['parsedFloData']['contractName'] + '&address=' + outputAddress.innerHTML);
-            contractNameMaster.append(contractNamePlacard);
-            contractNameMaster.append(contractNameSeperator);
-            contractNameMaster.append(contractNameValue);
-
-            var choiceMaster = document.createElement('div');
-            choiceMaster.setAttribute('class', 'tokeninfo-placard-master');
-            var choicePlacard = document.createElement('a');
-            choicePlacard.setAttribute('style', 'color: #333; cursor: initial');
-            choicePlacard.innerText = 'User choice';
-            var choiceSeperator = document.createElement('span');
-            choiceSeperator.setAttribute('class', 'tx-detail-seperator');
-            choiceSeperator.innerText = ':';
-            var choiceData = document.createElement('a');
-            choiceData.setAttribute('style', 'color: #333; cursor: initial;');
-            choiceData.innerText = transactionDetails['parsedFloData']['userChoice'];
-            choiceMaster.append(choicePlacard);
-            choiceMaster.append(choiceSeperator);
-            choiceMaster.append(choiceData);
-
-            transactionsContent.append(transactionHash);
-            transactionsContent.append(inputOutputAddress);
-            transactionsContent.append(tokenNameMaster);
-            transactionsContent.append(contractNameMaster);
-            transactionsContent.append(choiceMaster);
-
-            var blockinfoMaster = document.createElement('div');
-            blockinfoMaster.setAttribute('class', 'blockinfo');
-            var blockNumber = document.createElement('a');
-            blockNumber.setAttribute('style', 'color: #5c34a2; text-decoration:none;background-color: transparent; font-size: 12px; line-height: 1.4rem;');
-            blockNumber.innerText = 'Block #' + transactionDetails['transactionDetails']['blockheight'];
-            blockNumber.setAttribute('href', 'block.html?height=' + transactionDetails['transactionDetails']['blockheight'])
-            var blockTime = document.createElement('div');
-            blockTime.setAttribute('style', 'font-weight:400; color:#828ba0;');
-            blockTime.innerText = '1 min ago';
-            blockinfoMaster.append(blockNumber);
-            //blockinfoMaster.append(blockTime);
-
-            subCard.append(colorBlock);
-            subCard.append(transactionsContent);
-            subCard.append(blockinfoMaster);
-            mainCard.append(subCard);
-
-            document.getElementById(parentid).append(mainCard);
-
-        }
-
-        // 8. Create smart contract creation box (with media queries)
-        function createContractTrigger(transactionDetails, parentid) {
-
-
-            var mainCard = document.createElement('div');
-            mainCard.setAttribute('class', 'transactions contract-trigger');
-
-            var subCard = document.createElement('div');
-            subCard.setAttribute('class', 'transactions-sub-container');
-
-            var colorBlock = document.createElement('div');
-            colorBlock.setAttribute('class', 'color-block-contract-trigger');
-            colorBlock_line1 = document.createElement('span');
-            colorBlock_line1.setAttribute('style', 'color:#05c205d7; font-size: 12px; font-weight: 700; line-height: 1.2; margin: 0 0 2px; text-align: center;');
-            colorBlock_line1.innerText = 'Smart Contract Trigger';
-            colorBlock_line2 = document.createElement('span');
-            var colorBlock_line2_a = document.createElement('a');
-            colorBlock_line2_a.setAttribute('href', 'token.html?name=' + transactionDetails.parsedFloData.tokenIdentification);
-            colorBlock_line2_a.setAttribute('style', 'color:#05c205d7; font-size: 12px; font-weight: 700; line-height: 1.2; margin: 0 0 2px; text-align: center;');
-            //colorBlock_line2_a.innerText = transactionDetails.parsedFloData.tokenIdentification.toUpperCase();
-            colorBlock_line2.append(colorBlock_line2_a);
-            colorBlock.append(colorBlock_line1);
-            colorBlock.append(colorBlock_line2);
-
-
-            var transactionsContent = document.createElement('div');
-            transactionsContent.setAttribute('class', 'transactions-content');
-
-            var transactionHash = document.createElement('a');
-            transactionHash.innerText = transactionDetails['transactionDetails']['txid'];
-            transactionHash.setAttribute('href', 'transaction.html?txhash=' + transactionHash.innerText);
-
-
-            var incorpAddressMaster = document.createElement('div');
-            incorpAddressMaster.setAttribute('class', 'tokeninfo-placard-master');
-            var incorpAddressPlacard = document.createElement('a');
-            incorpAddressPlacard.setAttribute('style', 'color: #333; cursor: initial');
-            incorpAddressPlacard.innerText = 'Contract Address';
-            var incorpSeperator = document.createElement('span');
-            incorpSeperator.setAttribute('class', 'tx-detail-seperator');
-            incorpSeperator.innerText = ':';
-            var outputAddress = document.createElement('a');
-            var outputAmount = 0;
-            for (var i = 0; i < transactionDetails['transactionDetails']['vout'].length; i++) {
-                if (transactionDetails['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0] != transactionDetails['transactionDetails']['vin'][0]['addr']) {
-                    outputAddress.innerText = transactionDetails['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0];
-                    outputAmount = transactionDetails['transactionDetails']['vout'][i]['value'];
-
-                }
-            }
-            outputAddress.setAttribute('href', 'address.html?address=' + outputAddress.innerHTML);
-            incorpAddressMaster.append(incorpAddressPlacard);
-            incorpAddressMaster.append(incorpSeperator);
-            incorpAddressMaster.append(outputAddress);
-
-            var contractNameMaster = document.createElement('div');
-            contractNameMaster.setAttribute('class', 'tokeninfo-placard-master');
-            var contractNamePlacard = document.createElement('a');
-            contractNamePlacard.setAttribute('style', 'color: #333; cursor: initial');
-            contractNamePlacard.innerText = 'Contract name';
-            var contractNameSeperator = document.createElement('span');
-            contractNameSeperator.setAttribute('class', 'tx-detail-seperator');
-            contractNameSeperator.innerText = ':';
-            var contractNameValue = document.createElement('a');
-            contractNameValue.innerText = transactionDetails['parsedFloData']['contractName'];
-            contractNameValue.setAttribute('href', 'contract.html?name=' + contractNameValue.innerText + '&address=' + outputAddress.innerText);
-            contractNameMaster.append(contractNamePlacard);
-            contractNameMaster.append(contractNameSeperator);
-            contractNameMaster.append(contractNameValue);
-
-            var tokenMaster = document.createElement('div');
-            tokenMaster.setAttribute('class', 'tokeninfo-placard-master');
-            var tokenPlacard = document.createElement('a');
-            tokenPlacard.setAttribute('style', 'color: #333; cursor: initial');
-            tokenPlacard.innerText = 'Winning choice';
-            var tokenSeperator = document.createElement('span');
-            tokenSeperator.setAttribute('class', 'tx-detail-seperator');
-            tokenSeperator.innerText = ':';
-            var tokenData = document.createElement('a');
-            tokenData.setAttribute('style', 'color: #333; cursor: initial');
-            tokenData.innerText = transactionDetails['parsedFloData']['triggerCondition'];
-            tokenMaster.append(tokenPlacard);
-            tokenMaster.append(tokenSeperator);
-            tokenMaster.append(tokenData);
-
-
-            var committeeMaster = document.createElement('div');
-            committeeMaster.setAttribute('class', 'tokeninfo-placard-master');
-            var committeePlacard = document.createElement('a');
-            committeePlacard.setAttribute('style', 'color: #333; cursor: initial');
-            committeePlacard.innerText = 'Committee address';
-            var committeeSeperator = document.createElement('span');
-            committeeSeperator.setAttribute('class', 'tx-detail-seperator');
-            committeeSeperator.innerText = ':';
-            var committeeData = document.createElement('a');
-            committeeData.innerText = transactionDetails['transactionDetails']['vin'][0]['addr'];
-            committeeData.setAttribute('href', 'address.html?address=' + committeeData.innerText);
-            committeeMaster.append(committeePlacard);
-            committeeMaster.append(committeeSeperator);
-            committeeMaster.append(committeeData);
-
-            transactionsContent.append(transactionHash);
-            transactionsContent.append(contractNameMaster);
-            transactionsContent.append(incorpAddressMaster);
-            transactionsContent.append(tokenMaster);
-            transactionsContent.append(committeeMaster);
-
-            var blockinfoMaster = document.createElement('div');
-            blockinfoMaster.setAttribute('class', 'blockinfo');
-            var blockNumber = document.createElement('a');
-            blockNumber.setAttribute('style', 'color: #5c34a2; text-decoration:none;background-color: transparent; font-size: 12px; line-height: 1.4rem;');
-            blockNumber.innerText = 'Block #' + transactionDetails['transactionDetails']['blockheight'];
-            blockNumber.setAttribute('href', transactionDetails['transactionDetails']['blockheight']);
-            var blockTime = document.createElement('div');
-            blockTime.setAttribute('style', 'font-weight:400; color:#828ba0;');
-            blockTime.innerText = '1 min ago';
-            blockinfoMaster.append(blockNumber);
-            //blockinfoMaster.append(blockTime);
-
-            subCard.append(colorBlock);
-            subCard.append(transactionsContent);
-            subCard.append(blockinfoMaster);
-            mainCard.append(subCard);
-
-            document.getElementById(parentid).append(mainCard);
-
-        }
-
-        // only 2 API calls will give you the details of the last 4 blocks thoroughly and latest transactions
-        //blocks
-
-        fetch(`${window.tokenapiUrl}/api/v1.0/getSystemData`)
+        // First fetch the all transaction details  
+        // Smart Contract information
+        fetch(`${tokenapiUrl}/api/v1.0/getLatestBlockDetails?limit=100`)
             .then(function (response) {
                 return response.json();
             })
             .then(function (jsonData) {
-
-                if (jsonData['result'] == 'ok') {
-                    document.getElementById('toptoken-value').innerText = 'RMT';
-                    document.getElementById('toptoken-value').href = 'token.html?name=rmt';
-                    document.getElementById('toptoken-media-value').innerText = 'RMT';
-                    document.getElementById('toptoken-media-value').href = 'token.html?name=rmt';
-
-                    document.getElementById('topcontract-value').innerText = 'india-elections-2019';
-                    document.getElementById('topcontract-value').href = 'contract.html?name=india-elections-2019&address=F7osBpjDDV1mSSnMNrLudEQQ3cwDJ2dPR1';
-                    document.getElementById('topcontract-media-value').innerText = 'india-elections-2019';
-                    document.getElementById('topcontract-media-value').href = 'contract.html?name=india-elections-2019&address=F7osBpjDDV1mSSnMNrLudEQQ3cwDJ2dPR1';
-
-                    document.getElementById('totaltransactions').innerText = jsonData['systemTransactionCount'];
-                    document.getElementById('totaltransactions-media').innerText = jsonData['systemTransactionCount'];
-
-                    document.getElementById('walletaddresses').innerText = jsonData['systemAddressCount'];
-                    document.getElementById('walletaddresses-media').innerText = jsonData['systemAddressCount'];
-
-
-                }
-
-            });
-
-        fetch(`${window.tokenapiUrl}/api/v1.0/getLatestBlockDetails`)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (jsonData) {
-
+                //console.log('details of all the transactions are');
+                //console.log(jsonData);
 
                 // remove the loading icons 
                 document.getElementById('loadingBlocks').remove();
 
-                window.floscout = {};
-                window.floscout.latestBlocks = [];
-                window.floscout.latestBlocksExpansion = {};
+                // Iterate over each block and append it to the card
+                Object.keys(jsonData["latestBlocks"]).forEach(function (item, index) {
 
-                // Iterate through each block, pass the data to create transaction function
-                Object.keys(jsonData["latestBlocks"]).forEach(function (blockDetails, index) {
-
-                    createSmallBlock(jsonData["latestBlocks"][blockDetails]);
-
-                    window.floscout.latestBlocks.push(jsonData["latestBlocks"][blockDetails]['height']);
-                    window.floscout.latestBlocksExpansion["expansion_card_block_" + jsonData["latestBlocks"][blockDetails]['height']] = 'closed';
-
-                    // assign onclick listener to the block
-                    document.getElementById('blocks-card-' + jsonData["latestBlocks"][blockDetails]['height']).addEventListener("click", function () {
-
-                        //console.log('ID of this element is ' + this.id);
-
-                        if (window.screen.width > 600) {
-
-                            // first check if the clicked block expansion is open. If it is close it
-                            if (window.floscout.latestBlocksExpansion["expansion_card_block_" + jsonData["latestBlocks"][blockDetails]['height']] == 'open') {
-                                var expansion_card = document.getElementById("expansion_card_block_" + jsonData["latestBlocks"][blockDetails]['height']);
-                                expansion_card.classList.remove('expansionCard');
-                                expansion_card.classList.add('hideExpansionCard');
-                                window.floscout.latestBlocksExpansion["expansion_card_block_" + jsonData["latestBlocks"][blockDetails]['height']] = 'closed';
-
-                                // put every block card's opacity to 1 
-                                window.floscout.latestBlocks.forEach(function (block, index) {
-
-                                    // change opacity 
-                                    document.getElementById("blocks-card-" + block).style.opacity = 1;
-
-                                });
-
-                            }
-                            else {
-
-                                // close every other block and change
-                                window.floscout.latestBlocks.forEach(function (block, index) {
-
-                                    // change opacity 
-                                    if ("expansion_card_block_" + block != "expansion_card_block_" + jsonData["latestBlocks"][blockDetails]['height']) {
-
-                                        if (window.floscout.latestBlocksExpansion["expansion_card_block_" + block] == 'open') {
-                                            var block_expansion_card = document.getElementById("expansion_card_block_" + block);
-                                            block_expansion_card.classList.remove('expansionCard');
-                                            block_expansion_card.classList.add('hideExpansionCard');
-                                            window.floscout.latestBlocksExpansion["expansion_card_block_" + block] = 'closed';
-                                        };
-
-
-                                        document.getElementById("blocks-card-" + block).style.opacity = 0.2;
-
-                                    }
-                                });
-
-                                // open current card
-                                var expansion_card = document.getElementById("expansion_card_block_" + jsonData["latestBlocks"][blockDetails]['height']);
-                                expansion_card.classList.remove('hideExpansionCard');
-                                expansion_card.classList.add('expansionCard');
-                                window.floscout.latestBlocksExpansion["expansion_card_block_" + jsonData["latestBlocks"][blockDetails]['height']] = 'open';
-                                document.getElementById("blocks-card-" + jsonData["latestBlocks"][blockDetails]['height']).style.opacity = 1;
-
-                            }
-
-                        }
-
-
-                    });
+                    createBlock(jsonData["latestBlocks"][item], 'transactions-card');
                 });
 
-                //runScriptJs();
             });
-
-        //transaction
-        fetch(`${window.tokenapiUrl}/api/v1.0/getLatestTransactionDetails?numberOfLatestBlocks=4`)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (jsonData) {
-
-                // remove the loading icons 
-                document.getElementById('loadingTransactions').remove();
-
-                // All the functions to make visual changes on the UI
-                ////console.log('get latestb transactions, before loop');
-                // Iterate through each transaction pass the data to create transaction function
-                ////console.log(typeof jsonData['latestTransactions']);
-                Object.keys(jsonData["latestTransactions"]).forEach(function (item, index) {
-
-                    if (jsonData["latestTransactions"][item]["parsedFloData"]["transactionType"] == "transfer") {
-                        if (jsonData["latestTransactions"][item]["parsedFloData"]["transferType"] == "token") {
-                            //console.log('Just found a token transfer type of transaction');
-                            createTokenTransfer(jsonData["latestTransactions"][item], 'transactions-card');
-                            appendTransactionDetailsToExpansion(jsonData["latestTransactions"][item], 'tokenTransfer');
-                        }
-                        else if (jsonData["latestTransactions"][item]["parsedFloData"]["transferType"] == "smartContract") {
-                            //console.log('Just found a smart contract transfer type of transaction');
-                            createContractTransfer(jsonData["latestTransactions"][item], 'transactions-card');
-                            appendTransactionDetailsToExpansion(jsonData["latestTransactions"][item], 'contractTransfer');
-                        }
-                    }
-                    else if (jsonData["latestTransactions"][item]["parsedFloData"]["transactionType"] == 'tokenIncorporation') {
-                        //console.log('Just found a token incorporation type of transaction');
-
-                        createTokenCreation(jsonData["latestTransactions"][item], 'transactions-card');
-                        appendTransactionDetailsToExpansion(jsonData["latestTransactions"][item], 'tokenIncorporation');
-                    }
-                    else if (jsonData["latestTransactions"][item]["parsedFloData"]["transactionType"] == 'smartContractIncorporation') {
-                        //console.log('just found a smart contract incorporation type of transaction');
-                        createContractCreation(jsonData["latestTransactions"][item], 'transactions-card');
-                        appendTransactionDetailsToExpansion(jsonData["latestTransactions"][item], 'contractIncorporation')
-                    }
-                    else if (jsonData["latestTransactions"][item]["parsedFloData"]["transactionType"] == 'smartContractPays') {
-                        //console.log('Just found a smart contract pays type of transaction');
-                        createContractTrigger(jsonData["latestTransactions"][item], 'transactions-card');
-                        appendTransactionDetailsToExpansion(jsonData["latestTransactions"][item], 'contractTrigger');
-                    }
-                });
-            });
-
 
     </script>
-
-    <!-- partial -->
-    <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-    <script src="script.js"></script>
 
 </body>
 

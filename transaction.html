@@ -1,0 +1,3385 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
+    <link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
+</head>
+
+<!-- Set urls for token and flo Apis -->
+<script>
+    window.tokenapiUrl = 'https://ranchimallflo.duckdns.org'
+    window.floapiUrl = 'https://flosight.duckdns.org'
+</script>
+
+<!-- Flex search content -->
+<script>
+
+    /*
+     FlexSearch v0.6.22
+     Copyright 2019 Nextapps GmbH
+     Author: Thomas Wilkerling
+     Released under the Apache 2.0 Licence
+     https://github.com/nextapps-de/flexsearch
+    */
+    //FlexSearch min mode
+    DEBUG = true;
+    'use strict'; (function (I, R, v) { let K; (K = v.define) && K.amd ? K([], function () { return R }) : (K = v.modules) ? K[I.toLowerCase()] = R : "object" === typeof exports ? module.exports = R : v[I] = R })("FlexSearch", function ma(I) {
+        function v(a, b) { const c = b ? b.id : a && a.id; this.id = c || 0 === c ? c : na++; this.init(a, b); fa(this, "index", function () { return this.a ? Object.keys(this.a.index[this.a.keys[0]].c) : Object.keys(this.c) }); fa(this, "length", function () { return this.index.length }) } function K(a, b, c, d) {
+            this.u !== this.g && (this.o = this.o.concat(c), this.u++ ,
+                d && this.o.length >= d && (this.u = this.g), this.u === this.g && (this.cache && this.l.set(b, this.o), this.F && this.F(this.o))); return this
+        } function S(a) { const b = B(); for (const c in a) if (a.hasOwnProperty(c)) { const d = a[c]; b[c] = E(d) ? d.slice(0) : J(d) ? S(d) : d } return b } function W(a, b) { const c = a.length, d = O(b), e = []; for (let f = 0, g = 0; f < c; f++) { const h = a[f]; if (d && b(h) || !d && !b[h]) e[g++] = h } return e } function P(a, b, c, d, e, f, g, h, l, m) {
+            c = ha(c, g ? 0 : e, h, f, b, l, m); let n; h && (h = c.page, n = c.next, c = c.result); if (g) b = this.where(g, null, e, c); else {
+                b =
+                    c; c = this.h; e = b.length; f = Array(e); for (g = 0; g < e; g++)f[g] = c[b[g]]; b = f
+            } c = b; d && (O(d) || (L = d.split(":"), 1 < L.length ? d = oa : (L = L[0], d = pa)), c.sort(d)); c = T(h, n, c); this.cache && this.l.set(a, c); return c
+        } function fa(a, b, c) { Object.defineProperty(a, b, { get: c }) } function q(a) { return new RegExp(a, "g") } function Q(a, b) { for (let c = 0; c < b.length; c += 2)a = a.replace(b[c], b[c + 1]); return a } function V(a, b, c, d, e, f, g, h) {
+            if (b[c]) return b[c]; e = e ? (h - (g || h / 1.5)) * f + (g || h / 1.5) * e : f; b[c] = e; e >= g && (a = a[h - (e + .5 >> 0)], a = a[c] || (a[c] = []), a[a.length] =
+                d); return e
+        } function ba(a, b) { if (a) { const c = Object.keys(a); for (let d = 0, e = c.length; d < e; d++) { const f = c[d], g = a[f]; if (g) for (let h = 0, l = g.length; h < l; h++)if (g[h] === b) { 1 === l ? delete a[f] : g.splice(h, 1); break } else J(g[h]) && ba(g[h], b) } } } function ca(a) { let b = "", c = ""; var d = ""; for (let e = 0; e < a.length; e++) { const f = a[e]; if (f !== c) if (e && "h" === f) { if (d = "a" === d || "e" === d || "i" === d || "o" === d || "u" === d || "y" === d, ("a" === c || "e" === c || "i" === c || "o" === c || "u" === c || "y" === c) && d || " " === c) b += f } else b += f; d = e === a.length - 1 ? "" : a[e + 1]; c = f } return b }
+        function qa(a, b) { a = a.length - b.length; return 0 > a ? 1 : a ? -1 : 0 } function pa(a, b) { a = a[L]; b = b[L]; return a < b ? -1 : a > b ? 1 : 0 } function oa(a, b) { const c = L.length; for (let d = 0; d < c; d++)a = a[L[d]], b = b[L[d]]; return a < b ? -1 : a > b ? 1 : 0 } function T(a, b, c) { return a ? { page: a, next: b ? "" + b : null, result: c } : c } function ha(a, b, c, d, e, f, g) {
+            let h, l = []; if (!0 === c) { c = "0"; var m = "" } else m = c && c.split(":"); const n = a.length; if (1 < n) {
+                const y = B(), r = []; let w, x; var p = 0, k; let G; var u = !0; let C, D = 0, N, da, X, ea; m && (2 === m.length ? (X = m, m = !1) : m = ea = parseInt(m[0], 10));
+                if (g) { for (w = B(); p < n; p++)if ("not" === e[p]) for (x = a[p], G = x.length, k = 0; k < G; k++)w["@" + x[k]] = 1; else da = p + 1; if (H(da)) return T(c, h, l); p = 0 } else N = M(e) && e; let Y; for (; p < n; p++) {
+                    const ra = p === (da || n) - 1; if (!N || !p) if ((k = N || e && e[p]) && "and" !== k) if ("or" === k) Y = !1; else continue; else Y = f = !0; x = a[p]; if (G = x.length) {
+                        if (u) if (C) { var t = C.length; for (k = 0; k < t; k++) { u = C[k]; var A = "@" + u; g && w[A] || (y[A] = 1, f || (l[D++] = u)) } C = null; u = !1 } else { C = x; continue } A = !1; for (k = 0; k < G; k++) {
+                            t = x[k]; var z = "@" + t; const Z = f ? y[z] || 0 : p; if (!(!Z && !d || g && w[z] || !f &&
+                                y[z])) if (Z === p) { if (ra) { if (!ea || --ea < D) if (l[D++] = t, b && D === b) return T(c, D + (m || 0), l) } else y[z] = p + 1; A = !0 } else d && (z = r[Z] || (r[Z] = []), z[z.length] = t)
+                        } if (Y && !A && !d) break
+                    } else if (Y && !d) return T(c, h, x)
+                } if (C) if (p = C.length, g) for (k = m ? parseInt(m, 10) : 0; k < p; k++)a = C[k], w["@" + a] || (l[D++] = a); else l = C; if (d) for (D = l.length, X ? (p = parseInt(X[0], 10) + 1, k = parseInt(X[1], 10) + 1) : (p = r.length, k = 0); p--;)if (t = r[p]) { for (G = t.length; k < G; k++)if (d = t[k], !g || !w["@" + d]) if (l[D++] = d, b && D === b) return T(c, p + ":" + k, l); k = 0 }
+            } else !n || e && "not" === e[0] ||
+                (l = a[0], m && (m = parseInt(m[0], 10))); b && (g = l.length, m && m > g && (m = 0), m = m || 0, h = m + b, h < g ? l = l.slice(m, h) : (h = 0, m && (l = l.slice(m)))); return T(c, h, l)
+        } function M(a) { return "string" === typeof a } function E(a) { return a.constructor === Array } function O(a) { return "function" === typeof a } function J(a) { return "object" === typeof a } function H(a) { return "undefined" === typeof a } function ia(a) { const b = Array(a); for (let c = 0; c < a; c++)b[c] = B(); return b } function B() { return Object.create(null) } function sa() {
+            let a, b; self.onmessage = function (c) {
+                if (c =
+                    c.data) if (c.search) { const d = b.search(c.content, c.threshold ? { limit: c.limit, threshold: c.threshold, where: c.where } : c.limit); self.postMessage({ id: a, content: c.content, limit: c.limit, result: d }) } else c.add ? b.add(c.id, c.content) : c.update ? b.update(c.id, c.content) : c.remove ? b.remove(c.id) : c.clear ? b.clear() : c.info ? (c = b.info(), c.worker = a, console.log(c)) : c.register && (a = c.id, c.options.cache = !1, c.options.async = !1, c.options.worker = !1, b = (new Function(c.register.substring(c.register.indexOf("{") + 1, c.register.lastIndexOf("}"))))(),
+                        b = new b(c.options))
+            }
+        } function ta(a, b, c, d) { a = I("flexsearch", "id" + a, sa, function (f) { (f = f.data) && f.result && d(f.id, f.content, f.result, f.limit, f.where, f.cursor, f.suggest) }, b); const e = ma.toString(); c.id = b; a.postMessage({ register: e, options: c, id: b }); return a } const F = { encode: "icase", f: "forward", split: /\W+/, cache: !1, async: !1, g: !1, D: !1, a: !1, b: 9, threshold: 0, depth: 0 }, ja = {
+            memory: { encode: "extra", f: "strict", threshold: 0, b: 1 }, speed: { encode: "icase", f: "strict", threshold: 1, b: 3, depth: 2 }, match: {
+                encode: "extra", f: "full", threshold: 1,
+                b: 3
+            }, score: { encode: "extra", f: "strict", threshold: 1, b: 9, depth: 4 }, balance: { encode: "balance", f: "strict", threshold: 0, b: 3, depth: 3 }, fast: { encode: "icase", f: "strict", threshold: 8, b: 9, depth: 1 }
+        }, aa = []; let na = 0; const ka = {}, la = {}; v.create = function (a, b) { return new v(a, b) }; v.registerMatcher = function (a) { for (const b in a) a.hasOwnProperty(b) && aa.push(q(b), a[b]); return this }; v.registerEncoder = function (a, b) { U[a] = b.bind(U); return this }; v.registerLanguage = function (a, b) { ka[a] = b.filter; la[a] = b.stemmer; return this }; v.encode =
+            function (a, b) { return U[a](b) }; v.prototype.init = function (a, b) {
+                this.v = []; if (b) { var c = b.preset; a = b } else a || (a = F), c = a.preset; b = {}; M(a) ? (b = ja[a], a = {}) : c && (b = ja[c]); if (c = a.worker) if ("undefined" === typeof Worker) a.worker = !1, this.m = null; else { var d = parseInt(c, 10) || 4; this.C = -1; this.u = 0; this.o = []; this.F = null; this.m = Array(d); for (var e = 0; e < d; e++)this.m[e] = ta(this.id, e, a, K.bind(this)) } this.f = a.tokenize || b.f || this.f || F.f; this.split = a.split || this.split || F.split; this.D = a.rtl || this.D || F.D; this.async = "undefined" === typeof Promise ||
+                    H(c = a.async) ? this.async || F.async : c; this.g = H(c = a.worker) ? this.g || F.g : c; this.threshold = H(c = a.threshold) ? b.threshold || this.threshold || F.threshold : c; this.b = H(c = a.resolution) ? c = b.b || this.b || F.b : c; c <= this.threshold && (this.b = this.threshold + 1); this.depth = "strict" !== this.f || H(c = a.depth) ? b.depth || this.depth || F.depth : c; this.w = (c = H(c = a.encode) ? b.encode || F.encode : c) && U[c] && U[c].bind(U) || (O(c) ? c : this.w || !1); (c = a.matcher) && this.addMatcher(c); if (c = (b = a.lang) || a.filter) {
+                        M(c) && (c = ka[c]); if (E(c)) {
+                            d = this.w; e = B(); for (var f =
+                                0; f < c.length; f++) { var g = d ? d(c[f]) : c[f]; e[g] = 1 } c = e
+                        } this.filter = c
+                    } if (c = b || a.stemmer) { var h; b = M(c) ? la[c] : c; d = this.w; e = []; for (h in b) b.hasOwnProperty(h) && (f = d ? d(h) : h, e.push(q(f + "($|\\W)"), d ? d(b[h]) : b[h])); this.stemmer = h = e } this.a = e = (c = a.doc) ? S(c) : this.a || F.a; this.j = ia(this.b - (this.threshold || 0)); this.i = B(); this.c = B(); if (e) {
+                        this.h = B(); a.doc = null; h = e.index = {}; b = e.keys = []; d = e.field; f = e.tag; E(e.id) || (e.id = e.id.split(":")); if (f) {
+                            this.G = B(); g = B(); if (d) if (M(d)) g[d] = a; else if (E(d)) for (let l = 0; l < d.length; l++)g[d[l]] =
+                                a; else J(d) && (g = d); E(f) || (e.tag = f = [f]); for (d = 0; d < f.length; d++)this.G[f[d]] = B(); this.I = f; d = g
+                        } if (d) { let l; E(d) || (J(d) ? (l = d, e.field = d = Object.keys(d)) : e.field = d = [d]); for (e = 0; e < d.length; e++)f = d[e], E(f) || (l && (a = l[f]), b[e] = f, d[e] = f.split(":")), h[f] = new v(a), h[f].h = this.h }
+                    } this.B = !0; this.l = (this.cache = c = H(c = a.cache) ? this.cache || F.cache : c) ? new ua(c) : !1; return this
+            }; v.prototype.encode = function (a) {
+                a && aa.length && (a = Q(a, aa)); a && this.v.length && (a = Q(a, this.v)); a && this.w && (a = this.w(a)); a && this.stemmer && (a = Q(a, this.stemmer));
+                return a
+            }; v.prototype.addMatcher = function (a) { const b = this.v; for (const c in a) a.hasOwnProperty(c) && b.push(q(c), a[c]); return this }; v.prototype.add = function (a, b, c, d, e) {
+                if (this.a && J(a)) return this.A("add", a, b); if (b && M(b) && (a || 0 === a)) {
+                    var f = "@" + a; if (this.c[f] && !d) return this.update(a, b); if (this.g) return ++this.C >= this.m.length && (this.C = 0), this.m[this.C].postMessage({ add: !0, id: a, content: b }), this.c[f] = "" + this.C, c && c(), this; if (!e) {
+                        if (this.async && "function" !== typeof importScripts) {
+                            let r = this; f = new Promise(function (w) {
+                                setTimeout(function () {
+                                    r.add(a,
+                                        b, null, d, !0); r = null; w()
+                                })
+                            }); if (c) f.then(c); else return f; return this
+                        } if (c) return this.add(a, b, null, d, !0), c(), this
+                    } b = this.encode(b); if (!b.length) return this; c = this.f; e = O(c) ? c(b) : b.split(this.split); this.filter && (e = W(e, this.filter)); const p = B(); p._ctx = B(); const k = e.length, u = this.threshold, t = this.depth, A = this.b, z = this.j, y = this.D; for (let r = 0; r < k; r++) {
+                        var g = e[r]; if (g) {
+                            var h = g.length, l = (y ? r + 1 : k - r) / k, m = ""; switch (c) {
+                                case "reverse": case "both": for (var n = h; --n;)m = g[n] + m, V(z, p, m, a, y ? 1 : (h - n) / h, l, u, A - 1); m = "";
+                                case "forward": for (n = 0; n < h; n++)m += g[n], V(z, p, m, a, y ? (n + 1) / h : 1, l, u, A - 1); break; case "full": for (n = 0; n < h; n++) { const w = (y ? n + 1 : h - n) / h; for (let x = h; x > n; x--)m = g.substring(n, x), V(z, p, m, a, w, l, u, A - 1) } break; default: if (h = V(z, p, g, a, 1, l, u, A - 1), t && 1 < k && h >= u) for (h = p._ctx[g] || (p._ctx[g] = B()), g = this.i[g] || (this.i[g] = ia(A - (u || 0))), l = r - t, m = r + t + 1, 0 > l && (l = 0), m > k && (m = k); l < m; l++)l !== r && V(g, h, e[l], a, 0, A - (l < r ? r - l : l - r), u, A - 1)
+                            }
+                        }
+                    } this.c[f] = 1; this.B = !1
+                } return this
+            }; v.prototype.A = function (a, b, c) {
+                if (E(b)) for (let l = 0, m = b.length; l < m; l++) {
+                    if (l ===
+                        m - 1) return this.A(a, b[l], c); this.A(a, b[l])
+                } else {
+                    const l = this.a.index, m = this.a.keys; var d = this.a.tag, e = this.a.id; let n; let p; for (var f = 0; f < e.length; f++)n = (n || b)[e[f]]; if (d) { for (e = 0; e < d.length; e++) { var g = d[e]; var h = g.split(":"); for (f = 0; f < h.length; f++)p = (p || b)[h[f]]; p = "@" + p } h = this.G[g]; h = h[p] || (h[p] = []) } if ("remove" === a) { delete this.h[n]; for (let k = 0, u = m.length; k < u; k++) { if (k === u - 1) return l[m[k]].remove(n, c), this; l[m[k]].remove(n) } } e = this.a.field; h && (h[h.length] = b); this.h[n] = b; for (let k = 0, u = e.length; k <
+                        u; k++) { d = e[k]; let t; for (g = 0; g < d.length; g++)t = (t || b)[d[g]]; d = l[m[k]]; g = "add" === a ? d.add : d.update; k === u - 1 ? g.call(d, n, t, c) : g.call(d, n, t) }
+                } return this
+            }; v.prototype.update = function (a, b, c) { if (this.a && J(a)) return this.A("update", a, b); this.c["@" + a] && M(b) && (this.remove(a), this.add(a, b, c, !0)); return this }; v.prototype.remove = function (a, b, c) {
+                if (this.a && J(a)) return this.A("remove", a, b); var d = "@" + a; if (this.c[d]) {
+                    if (this.g) return this.m[this.c[d]].postMessage({ remove: !0, id: a }), delete this.c[d], b && b(), this; if (!c) {
+                        if (this.async &&
+                            "function" !== typeof importScripts) { let e = this; d = new Promise(function (f) { setTimeout(function () { e.remove(a, null, !0); e = null; f() }) }); if (b) d.then(b); else return d; return this } if (b) return this.remove(a, null, !0), b(), this
+                    } for (b = 0; b < this.b - (this.threshold || 0); b++)ba(this.j[b], a); this.depth && ba(this.i, a); delete this.c[d]; this.B = !1
+                } return this
+            }; let L; v.prototype.search = function (a, b, c, d) {
+                if (J(b)) { if (E(b)) for (var e = 0; e < b.length; e++)b[e].query = a; else b.query = a; a = b; b = 1E3 } else b && O(b) ? (c = b, b = 1E3) : b || 0 === b || (b = 1E3);
+                let f = [], g = a; let h, l, m; if (J(a) && !E(a)) { c || (c = a.callback) && (g.callback = null); l = a.sort; h = a.page; b = a.limit; var n = a.threshold; m = a.suggest; a = a.query } if (this.a) {
+                    n = this.a.index; const y = g.where; var p = g.bool || "or", k = g.field; let r = p; let w, x; if (k) E(k) || (k = [k]); else if (E(g)) { var u = g; k = []; r = []; for (var t = 0; t < g.length; t++)d = g[t], e = d.bool || p, k[t] = d.field, r[t] = e, "not" === e ? w = !0 : "and" === e && (x = !0) } else k = this.a.keys; p = k.length; for (t = 0; t < p; t++)u && (g = u[t]), h && !M(g) && (g.page = null, g.limit = 0), f[t] = n[k[t]].search(g, 0); if (this.g) {
+                        this.F =
+                            c; this.u = 0; this.o = []; for (n = 0; n < this.g; n++)this.m[n].postMessage({ search: !0, limit: b, content: g }); return
+                    } if (c) return c(P.call(this, a, r, f, l, b, m, y, h, x, w)); if (this.async) { const G = this; return new Promise(function (C) { Promise.all(f).then(function (D) { C(P.call(G, a, r, D, l, b, m, y, h, x, w)) }) }) } return P.call(this, a, r, f, l, b, m, y, h, x, w)
+                } n || (n = this.threshold || 0); if (!d) {
+                    if (this.async && "function" !== typeof importScripts) {
+                        let y = this; n = new Promise(function (r) { setTimeout(function () { r(y.search(g, b, null, !0)); y = null }) }); if (c) n.then(c);
+                        else return n; return this
+                    } if (c) return c(this.search(g, b, null, !0)), this
+                } if (!a || !M(a)) return f; g = a; if (this.cache) if (this.B) { if (c = this.l.get(a)) return c } else this.l.clear(), this.B = !0; g = this.encode(g); if (!g.length) return f; c = this.f; c = O(c) ? c(g) : g.split(this.split); this.filter && (c = W(c, this.filter)); u = c.length; d = !0; e = []; const A = B(); let z = 0; 1 < u && (this.depth && "strict" === this.f ? p = !0 : c.sort(qa)); if (!p || (t = this.i)) {
+                    const y = this.b; for (; z < u; z++) {
+                        let r = c[z]; if (r) {
+                            if (p) {
+                                if (!k) if (t[r]) k = r, A[r] = 1; else if (!m) return f;
+                                if (m && z === u - 1 && !e.length) p = !1, r = k || r, A[r] = 0; else if (!k) continue
+                            } if (!A[r]) { const w = []; let x = !1, G = 0; const C = p ? t[k] : this.j; if (C) { let D; for (let N = 0; N < y - n; N++)if (D = C[N] && C[N][r]) w[G++] = D, x = !0 } if (x) k = r, e[e.length] = 1 < G ? w.concat.apply([], w) : w[0]; else if (!m) { d = !1; break } A[r] = 1 }
+                        }
+                    }
+                } else d = !1; d && (f = ha(e, b, h, m)); this.cache && this.l.set(a, f); return f
+            }; v.prototype.find = function (a, b) { return this.where(a, b, 1)[0] || null }; v.prototype.where = function (a, b, c, d) {
+                const e = this.h, f = []; let g = 0; let h; var l; let m; if (J(a)) {
+                    c || (c =
+                        b); var n = Object.keys(a); var p = n.length; h = !1; if (1 === p && "id" === n[0]) return [e[a.id]]; if ((l = this.I) && !d) for (var k = 0; k < l.length; k++) { var u = l[k], t = a[u]; if (!H(t)) { m = this.G[u]["@" + t]; if (0 === --p) return m; n.splice(n.indexOf(u), 1); delete a[u]; break } } l = Array(p); for (k = 0; k < p; k++)l[k] = n[k].split(":")
+                } else { if (O(a)) { b = d || Object.keys(e); c = b.length; for (n = 0; n < c; n++)p = e[b[n]], a(p) && (f[g++] = p); return f } if (H(b)) return [e[a]]; if ("id" === a) return [e[b]]; n = [a]; p = 1; l = [a.split(":")]; h = !0 } d = m || d || Object.keys(e); k = d.length; for (u =
+                    0; u < k; u++) { t = m ? d[u] : e[d[u]]; let A = !0; for (let z = 0; z < p; z++) { h || (b = a[n[z]]); const y = l[z], r = y.length; let w = t; if (1 < r) for (let x = 0; x < r; x++)w = w[y[x]]; else w = w[y[0]]; if (w !== b) { A = !1; break } } if (A && (f[g++] = t, c && g === c)) break } return f
+            }; v.prototype.info = function () {
+                if (this.g) for (let a = 0; a < this.g; a++)this.m[a].postMessage({ info: !0, id: this.id }); else return {
+                    id: this.id, items: this.length, cache: this.cache && this.cache.s ? this.cache.s.length : !1, matcher: aa.length + (this.v ? this.v.length : 0), worker: this.g, threshold: this.threshold,
+                    depth: this.depth, resolution: this.b, contextual: this.depth && "strict" === this.f
+                }
+            }; v.prototype.clear = function () { return this.destroy().init() }; v.prototype.destroy = function () { this.cache && (this.l.clear(), this.l = null); this.j = this.i = this.c = null; if (this.a) { const a = this.a.keys; for (let b = 0; b < a.length; b++)this.a.index[a[b]].destroy(); this.a = this.h = null } return this }; v.prototype.export = function () {
+                let a; if (this.a) {
+                    const b = this.a.keys; a = Array(b.length + 1); let c = 0; for (; c < b.length; c++) {
+                        const d = this.a.index[b[c]]; a[c] =
+                            [d.j, d.i, Object.keys(d.c)]
+                    } a[c] = this.h
+                } else a = [this.j, this.i, Object.keys(this.c)]; return JSON.stringify(a)
+            }; v.prototype.import = function (a) { a = JSON.parse(a); const b = B(); if (this.a) { var c = this.a.keys, d = c.length, e = a[0][2]; for (var f = 0; f < e.length; f++)b[e[f]] = 1; for (e = 0; e < d; e++)f = this.a.index[c[e]], f.j = a[e][0], f.i = a[e][1], f.c = b, f.h = a[d]; this.h = a[d] } else { c = a[2]; for (d = 0; d < c.length; d++)b[c[d]] = 1; this.j = a[0]; this.i = a[1]; this.c = b } }; const U = {
+                icase: function (a) { return a.toLowerCase() }, simple: function () {
+                    const a = [q("[\u00e0\u00e1\u00e2\u00e3\u00e4\u00e5]"),
+                        "a", q("[\u00e8\u00e9\u00ea\u00eb]"), "e", q("[\u00ec\u00ed\u00ee\u00ef]"), "i", q("[\u00f2\u00f3\u00f4\u00f5\u00f6\u0151]"), "o", q("[\u00f9\u00fa\u00fb\u00fc\u0171]"), "u", q("[\u00fd\u0177\u00ff]"), "y", q("\u00f1"), "n", q("[\u00e7c]"), "k", q("\u00df"), "s", q(" & "), " and ", q("[-/]"), " ", q("[^a-z0-9 ]"), "", q("\\s+"), " "]; return function (b) { b = Q(b.toLowerCase(), a); return " " === b ? "" : b }
+                }(), advanced: function () {
+                    const a = [q("ae"), "a", q("ai"), "ei", q("ay"), "ei", q("ey"), "ei", q("oe"), "o", q("ue"), "u", q("ie"), "i", q("sz"),
+                        "s", q("zs"), "s", q("sh"), "s", q("ck"), "k", q("cc"), "k", q("th"), "t", q("dt"), "t", q("ph"), "f", q("pf"), "f", q("ou"), "o", q("uo"), "u"]; return function (b, c) { if (!b) return b; b = this.simple(b); 2 < b.length && (b = Q(b, a)); c || 1 < b.length && (b = ca(b)); return b }
+                }(), extra: function () {
+                    const a = [q("p"), "b", q("z"), "s", q("[cgq]"), "k", q("n"), "m", q("d"), "t", q("[vw]"), "f", q("[aeiouy]"), ""]; return function (b) {
+                        if (!b) return b; b = this.advanced(b, !0); if (1 < b.length) {
+                            b = b.split(" "); for (let c = 0; c < b.length; c++) {
+                                const d = b[c]; 1 < d.length && (b[c] =
+                                    d[0] + Q(d.substring(1), a))
+                            } b = b.join(" "); b = ca(b)
+                        } return b
+                    }
+                }(), balance: function () { const a = [q("[-/]"), " ", q("[^a-z0-9 ]"), "", q("\\s+"), " "]; return function (b) { return ca(Q(b.toLowerCase(), a)) } }()
+            }, ua = function () {
+                function a(b) { this.clear(); this.H = !0 !== b && b } a.prototype.clear = function () { this.cache = B(); this.count = B(); this.index = B(); this.s = [] }; a.prototype.set = function (b, c) {
+                    if (this.H && H(this.cache[b])) {
+                        let d = this.s.length; if (d === this.H) { d--; const e = this.s[d]; delete this.cache[e]; delete this.count[e]; delete this.index[e] } this.index[b] =
+                            d; this.s[d] = b; this.count[b] = -1; this.cache[b] = c; this.get(b)
+                    } else this.cache[b] = c
+                }; a.prototype.get = function (b) { const c = this.cache[b]; if (this.H && c) { var d = ++this.count[b]; const f = this.index; let g = f[b]; if (0 < g) { const h = this.s; for (var e = g; this.count[h[--g]] <= d && -1 !== g;); g++; if (g !== e) { for (d = e; d > g; d--)e = h[d - 1], h[d] = e, f[e] = d; h[g] = b; f[b] = g } } } return c }; return a
+            }(); return v
+    }(function () {
+        const I = {}, R = "undefined" !== typeof Blob && "undefined" !== typeof URL && URL.createObjectURL; return function (v, K, S, W, P) {
+            S = R ? URL.createObjectURL(new Blob(["(" +
+                S.toString() + ")()"], { type: "text/javascript" })) : v + ".min.js"; v += "-" + K; I[v] || (I[v] = []); I[v][P] = new Worker(S); I[v][P].onmessage = W; return I[v][P]
+        }
+    }()), this);
+</script>
+
+<!-- THIS IS A BEAUTIFUL SOLUTION -->
+<style>
+    article,
+    aside,
+    details,
+    figcaption,
+    figure,
+    footer,
+    header,
+    hgroup,
+    main,
+    nav,
+    section,
+    summary {
+        display: block;
+    }
+
+    audio,
+    canvas,
+    video {
+        display: inline-block;
+    }
+
+    audio:not([controls]) {
+        display: none;
+        height: 0;
+    }
+
+    [hidden] {
+        display: none;
+    }
+
+    html {
+        font-family: 'Titillium Web';
+        -ms-text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        margin: 0;
+    }
+
+    a:focus {
+        outline: thin dotted;
+    }
+
+    a:active,
+    a:hover {
+        outline: 0;
+    }
+
+    h1 {
+        font-size: 2em;
+        margin: 0.67em 0;
+    }
+
+    abbr[title] {
+        border-bottom: 1px dotted;
+    }
+
+    b,
+    strong {
+        font-weight: bold;
+    }
+
+    dfn {
+        font-style: italic;
+    }
+
+    hr {
+        -moz-box-sizing: content-box;
+        box-sizing: content-box;
+        height: 0;
+    }
+
+    mark {
+        background: #ff0;
+        color: #000;
+    }
+
+    code,
+    kbd,
+    pre,
+    samp {
+        font-family: monospace, serif;
+        font-size: 1em;
+    }
+
+    pre {
+        white-space: pre-wrap;
+    }
+
+    q {
+        quotes: "\201C""\201D""\2018""\2019";
+    }
+
+    small {
+        font-size: 80%;
+    }
+
+    sub,
+    sup {
+        font-size: 75%;
+        line-height: 0;
+        position: relative;
+        vertical-align: baseline;
+    }
+
+    sup {
+        top: -0.5em;
+    }
+
+    sub {
+        bottom: -0.25em;
+    }
+
+    img {
+        border: 0;
+    }
+
+    svg:not(:root) {
+        overflow: hidden;
+    }
+
+    figure {
+        margin: 0;
+    }
+
+    fieldset {
+        border: 1px solid #c0c0c0;
+        margin: 0 2px;
+        padding: 0.35em 0.625em 0.75em;
+    }
+
+    legend {
+        border: 0;
+        padding: 0;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+        font-family: inherit;
+        font-size: 100%;
+        margin: 0;
+    }
+
+    button,
+    input {
+        line-height: normal;
+    }
+
+    button,
+    select {
+        text-transform: none;
+    }
+
+    button,
+    html input[type="button"],
+    input[type="reset"],
+    input[type="submit"] {
+        -webkit-appearance: button;
+        cursor: pointer;
+    }
+
+    button[disabled],
+    html input[disabled] {
+        cursor: default;
+    }
+
+    input[type="checkbox"],
+    input[type="radio"] {
+        box-sizing: border-box;
+        padding: 0;
+    }
+
+    input[type="search"] {
+        -webkit-appearance: textfield;
+        -moz-box-sizing: content-box;
+        -webkit-box-sizing: content-box;
+        box-sizing: content-box;
+    }
+
+    input[type="search"]::-webkit-search-cancel-button,
+    input[type="search"]::-webkit-search-decoration {
+        -webkit-appearance: none;
+    }
+
+    button::-moz-focus-inner,
+    input::-moz-focus-inner {
+        border: 0;
+        padding: 0;
+    }
+
+    textarea {
+        overflow: auto;
+        vertical-align: top;
+    }
+
+    table {
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+    body {
+        margin: 0;
+        /*font-family: Nunito,helvetica neue,Arial,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol;*/
+        font-size: 1em;
+        font-weight: 400;
+        line-height: 1.5;
+        /*  color: #212529;*/
+        text-align: left;
+        background-color: #fff;
+    }
+
+    *,
+    *::before,
+    *::after {
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+    .maincontainer {
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .container {
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+
+        /* media query shiz */
+        max-width: 1140px;
+    }
+
+    .navbar {
+        background-color: #fff;
+        position: relative;
+        z-index: 100;
+        padding: 8 16 8 16;
+
+        display: flex;
+        align-items: center;
+        padding: .5rem 1rem;
+        box-shadow: 0 0 30px 0 rgba(21, 53, 80, .12);
+
+        /* media query shiz 992*/
+        flex-flow: row nowrap;
+        -webkit-box-pack: start;
+        -ms-flex-pack: start;
+        justify-content: flex-start;
+    }
+
+    .navbar_container {
+        display: flex;
+        flex-wrap: nowrap;
+        -webkit-box-align: center;
+        align-items: center;
+        -webkit-box-pack: justify;
+        justify-content: space-between;
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+
+        /* media query shiz 1200*/
+        flex-wrap: nowrap;
+        max-width: 1140px;
+    }
+
+    .navbar_brand {
+        color: #fff;
+        margin-left: 0;
+        display: inline-block;
+        padding-top: .3125rem;
+        padding-bottom: .3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar_container a {
+        text-decoration: none;
+        background-color: transparent;
+        -webkit-text-decoration-skip: objects;
+    }
+
+    .navbar_logo {
+        max-height: 28px;
+        width: auto;
+    }
+
+    .navbarmenu_search {
+        flex-grow: 1;
+        -webkit-box-align: center;
+        align-items: center;
+
+        /* media query shiz */
+        display: flex !important;
+        flex-basis: auto;
+    }
+
+    .searchform_container {
+
+        /* media query shiz 1200*/
+        height: 57px;
+        margin-bottom: -8px;
+        margin-top: -8px;
+
+        /* media query inherited shiz 992*/
+        display: flex !important;
+        box-sizing: border-box;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        text-align: left;
+    }
+
+    .search_form {
+        height: 100%;
+        display: flex;
+        flex-flow: row wrap;
+        -webkit-box-align: center;
+        align-items: center;
+
+        /* media query shiz */
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    .searchBar {
+        text-overflow: ellipsis !important;
+        width: 280px;
+        background: #f5f6fa;
+        border-color: #f5f6fa;
+        color: #828ba0;
+        font-size: 14px;
+        height: 50px;
+        padding-left: 38px;
+        padding-right: 8px;
+        position: relative;
+        z-index: 1;
+        overflow: visible;
+        margin: 0;
+        font-family: inherit;
+        box-sizing: border-box;
+        -webkit-appearance: textfield;
+        -webkit-rtl-ordering: logical;
+        cursor: text;
+        letter-spacing: normal;
+        word-spacing: normal;
+        text-transform: none;
+        text-indent: 0px;
+        text-shadow: none;
+        text-rendering: auto;
+        -webkit-box-direction: normal;
+        -webkit-tap-highlight-color: transparent;
+        text-align: center;
+        vertical-align: center;
+
+    }
+
+    .search_button {
+        border-radius: 2px;
+        border: none;
+        display: inline-block;
+        line-height: 1.2;
+        padding: 10px 16px;
+        text-align: center;
+        text-decoration: none;
+        transition: all .4s ease-in-out;
+        white-space: nowrap;
+
+        color: #20b760;
+        background-color: transparent;
+        background-image: none;
+
+        position: absolute;
+        width: 1px;
+        text-transform: none;
+
+        /* media query shiz*/
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    .main {
+        flex-grow: 1;
+        background-color: #fbfafc;
+        padding-top: 3rem !important;
+        display: block;
+    }
+
+    .dashboard-banner-container {
+        background-image: linear-gradient(to bottom, #5c34a2, #673ab5);
+        background-color: #5c34a2;
+        box-shadow: 0 5px 40px -5px rgba(0, 0, 0, .25);
+        margin-top: -3rem;
+        margin-bottom: 3rem;
+        overflow: hidden;
+        padding: 0;
+        position: relative;
+        display: block;
+    }
+
+    .dashboard-container {
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+
+        /* media query shiz */
+        max-width: 1140px;
+    }
+
+    .dashboard-banner {
+        display: flex;
+        -webkit-box-pack: justify;
+        justify-content: space-between;
+        position: relative;
+        z-index: 9;
+    }
+
+    .dashboard-banner-network-graph {
+        -webkit-box-flex: 1;
+        flex-grow: 1;
+        padding: 15px 0 0;
+    }
+
+    .dashboard-banner-network-plain-container {
+        -webkit-box-align: center;
+        align-items: center;
+        align-self: flex-end;
+        background-color: #8258cd;
+        border-top-left-radius: 10px;
+        display: flex;
+        height: 205px;
+        -webkit-box-pack: center;
+        justify-content: center;
+        margin: 0 0 0 30px;
+        max-width: 100%;
+        padding: 30px 0 30px 60px;
+        width: 750px;
+        position: relative;
+    }
+
+    .dashboard-banner-network-plain-container::after {
+        background-color: #8258cd;
+        bottom: 0;
+        content: "";
+        display: block;
+        height: 205px;
+        left: 0;
+        position: absolute;
+        width: 9999px;
+        z-index: -1;
+        box-shadow: 0 0 35px 0 rgba(0, 0, 0, .2);
+        border-top-left-radius: 10px;
+    }
+
+    .dashboard-banner-network-stats {
+        column-gap: 25px;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+
+    .dashboard-banner-network-stats-item {
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        padding-left: calc(1rem + 4px);
+        padding-right: 1rem;
+        position: relative;
+    }
+
+    .dashboard-banner-network-stats-item::before {
+        background-color: #87e1a9;
+        border-radius: 2px;
+        content: "";
+        height: 100%;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 4px;
+    }
+
+    .dashboard-banner-network-stats-label {
+        color: #dcc8ff;
+        display: block;
+        white-space: nowrap;
+    }
+
+    .dashboard-banner-network-stats-value {
+        color: #fff;
+        display: block;
+        font-size: 1.5rem;
+        font-weight: 200;
+        white-space: nowrap;
+    }
+
+    .card-body {
+        padding: 30px;
+        -webkit-box-flex: 1;
+        flex: 1 1 auto;
+    }
+
+    .card-chain-transactions {
+        height: auto;
+    }
+
+    .footer {
+        background: #3c226a;
+        color: #bda6e7;
+        font-size: 12px;
+        line-height: 1.67;
+        margin: 0;
+        padding: 40px 0;
+        position: relative;
+    }
+
+    .footer-logo-row {
+        margin-bottom: 30px;
+    }
+
+    .col-md-12 {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+
+    /*Card Blocks Section */
+
+    .card {
+        background-color: #fff;
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 0 30px 0 rgba(202, 199, 226, .5);
+        margin-bottom: 50px;
+        position: relative;
+    }
+
+
+    /*Card Blocks Section */
+
+    .container1 {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: center;
+        padding: 30px 15px 30px;
+    }
+
+
+    .box1class {
+        width: 240px;
+        height: 122px;
+
+        color: #828ba0;
+
+        font-size: 12px;
+        line-height: 1.4rem;
+
+        border-radius: 4px;
+        border: 1px solid #dee2e6;
+        border-left: 4px solid #5c34a2;
+        margin-right: 15px;
+        margin-left: 15px;
+        display: flex;
+        flex-direction: column;
+        padding-top: 10px;
+
+        /* Animation */
+        animation-name: slidein;
+        animation-duration: 300ms;
+        animation-timing-function: ease-in-out;
+        animation-delay: 0s;
+        animation-iteration-count: 1;
+        animation-direction: normal;
+        animation-fill-mode: forwards;
+
+    }
+
+
+    @keyframes slidein {
+        from {
+            transform: scale(0);
+        }
+
+        to {
+            transform: scale(1);
+        }
+    }
+
+
+    .box1class a {
+        font-weight: 700;
+        font-size: 12px;
+        color: #5c34a2;
+        text-decoration: none;
+        background-color: transparent;
+    }
+
+
+    /* Card Transaction section */
+    .box2class {
+        width: 195px;
+        height: 122px;
+        border-radius: 4px;
+        border: 1px solid #dee2e6;
+        border-left: 4px solid #5c34a2;
+        margin-right: 15px;
+        margin-left: 15px;
+        flex-shrink: 0;
+
+        color: #a5b2cf;
+
+        font-size: 12px;
+        line-height: 1.4rem;
+
+        display: flex;
+        flex-direction: column;
+        padding-top: 10px;
+    }
+
+    .box3class {
+        width: auto;
+        height: 122px;
+        border-radius: 4px;
+        border: 1px solid #dee2e6;
+        border-left: 4px solid #5c34a2;
+        margin-right: 15px;
+        margin-left: 15px;
+        margin-top: 9px;
+        margin-bottom: 9px;
+        flex-shrink: 0;
+
+        color: #a5b2cf;
+
+        font-size: 12px;
+        line-height: 1.4rem;
+
+        display: flex;
+        flex-direction: column;
+        padding-top: 10px;
+    }
+
+
+    .color-block-token-transfer {
+        background-color: rgba(239, 154, 96, .1);
+        border-bottom: 1px solid #ef9a60;
+        border-right: 1px solid #ef9a60;
+        border-top: 1px solid #ef9a60;
+        color: #ef9a60;
+
+        height: 132px;
+        width: 172px;
+
+        margin-top: -1px;
+        margin-left: -4px;
+        border-radius: 4px 0px 0px 4px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: center;
+    }
+
+    .color-block-token-creation {
+        background-color: rgba(239, 211, 96, .1);
+        border-bottom: 1px solid #FB0112;
+        border-right: 1px solid #FB0112;
+        border-top: 1px solid #FB0112;
+        color: #FB0112;
+
+        height: 132px;
+        width: 172px;
+
+        margin-top: -1px;
+        margin-left: -4px;
+        border-radius: 4px 0px 0px 4px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: center;
+    }
+
+    .transactions {
+        width: auto;
+        border-radius: 4px;
+        border: 1px solid #dee2e6;
+
+        margin-right: 15px;
+        margin-left: 15px;
+        margin-top: 9px;
+        margin-bottom: 9px;
+        flex-shrink: 0;
+
+        color: #a5b2cf;
+
+        font-size: 12px;
+        line-height: 1.4rem;
+    }
+
+    .token-transfer {
+        height: 132px;
+        border-left: 4px solid #ef9a60;
+    }
+
+    .token-creation {
+        height: 132px;
+        border-left: 4px solid #FB0112;
+    }
+
+    .transaction {
+        height: 100px;
+        border-left: 4px solid #4786ff;
+    }
+
+
+    .color-block-transaction {
+        background-color: rgba(71, 134, 255, .1);
+        border-bottom: 1px solid #4786ff;
+        border-right: 1px solid #4786ff;
+        border-top: 1px solid #4786ff;
+        color: #4786ff;
+
+        height: 100px;
+        width: 172px;
+
+        margin-top: -1px;
+        margin-left: -4px;
+        border-radius: 4px 0px 0px 4px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: center;
+    }
+
+    .transactions-content {
+        width: 100%;
+        max-width: 66.66666667%;
+        padding: 16px 0px 16px 15px;
+
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+        flex: 0 0 66.66666667%;
+    }
+
+    .transactions a {
+        color: #5c34a2;
+        text-decoration: none;
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        font-size: 12px;
+        line-height: 1.4rem;
+    }
+
+    .transactions-token-transfer-content {
+        width: 100%;
+        max-width: 66.66666667%;
+        padding: 16px 0px 16px 15px;
+
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+        flex: 0 0 66.66666667%;
+    }
+
+
+    .blockinfo {
+        text-align: right;
+        padding: 16px 15px 16px 15px;
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center
+    }
+
+    .container2 {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: center;
+        padding: 30px 15px 30px;
+    }
+
+    .viewall {
+        align-items: center;
+        background-color: #fff;
+        border-radius: 2px;
+        border: 1px solid #5c34a2;
+        color: #5c34a2;
+        display: flex;
+        font-size: 12px;
+        height: 36px;
+        justify-content: center;
+        outline: none;
+        padding: 0 15px;
+        text-decoration: none;
+        justify-content: center;
+        outline: none;
+        padding: 0 15px;
+        transition: all .4s ease-in-out;
+        white-space: nowrap;
+        width: fit-content;
+        font-weight: 400;
+
+        margin-right: 14px;
+        line-height: 1.2rem;
+        margin-bottom: 2rem;
+        margin-block-start: 0.83em;
+        margin-block-end: 0.83em;
+    }
+
+    /*Footer Section*/
+
+    .footerBar {
+        flex: 1 1 20%;
+    }
+
+    .footerBar a {
+        color: inherit;
+        text-decoration: none;
+        margin-right: 15px;
+    }
+
+    .footerBar h3 {
+        margin: 0px 0px 15px 0px;
+        padding: 0px;
+    }
+
+    .footerBar ul {
+        margin: 0px 0px 25px 12px;
+        padding: 0px;
+        list-style: none;
+    }
+
+    .footerBar li::before {
+        content: "\2022";
+        /* Add content: \2022 is the CSS Code/unicode for a bullet */
+        color: #87e1a9;
+        /* Change the color */
+        font-weight: bold;
+        /* If you want it to be bold */
+        display: inline-block;
+        /* Needed to add space between the bullet and the text */
+        width: 1em;
+        /* Also needed for space (tweak if needed) */
+        margin-left: -1em;
+        /* Also needed for space (tweak if needed) */
+        margin-right: 10px;
+    }
+
+    .transfer-indicator {
+        background-color: rgba(71, 134, 255, .1);
+        border-bottom: 1px solid #4786ff;
+        border-right: 1px solid #4786ff;
+        border-top: 1px solid #4786ff;
+        color: #4786ff;
+        -webkit-box-align: center;
+        align-items: center;
+        bottom: -17px;
+        -webkit-box-pack: center;
+        justify-content: center;
+        margin-left: -1px;
+        margin-top: -34px;
+        padding: 0;
+        position: relative;
+
+        /* media query shiz */
+        -webkit-box-orient: vertical !important;
+        -webkit-box-direction: normal !important;
+        flex-direction: column !important;
+        display: flex !important;
+        -webkit-box-flex: 0;
+        flex: 0 0 16.66666667%;
+        max-width: 16.66666667%;
+    }
+
+    .mr-4 {
+        margin-right: 1.5rem !important;
+    }
+
+    .row {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        margin-right: -15px;
+        margin-left: -15px;
+    }
+
+    dl {
+        margin-bottom: 12px;
+        margin-top: 0;
+        margin-bottom: 1rem;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        display: block;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+    }
+
+    .card-tabs {
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        border-bottom: 1px solid #e2e5ec;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-pack: start;
+        -ms-flex-pack: start;
+        justify-content: flex-start;
+        overflow: hidden;
+        padding: 0 25px;
+    }
+
+    .card-tabs:hover {
+        background-color: rgba(91, 56, 159, 0.2);
+        color: rgba(91, 56, 159, 1);
+        transition-duration: 1s;
+    }
+
+    .card-tab-active {
+        background-color: rgba(91, 56, 159, 1);
+        color: #fff;
+        border-radius: 10px 0px 0px 0px;
+    }
+
+    .navbar_brand {
+        color: #fff;
+        margin-left: 0;
+        display: inline-block;
+        padding-top: .3125rem;
+        padding-bottom: .3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar_logo {
+        max-height: 28px;
+        width: auto;
+    }
+
+    .navbarmenu_search {
+        flex-grow: 1;
+        -webkit-box-align: center;
+        align-items: center;
+
+        /* media query shiz */
+        display: flex !important;
+        flex-basis: auto;
+    }
+
+    .searchform_container {
+
+        /* media query shiz 1200*/
+        height: 57px;
+        margin-bottom: -8px;
+        margin-top: -8px;
+
+        /* media query inherited shiz 992*/
+        display: flex !important;
+        box-sizing: border-box;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        text-align: left;
+    }
+
+    .search_form {
+        height: 100%;
+        display: flex;
+        flex-flow: row wrap;
+        -webkit-box-align: center;
+        align-items: center;
+
+        /* media query shiz */
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    .searchBar {
+        text-overflow: ellipsis !important;
+        width: 280px;
+        background: #f5f6fa;
+        border-color: #f5f6fa;
+        color: #828ba0;
+        font-size: 14px;
+        height: 50px;
+        padding-left: 38px;
+        padding-right: 8px;
+        position: relative;
+        z-index: 1;
+        overflow: visible;
+        margin: 0;
+        font-family: inherit;
+        box-sizing: border-box;
+        -webkit-appearance: textfield;
+        -webkit-rtl-ordering: logical;
+        cursor: text;
+        letter-spacing: normal;
+        word-spacing: normal;
+        text-transform: none;
+        text-indent: 0px;
+        text-shadow: none;
+        text-rendering: auto;
+        -webkit-box-direction: normal;
+        -webkit-tap-highlight-color: transparent;
+        text-align: center;
+        vertical-align: center;
+
+    }
+
+    .search_button {
+        border-radius: 2px;
+        border: none;
+        display: inline-block;
+        line-height: 1.2;
+        padding: 10px 16px;
+        text-align: center;
+        text-decoration: none;
+        transition: all .4s ease-in-out;
+        white-space: nowrap;
+
+        color: #20b760;
+        background-color: transparent;
+        background-image: none;
+
+        position: absolute;
+        width: 1px;
+        text-transform: none;
+
+        /* media query shiz*/
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
+    }
+
+
+    .navbar {
+        background-color: #fff;
+        position: relative;
+        z-index: 100;
+        padding: 8 16 8 16;
+
+        display: flex;
+        align-items: center;
+        padding: .5rem 1rem;
+        box-shadow: 0 0 30px 0 rgba(21, 53, 80, .12);
+
+        /* media query shiz 992*/
+        flex-flow: row nowrap;
+        -webkit-box-pack: start;
+        -ms-flex-pack: start;
+        justify-content: flex-start;
+    }
+
+    .navbar_container {
+        display: flex;
+        flex-wrap: nowrap;
+        -webkit-box-align: center;
+        align-items: center;
+        -webkit-box-pack: justify;
+        justify-content: space-between;
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+
+        /* media query shiz 1200*/
+        flex-wrap: nowrap;
+        max-width: 1140px;
+    }
+
+    .navbar_container a {
+        text-decoration: none;
+        background-color: transparent;
+        -webkit-text-decoration-skip: objects;
+    }
+
+    .navbar-search-parent {
+        position: absolute;
+        left: 65%;
+    }
+
+    .navbar-search {
+        position: relative;
+        background-color: #E6E6FA;
+        height: 52px;
+        width: 350px;
+        border-style: none;
+    }
+
+    .searchbutton {
+        position: absolute;
+        height: 100%;
+        width: 50px;
+        background-color: #E6E6FA;
+        border-style: none;
+    }
+
+    .searchbox-parent {
+        position: absolute;
+        height: 100%;
+        width: 300px;
+        left: 50px;
+    }
+
+    .column1 {
+        padding-right: 0 !important;
+        -webkit-box-flex: 0;
+        flex: 0 0 66.66666667%;
+        max-width: 66.66666667%;
+        position: relative;
+        width: 100%;
+        min-height: 1px;
+        padding-left: 15px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        text-align: left;
+        font-size: 12px;
+    }
+
+    .column1-card {
+        background-color: #fff;
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 0 30px 0 rgba(202, 199, 226, .5);
+        margin-bottom: 50px;
+        margin-right: 50px;
+        position: relative;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-clip: border-box;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        text-align: left;
+    }
+
+    .card-body {
+        padding: 30px;
+        -webkit-box-flex: 1;
+        flex: 1 1 auto;
+    }
+
+    .card-title {
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 1.2rem;
+        margin-bottom: 2rem;
+        margin-top: 0;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        display: block;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+    }
+
+    .transaction-details-address {
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 36px;
+        margin-top: 0;
+        margin-bottom: .5rem;
+        display: block;
+        margin-block-start: 1em;
+        margin-block-end: 1em;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        -webkit-box-direction: normal;
+        color: #5c34a2;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .tx-detail-column-name {
+        position: relative;
+        width: 100%;
+        min-height: 1px;
+        padding-right: 15px;
+        padding-left: 15px;
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 25%;
+        flex: 0 0 25%;
+        max-width: 25%;
+        color: #828ba0 !important;
+        text-align: left;
+    }
+
+    .tx-detail-column-data {
+        display: block;
+        margin-inline-start: 40px;
+        margin: 0;
+        position: relative;
+        width: 100%;
+        min-height: 1px;
+        padding-right: 15px;
+        padding-left: 15px;
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 75%;
+        flex: 0 0 75%;
+        max-width: 75%;
+        text-align: left;
+    }
+
+
+    .column2 {
+        position: relative;
+        width: 100%;
+        min-height: 1px;
+        padding-right: 15px;
+        flex: 0 0 33.33333333%;
+        max-width: 33.33333333%;
+        -webkit-box-flex: 0;
+        display: flex !important;
+        -webkit-box-orient: vertical !important;
+        -webkit-box-direction: normal !important;
+        -ms-flex-direction: column !important;
+        flex-direction: column !important;
+        padding-left: 0 !important;
+    }
+
+    .column2-card1 {
+        flex-grow: 1 !important;
+        background-clip: border-box;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        position: relative;
+        box-shadow: 0 0 30px 0 rgba(202, 199, 226, 0.5);
+        margin-bottom: 50px;
+        border-radius: 10px;
+        border: none;
+        background-color: #5c34a2;
+        color: #fff;
+    }
+
+    .column2-card1-body {
+        color: #fff;
+        flex: 1 1 auto;
+        -webkit-box-flex: 1;
+        padding: 30px;
+        justify-content: space-between;
+        flex-direction: column;
+        -webkit-box-pack: justify;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+    }
+
+    .bottom-card-master {
+        display: block;
+        text-align: center;
+        min-width: 630px;
+        max-width: 1140px;
+        margin: auto;
+    }
+
+    .bottom-card-tabs {
+        height: 70px;
+        margin: auto;
+        border-bottom: 1px solid #e2e5ec;
+        background-color: #fff;
+        border-radius: 10px 10px 0px 0px;
+        display: flex;
+        flex-direction: row;
+    }
+
+    .bottom-card-tab {
+        display: flex;
+        font-size: 14px;
+        font-weight: 400;
+        height: 70px;
+        text-align: center;
+        border-radius: 10px 0px 0px 0px;
+    }
+
+    .quick_block_details {
+        color: #828ba0 !important;
+        -webkit-box-pack: start !important;
+        justify-content: flex-start !important;
+        -webkit-box-orient: horizontal !important;
+        -webkit-box-direction: normal !important;
+        flex-direction: row !important;
+        display: flex !important;
+    }
+
+    .tx-details-name-extra-padding {
+        padding-left: 28px;
+    }
+
+    .tx-details-data-extra-padding {}
+
+    .inputadd-outputadd-span {
+        display: block !important;
+        margin-bottom: .5rem !important;
+    }
+
+    .navbar-flexbox {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .social-media-icons {
+        color: white;
+        font-size: 18px;
+        margin-top: 20px;
+    }
+
+
+    @media only screen and (max-width: 600px) {
+
+        .social-media-icons {
+            color: white;
+            font-size: 18px;
+            margin-top: 0px;
+        }
+
+        .navbar-flexbox {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+        }
+
+        .navbar_container {
+            padding: 0;
+        }
+
+        .navbar-search-parent {
+            left: initial;
+            right: 0;
+        }
+
+        .navbar-search {
+            width: 52px;
+        }
+
+        .searchbox-parent {
+            width: 50vw;
+            display: none;
+        }
+
+        .column1 {
+            padding-right: 15 !important;
+            position: relative;
+            width: 100%;
+            min-height: 1px;
+            padding-left: 15px;
+
+            /* remove this later and check */
+            -webkit-box-flex: initial;
+            flex: initial;
+            max-width: initial;
+            font-weight: 400;
+            line-height: initial;
+            color: initial;
+            text-align: initial;
+            font-size: initial;
+        }
+
+        .column1-card {
+            background-color: #fff;
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 0 30px 0 rgba(202, 199, 226, .5);
+            margin-bottom: 50px;
+            margin-right: 0;
+            position: relative;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-clip: border-box;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #212529;
+            text-align: left;
+        }
+
+        .card-body {
+            padding: 30px;
+            -webkit-box-flex: 1;
+            flex: 1 1 auto;
+        }
+
+        .tx-detail-column-name {
+            position: relative;
+            width: 100%;
+            min-height: 1px;
+            padding-right: 15px;
+            padding-left: 15px;
+            -webkit-box-flex: 0;
+            -ms-flex: 0 0 25%;
+            flex: 0 0 25%;
+            max-width: 25%;
+            color: #828ba0 !important;
+            font-weight: normal;
+            display: block;
+
+        }
+
+        .tx-detail-column-data {
+            position: relative;
+            width: 100%;
+            min-height: 1px;
+            padding-right: 15px;
+            padding-left: 15px;
+            margin: 0;
+
+            display: block;
+            margin-inline-start: initial;
+            -webkit-box-direction: normal;
+
+            -webkit-box-flex: initial;
+            -ms-flex: initial;
+            flex: initial;
+            max-width: initial;
+        }
+
+        .column2 {
+            -webkit-box-orient: vertical !important;
+            -webkit-box-direction: normal !important;
+            -ms-flex-direction: column !important;
+            flex-direction: column !important;
+            display: flex !important;
+            padding-left: 15px !important;
+            position: relative;
+            width: 100%;
+            min-height: 1px;
+            padding-right: 15px;
+            flex: initial;
+            max-width: initial;
+            -webkit-box-flex: initial;
+        }
+
+        .column2-card1 {
+            background-color: #5c34a2;
+            color: #fff;
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 0 30px 0 rgba(202, 199, 226, 0.5);
+            margin-bottom: 50px;
+            position: relative;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+
+            flex-grow: 1 !important;
+            background-clip: border-box;
+
+        }
+
+        .bottom-card-master {
+            display: block;
+            text-align: initial;
+            min-width: initial;
+            max-width: initial;
+            margin: initial;
+
+            width: 100%;
+            padding-right: 0px;
+            padding-left: 0px;
+            margin-right: auto;
+            margin-left: auto;
+            -webkit-box-direction: normal;
+        }
+
+        .transaction-details-address {
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 36px;
+            margin-top: 0;
+            margin-bottom: .5rem;
+            display: block;
+            margin-block-start: 1em;
+            margin-block-end: 1em;
+            margin-inline-start: 0px;
+            margin-inline-end: 0px;
+            -webkit-box-direction: normal;
+
+            text-overflow: ellipsis;
+            /* Required for text-overflow to do anything */
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .quick_block_details {
+            margin-top: 5px;
+        }
+
+        .tx-details-name-extra-padding {
+            padding-left: 28px;
+        }
+
+        .tx-details-data-extra-padding {
+            padding-left: 28px;
+        }
+
+        .inputadd-outputadd-span {
+            display: block !important;
+            margin-bottom: 1.5rem !important;
+        }
+
+        .transactions a {
+            width: 100%;
+        }
+    }
+</style>
+
+<body>
+
+    <link rel="stylesheet" href="./style.css">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar_container">
+            <a href="index.html">
+
+                <svg width="30pt" height="27pt" viewBox="0 0 100 130">
+                    <style>
+                        svg {
+                            vertical-align: middle;
+                            border-style: none;
+                        }
+                    </style>
+
+                    <g id="layer1" transform="translate(470,140)" id="test1">
+                        <path transform="translate(-350,-850)" id="path5165"
+                            d="M -166.99971,804.55875 V 484.41291 H 153.14614 473.29202 V 804.55875 1124.7046 H 153.14614 -166.99971 Z m 639.93893,0 V 484.76569 H 153.14614 -166.64693 v 319.79306 319.79305 h 319.79307 319.79308 z m -168.4514,189.02282 m 10.5778,-228.53393 m -37.9181,8.56292  z m -332.434261,52.76162 c -0.12935,-0.12935 -0.23519,-1.28253 -0.23519,-2.56262 0,-6.67058 -5.44905,-13.20481 -16.4463,-19.72158 -1.96345,-1.1635 -4.3447,-2.4643 -5.29166,-2.89067 -4.957,-2.23185 -12.62447,-6.25072 -15.28525,-8.0117 -12.030489,-7.96211 -12.658389,-16.35177 -1.98645,-26.54198 1.73209,-1.65391 4.64828,-4.43585 6.48042,-6.1821 6.95926,-6.63302 10.68624,-12.58985 11.25673,-17.99167 l 0.22355,-2.11667 -1.9948,2.35011 c -3.79112,4.46638 -7.61404,7.1861 -11.52814,8.20141 -2.21719,0.57513 -2.64903,0.29106 -3.26536,-2.14806 l -0.46168,-1.82711 -2.28178,1.4509 c -2.41829,1.5377 -6.723749,3.18611 -7.521859,2.87985 -0.26212,-0.10059 -0.6859,-1.05542 -0.94173,-2.12185 -0.25584,-1.06643 -0.57694,-2.00805 -0.71357,-2.09249 -0.13663,-0.0844 -0.87878,0.3031 -1.64922,0.8612 -1.94063,1.40579 -3.46509,2.15893 -5.81469,2.8727 -2.51574,0.76424 -2.8946,0.5237 -3.62066,-2.29869 -0.88387,-3.43588 -0.92652,-3.36547 2.03806,-3.36547 6.83587,0 13.43345,-5.38116 19.896059,-16.22778 2.20502,-3.70081 3.98333,-7.22308 3.98333,-7.88969 0,-1.65984 2.6604,-0.47757 8.74073,3.88434 0.44177,0.31692 0.84002,0.51434 0.885,0.4387 0.62242,-1.04661 2.02564,-4.11571 2.02146,-4.4213 -0.0103,-0.75676 1.09171,-0.826 2.39614,-0.15054 0.71638,0.37096 2.5618,1.54517 4.10094,2.60937 l 2.79843,1.9349 0.97993,-1.81886 c 0.53896,-1.00037 0.98623,-2.08598 0.99393,-2.41245 0.0309,-1.3126 1.35752,-1.06195 4.32379,0.81695 8.04593,5.09648 12.84596,10.33008 15.13027,16.49691 0.65604,1.77111 0.54891,7.26086 -0.18316,9.38529 -1.79642,5.21312 -4.92116,9.58274 -11.10003,15.52222 -10.2817,9.88334 -11.67023,11.50598 -12.92312,15.10198 -0.68891,1.97729 -0.66829,5.81002 0.0404,7.52091 0.62466,1.50789 2.49336,3.99328 4.16986,5.54596 2.19595,2.03378 6.9095,4.82907 13.96149,8.27964 17.53725,8.58104 24.94403,14.81547 27.39109,23.05562 0.506,1.70388 0.50176,1.87158 -0.0577,2.28064 -0.71748,0.52463 -5.11519,1.57632 -5.52706,1.32176 -0.1578,-0.0975 -0.28691,-1.24175 -0.28691,-2.54272 0,-5.44225 -3.46174,-10.63587 -10.63355,-15.95345 -4.28094,-3.17412 -6.86259,-4.60768 -19.35256,-10.74621 -8.02659,-3.94489 -13.56038,-8.39151 -15.44245,-12.40863 -0.79591,-1.6988 -0.96172,-2.53931 -0.96172,-4.87494 0,-2.42145 0.15442,-3.14785 1.08741,-5.11528 1.21505,-2.56222 3.52772,-5.46919 6.89222,-8.66337 9.99629,-9.49026 11.81397,-11.48021 14.18898,-15.53373 2.29842,-3.92278 2.87861,-5.90728 2.87861,-9.84596 0,-3.92937 -0.49788,-5.6762 -2.54551,-8.93109 -1.8328,-2.91338 -8.45442,-9.23697 -9.67231,-9.23697 -0.43533,0 -2.1296,3.4982 -1.88553,3.89311 0.11519,0.18638 1.08106,1.16322 2.14638,2.17076 4.62673,4.37576 6.94442,9.15024 6.92646,14.26857 -0.0223,6.34079 -3.45437,12.37338 -11.41304,20.0606 -9.7573,9.4245 -11.14838,10.9574 -12.50702,13.78212 -2.47712,5.15014 -1.60256,9.72788 2.65929,13.9197 2.6136,2.57065 6.13507,4.85438 11.78566,7.64316 11.49487,5.67317 12.94902,6.46058 17.33578,9.38711 7.7164,5.14782 12.40171,10.85444 13.10107,15.95683 l 0.20905,1.52525 -1.54375,0.40093 c -0.84906,0.22051 -2.08448,0.54356 -2.74536,0.71789 -0.66089,0.17434 -1.31163,0.24898 -1.44609,0.16588 -0.13446,-0.0831 -0.3448,-1.4521 -0.46742,-3.04221 -0.26667,-3.45806 -1.40409,-6.14134 -3.94386,-9.30386 -3.96382,-4.93576 -9.19258,-8.50743 -21.29726,-14.54777 -10.55708,-5.26806 -14.28068,-7.62481 -17.44215,-11.0395 -3.01368,-3.25504 -3.88596,-5.42067 -3.69007,-9.16134 0.23445,-4.47716 2.12333,-7.63031 7.8192,-13.05278 8.17821,-7.78566 11.42793,-11.23684 13.39849,-14.2291 1.10432,-1.67689 2.09734,-3.32853 2.20672,-3.67032 0.10937,-0.34177 0.33606,-0.93891 0.50374,-1.32697 0.7565,-1.75067 1.39503,-4.69838 1.39503,-6.44002 0,-2.55009 -1.43409,-6.695 -3.23286,-9.3438 l -1.45314,-2.13983 -0.52062,1.02432 c -0.28634,0.56338 -0.96031,1.75163 -1.4977,2.64056 l -0.97709,1.61622 1.06017,2.44072 c 0.94532,2.17632 1.06006,2.82288 1.05923,5.9685 -7e-4,3.32326 -0.081,3.71278 -1.3819,6.71897 -2.5028,5.78351 -6.08366,10.11439 -15.51794,18.76826 -5.95936,5.46639 -8.3221,9.472 -8.29561,14.06375 0.0168,2.90596 1.30197,5.60636 3.9078,8.21083 2.8565,2.85503 6.15357,4.89263 14.68085,9.0728 7.6367,3.7436 13.15045,6.8861 16.95694,9.66442 3.2897,2.40112 7.59877,6.96715 8.90278,9.43366 1.27429,2.41032 2.20493,5.48363 1.83953,6.07484 -0.12755,0.2064 -1.3702,0.6907 -2.76143,1.07623 -2.89845,0.8032 -2.70184,0.77276 -3.00882,0.46578 z m -41.33331,-82.80985 c 4.23101,-2.09108 7.92503,-5.83754 12.53542,-12.7134 l 1.87844,-2.80148 -2.0919,-1.91409 c -2.52447,-2.30991 -4.72208,-3.76207 -5.08615,-3.36088 -0.14704,0.16203 -1.02759,1.80273 -1.95679,3.64599 -3.56684,7.07558 -6.30491,11.4598 -9.998129,16.00908 l -2.2568,2.77991 2.13626,-0.15453 c 1.543029,-0.11161 2.886999,-0.52555 4.839649,-1.4906 z m 10.43136,0.54182 c 2.0284,-0.77999 7.31893,-4.77496 8.55423,-6.45945 l 0.69272,-0.9446 -1.4792,-2.986 c -1.32469,-2.67412 -2.64562,-4.48681 -2.97976,-4.08907 -0.0669,0.0797 -0.72265,1.25608 -1.45719,2.61427 -1.84339,3.40851 -4.45047,7.27559 -6.98968,10.36783 l -2.14053,2.60672 1.91711,-0.17701 c 1.05442,-0.0974 2.80145,-0.51707 3.8823,-0.93269 z m 13.86858,-13.83041 c 0.70178,-1.17807 1.27596,-2.21029 1.27596,-2.29383 0,-0.26334 -2.57037,-2.6013 -4.51637,-4.108 -2.11433,-1.63702 -2.27705,-1.58756 -3.40635,1.0354 l -0.64041,1.48745 2.78226,2.98903 c 1.53024,1.64397 2.88277,2.99868 3.00561,3.01047 0.12284,0.0118 0.79753,-0.94244 1.4993,-2.12052 z"
+                            style="fill:#000000;stroke-width:0.35277778;" />
+                    </g>
+
+                    <g transform=" matrix(0.866, -0.5, 0.25, 0.433, 45, 60)">
+                        <path d="M 0,70 A 65,70 0 0,0 65,0 5,5 0 0,1 75,0 75,70 0 0,1 0,70Z" fill="red">
+                            <animateTransform attributeName="transform" type="rotate" from="360 0 0" to="0 0 0" dur="3s"
+                                repeatCount="indefinite" />
+                        </path>
+                    </g>
+
+
+                    <g transform=" matrix(0.866, -0.5, 0.25, 0.433, 45, 60)">
+                        <path d="M 0,70 A 65,70 0 0,0 65,0 5,5 0 0,1 75,0 75,70 0 0,1 0,70Z" fill="white">
+                            <animateTransform attributeName="transform" type="rotate" from="360 0 0" to="0 0 0"
+                                begin="-1.5s" dur="3s" repeatCount="indefinite" />
+                            <!--   <animate attributeName="opacity" from="0" to="1" dur="3s" begin="1s" fill="freeze" repeatCount="indefinite"/> 
+                       -->
+                        </path>
+                    </g>
+
+
+                    <defs id="defs869">
+                        <clipPath clipPathUnits="userSpaceOnUse" id="clipPath875">
+                            <rect
+                                style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.08673105;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                                id="rect877" width="97.972534" height="47.101768" x="-468.72458" y="-138.8875" />
+                            </rect>
+                        </clipPath>
+                    </defs>
+
+                    <g id="layer1" transform="translate(470,140)" clip-path="url(#clipPath875)">
+                        <path transform="translate(-350,-850)" id="path5165"
+                            d="M -166.99971,804.55875 V 484.41291 H 153.14614 473.29202 V 804.55875 1124.7046 H 153.14614 -166.99971 Z m 639.93893,0 V 484.76569 H 153.14614 -166.64693 v 319.79306 319.79305 h 319.79307 319.79308 z m -168.4514,189.02282 m 10.5778,-228.53393 m -37.9181,8.56292 z m -332.434261,52.76162 c -0.12935,-0.12935 -0.23519,-1.28253 -0.23519,-2.56262 0,-6.67058 -5.44905,-13.20481 -16.4463,-19.72158 -1.96345,-1.1635 -4.3447,-2.4643 -5.29166,-2.89067 -4.957,-2.23185 -12.62447,-6.25072 -15.28525,-8.0117 -12.030489,-7.96211 -12.658389,-16.35177 -1.98645,-26.54198 1.73209,-1.65391 4.64828,-4.43585 6.48042,-6.1821 6.95926,-6.63302 10.68624,-12.58985 11.25673,-17.99167 l 0.22355,-2.11667 -1.9948,2.35011 c -3.79112,4.46638 -7.61404,7.1861 -11.52814,8.20141 -2.21719,0.57513 -2.64903,0.29106 -3.26536,-2.14806 l -0.46168,-1.82711 -2.28178,1.4509 c -2.41829,1.5377 -6.723749,3.18611 -7.521859,2.87985 -0.26212,-0.10059 -0.6859,-1.05542 -0.94173,-2.12185 -0.25584,-1.06643 -0.57694,-2.00805 -0.71357,-2.09249 -0.13663,-0.0844 -0.87878,0.3031 -1.64922,0.8612 -1.94063,1.40579 -3.46509,2.15893 -5.81469,2.8727 -2.51574,0.76424 -2.8946,0.5237 -3.62066,-2.29869 -0.88387,-3.43588 -0.92652,-3.36547 2.03806,-3.36547 6.83587,0 13.43345,-5.38116 19.896059,-16.22778 2.20502,-3.70081 3.98333,-7.22308 3.98333,-7.88969 0,-1.65984 2.6604,-0.47757 8.74073,3.88434 0.44177,0.31692 0.84002,0.51434 0.885,0.4387 0.62242,-1.04661 2.02564,-4.11571 2.02146,-4.4213 -0.0103,-0.75676 1.09171,-0.826 2.39614,-0.15054 0.71638,0.37096 2.5618,1.54517 4.10094,2.60937 l 2.79843,1.9349 0.97993,-1.81886 c 0.53896,-1.00037 0.98623,-2.08598 0.99393,-2.41245 0.0309,-1.3126 1.35752,-1.06195 4.32379,0.81695 8.04593,5.09648 12.84596,10.33008 15.13027,16.49691 0.65604,1.77111 0.54891,7.26086 -0.18316,9.38529 -1.79642,5.21312 -4.92116,9.58274 -11.10003,15.52222 -10.2817,9.88334 -11.67023,11.50598 -12.92312,15.10198 -0.68891,1.97729 -0.66829,5.81002 0.0404,7.52091 0.62466,1.50789 2.49336,3.99328 4.16986,5.54596 2.19595,2.03378 6.9095,4.82907 13.96149,8.27964 17.53725,8.58104 24.94403,14.81547 27.39109,23.05562 0.506,1.70388 0.50176,1.87158 -0.0577,2.28064 -0.71748,0.52463 -5.11519,1.57632 -5.52706,1.32176 -0.1578,-0.0975 -0.28691,-1.24175 -0.28691,-2.54272 0,-5.44225 -3.46174,-10.63587 -10.63355,-15.95345 -4.28094,-3.17412 -6.86259,-4.60768 -19.35256,-10.74621 -8.02659,-3.94489 -13.56038,-8.39151 -15.44245,-12.40863 -0.79591,-1.6988 -0.96172,-2.53931 -0.96172,-4.87494 0,-2.42145 0.15442,-3.14785 1.08741,-5.11528 1.21505,-2.56222 3.52772,-5.46919 6.89222,-8.66337 9.99629,-9.49026 11.81397,-11.48021 14.18898,-15.53373 2.29842,-3.92278 2.87861,-5.90728 2.87861,-9.84596 0,-3.92937 -0.49788,-5.6762 -2.54551,-8.93109 -1.8328,-2.91338 -8.45442,-9.23697 -9.67231,-9.23697 -0.43533,0 -2.1296,3.4982 -1.88553,3.89311 0.11519,0.18638 1.08106,1.16322 2.14638,2.17076 4.62673,4.37576 6.94442,9.15024 6.92646,14.26857 -0.0223,6.34079 -3.45437,12.37338 -11.41304,20.0606 -9.7573,9.4245 -11.14838,10.9574 -12.50702,13.78212 -2.47712,5.15014 -1.60256,9.72788 2.65929,13.9197 2.6136,2.57065 6.13507,4.85438 11.78566,7.64316 11.49487,5.67317 12.94902,6.46058 17.33578,9.38711 7.7164,5.14782 12.40171,10.85444 13.10107,15.95683 l 0.20905,1.52525 -1.54375,0.40093 c -0.84906,0.22051 -2.08448,0.54356 -2.74536,0.71789 -0.66089,0.17434 -1.31163,0.24898 -1.44609,0.16588 -0.13446,-0.0831 -0.3448,-1.4521 -0.46742,-3.04221 -0.26667,-3.45806 -1.40409,-6.14134 -3.94386,-9.30386 -3.96382,-4.93576 -9.19258,-8.50743 -21.29726,-14.54777 -10.55708,-5.26806 -14.28068,-7.62481 -17.44215,-11.0395 -3.01368,-3.25504 -3.88596,-5.42067 -3.69007,-9.16134 0.23445,-4.47716 2.12333,-7.63031 7.8192,-13.05278 8.17821,-7.78566 11.42793,-11.23684 13.39849,-14.2291 1.10432,-1.67689 2.09734,-3.32853 2.20672,-3.67032 0.10937,-0.34177 0.33606,-0.93891 0.50374,-1.32697 0.7565,-1.75067 1.39503,-4.69838 1.39503,-6.44002 0,-2.55009 -1.43409,-6.695 -3.23286,-9.3438 l -1.45314,-2.13983 -0.52062,1.02432 c -0.28634,0.56338 -0.96031,1.75163 -1.4977,2.64056 l -0.97709,1.61622 1.06017,2.44072 c 0.94532,2.17632 1.06006,2.82288 1.05923,5.9685 -7e-4,3.32326 -0.081,3.71278 -1.3819,6.71897 -2.5028,5.78351 -6.08366,10.11439 -15.51794,18.76826 -5.95936,5.46639 -8.3221,9.472 -8.29561,14.06375 0.0168,2.90596 1.30197,5.60636 3.9078,8.21083 2.8565,2.85503 6.15357,4.89263 14.68085,9.0728 7.6367,3.7436 13.15045,6.8861 16.95694,9.66442 3.2897,2.40112 7.59877,6.96715 8.90278,9.43366 1.27429,2.41032 2.20493,5.48363 1.83953,6.07484 -0.12755,0.2064 -1.3702,0.6907 -2.76143,1.07623 -2.89845,0.8032 -2.70184,0.77276 -3.00882,0.46578 z m -41.33331,-82.80985 c 4.23101,-2.09108 7.92503,-5.83754 12.53542,-12.7134 l 1.87844,-2.80148 -2.0919,-1.91409 c -2.52447,-2.30991 -4.72208,-3.76207 -5.08615,-3.36088 -0.14704,0.16203 -1.02759,1.80273 -1.95679,3.64599 -3.56684,7.07558 -6.30491,11.4598 -9.998129,16.00908 l -2.2568,2.77991 2.13626,-0.15453 c 1.543029,-0.11161 2.886999,-0.52555 4.839649,-1.4906 z m 10.43136,0.54182 c 2.0284,-0.77999 7.31893,-4.77496 8.55423,-6.45945 l 0.69272,-0.9446 -1.4792,-2.986 c -1.32469,-2.67412 -2.64562,-4.48681 -2.97976,-4.08907 -0.0669,0.0797 -0.72265,1.25608 -1.45719,2.61427 -1.84339,3.40851 -4.45047,7.27559 -6.98968,10.36783 l -2.14053,2.60672 1.91711,-0.17701 c 1.05442,-0.0974 2.80145,-0.51707 3.8823,-0.93269 z m 13.86858,-13.83041 c 0.70178,-1.17807 1.27596,-2.21029 1.27596,-2.29383 0,-0.26334 -2.57037,-2.6013 -4.51637,-4.108 -2.11433,-1.63702 -2.27705,-1.58756 -3.40635,1.0354 l -0.64041,1.48745 2.78226,2.98903 c 1.53024,1.64397 2.88277,2.99868 3.00561,3.01047 0.12284,0.0118 0.79753,-0.94244 1.4993,-2.12052 z"
+                            style="fill:#000000;stroke-width:0.35277778" />
+                    </g>
+                </svg>
+            </a>
+        </div>
+
+        <div id="navbar-search-parent" class="navbar-search-parent">
+            <div id="navbar-search" class="navbar-search">
+
+                <button id="navbar_search_button" onclick="processNavbarSearch()" type="submit" class="searchbutton"><i
+                        class="fas fa-search"></i></button>
+
+                <div id='searchbox-parent' class="searchbox-parent">
+                    <input type="text" id="autocomplete"
+                        style="position: absolute; height:100%; width: 100%; background-color: #E6E6FA;border-style: none;text-align: center; justify-content: center">
+                    <input type="text" id="userinput"
+                        style="position: absolute; height:100%; width: 100%; background-color: #E6E6FA;border-style: none; text-align: center; justify-content: center"
+                        placeholder="block, transaction, address, token or contract">
+                    <div id="suggestions"
+                        style="position: absolute; background-color: #E6E6FA; width:100%; top:40px;border-style: none;z-index: 2; text-align: center; justify-content: center">
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Main is the whole section between header and footer-->
+    <div id='main'
+        style="-webkit-box-flex: 1; flex-grow: 1; background-color: #fbfafc; padding-top: 3rem!important; display: block; -webkit-box-direction: normal;">
+        <section
+            style="max-width: 1140px; width: 100%; padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto; display:block;">
+            <!-- Block details, validators and block rewards -->
+            <section style="display: block;">
+                <div id="row" style="display: flex; flex-wrap: wrap; margin-right: -15px; margin-left: -15px;">
+                    <!-- Block details -->
+                    <div id="column1" class="column1">
+                        <div class="column1-card">
+                            <div class="card-body">
+                                <h1 id="transaction-details" class="card-title">
+                                    Transaction Details </h1>
+
+                                <div id='loading-topcard-left-main'
+                                    style="height: 100px; width:100%; position: relative; ">
+                                    <div style="margin: 0;
+                                                    position: absolute;
+                                                    top: 50%;
+                                                    right: 50%;
+                                                    -ms-transform: translateY(-50%);
+                                                    transform: translateY(-50%);"><i class="fa fa-spinner fa-spin"
+                                            style="font-size:24px"></i></div>
+                                </div>
+
+                                <div id="topcard-left-main" style="display: none;">
+                                    <a id="transaction_card_transactionHash" class="transaction-details-address">
+                                    </a>
+                                    <span class='inputadd-outputadd-span'>
+                                        <a id="tx-input-address"
+                                            style='color: #5c34a2; cursor: pointer; text-decoration:none'></a>
+                                        <span style="color:#828ba0!important;"> <i
+                                                class="fas fa-long-arrow-alt-right"></i>
+                                        </span>
+                                        <a id="tx-output-address"
+                                            style='color: #5c34a2; cursor: pointer; text-decoration:none'></a>
+                                    </span>
+                                    <div id="quick_block_details" class="quick_block_details">
+                                        <span id="tx-type-small" class="mr-4"> Token Creation </span>
+                                        <span class="mr-4"> Success </span>
+                                        <!--<span class="mr-4" data-from-now="2019-07-03 06:55:40.000000Z">25 minutes ago
+                                            (July-03-2019 12:25:40 PM +5.5 UTC)</span>-->
+                                    </div>
+                                    <hr
+                                        style="display: block; unicode-bidi: isolate; margin-block-start: 0.5em; margin-block-end: 0.5em; margin-inline-start: auto; margin-inline-end: auto; box-sizing: content-box; height: 0; overflow: visible; border-bottom: none; border-left: none; border-right: none; border-top: 1px solid #f5f6fa; margin: 30px 0;">
+                                    <dl class="row">
+                                        <dt class="tx-detail-column-name">
+                                            Amount</dt>
+                                        <dd class="tx-detail-column-data">
+                                            <a id="tx-amount"
+                                                style="cursor: pointer; background-color: transparent; text-decoration: none;"></a>
+                                        </dd>
+                                    </dl>
+                                    <dl class="row">
+                                        <dt class="tx-detail-column-name">
+                                            Block height</dt>
+                                        <dd class="tx-detail-column-data">
+                                            <a id="tx-block-height"
+                                                style="cursor: pointer; background-color: transparent; color: #5c34a2; text-decoration: none;"></a>
+                                        </dd>
+                                    </dl>
+                                    <dl class="row">
+                                        <dt class="tx-detail-column-name">
+                                            Block Confirmations</dt>
+                                        <dd class="tx-detail-column-data">
+                                            <a id="tx-block-confirmations"
+                                                style="background-color:transparent; color: inherit; text-decoration: none;"></a>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Validator & Block Rewards Column -->
+                    <div id="column2" class="column2">
+                        <!-- Validator -->
+                        <div class="column2-card1">
+                            <div id='loading-topcard-right-up' style="height: 100px; width:100%; position: relative; ">
+                                <div style="margin: 0;
+                                                position: absolute;
+                                                top: 50%;
+                                                right: 50%;
+                                                -ms-transform: translateY(-50%);
+                                                transform: translateY(-50%);"><i class="fa fa-spinner fa-spin"
+                                        style="font-size:24px"></i></div>
+                            </div>
+
+                            <div id='topcard-right-up' class="column2-card1-body" style="display:none;">
+                                <h2
+                                    style="color: #fff; -webkit-box-direction: normal; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; display: block; margin-top: 0; font-size: 18px; font-weight: normal; line-height: 1.2rem; margin-bottom: .5rem;">
+                                    <a id="tx-type-big" href=''
+                                        style="color:inherit; font-size:inherit; font-weight:inherit; text-decoration:none"></a>
+                                </h2>
+                                <div style="text-align:left!important;">
+                                    <h3
+                                        style="margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; display: block; text-overflow: ellipsis; white-space: nowrap; overflow:hidden; font-size: 12px; font-weight: bold; line-height: 1.2; margin: 0px 0px 12px; margin-bottom: 0;">
+                                        <a id="tx-type-big-subscript-href"
+                                            style="background-color: transparent; text-decoration: none; color: #fff;"
+                                            data-test="address_hash_link">
+                                            <span class=""
+                                                data-address-hash="0x6E349BE21Acb0db3B2092fd4E3B738202842697E">
+                                                <span id="tx-type-big-subscript" data-toggle="tooltip"
+                                                    data-placement="top"></span>
+                                            </span>
+                                        </a>
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Block Rewards -->
+                        <div
+                            style="margin-left: 0!important; flex-grow: 1!important; -webkit-box-flex: 1!important; background-clip: border-box; flex-direction: column; min-width: 0;  word-wrap: break-word; display: flex; -webkit-box-orient: vertical; -webkit-box-direction: normal; position: relative; box-shadow: 0 0 30px 0 rgba(202,199,226,.5); margin-bottom: 50px; background-color: #fff; border-radius: 10px; border: none; ">
+                            <div style="flex: 1 1 auto; -webkit-box-flex: 1; padding: 30px;">
+                                <h2
+                                    style=" -webkit-box-direction: normal; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; display: block; margin-top: 0; font-size: 18px; font-weight: normal; line-height: 1.2rem; margin-bottom: .5rem;">
+                                    FLO Data</h2>
+
+                                <div id='loading-topcard-right-down'
+                                    style="height: 100px; width:100%; position: relative; ">
+                                    <div style="margin: 0;
+                                                    position: absolute;
+                                                    top: 50%;
+                                                    right: 50%;
+                                                    -ms-transform: translateY(-50%);
+                                                    transform: translateY(-50%);"><i class="fa fa-spinner fa-spin"
+                                            style="font-size:24px"></i></div>
+                                </div>
+
+                                <h4 id="tx-flodata"
+                                    style=" -webkit-box-direction: normal; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; display: block; margin-top: 1rem; font-size: 18px; font-weight: normal; line-height: 1.2rem; margin-bottom: .5rem; display:none">
+                                </h4>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bottom-card-master">
+                <!-- Transaction Card -->
+                <div id="maincard" class="card">
+                    <!-- Transaction tabs -->
+                    <div class="bottom-card-tabs">
+                        <div class="bottom-card-tab">
+                            <a class="card-tabs card-tab-active">Details</a>
+                        </div>
+                    </div>
+                    <div id="temp-card" class="container2">
+                        <div id='loadingTransactions' style="height: 100px; width:100%; position: relative; ">
+                            <div style="margin: 0;
+                                                    position: absolute;
+                                                    top: 50%;
+                                                    right: 50%;
+                                                    -ms-transform: translateY(-50%);
+                                                    transform: translateY(-50%);"><i class="fa fa-spinner fa-spin"
+                                    style="font-size:24px"></i></div>
+                        </div>
+
+                    </div>
+                    <!--
+                    <div id="transactions-card" class="container2">
+                        <div
+                            style="display:flex;justify-content: space-between; flex-direction: column; flex: 1 1 auto;">
+
+                            <h4
+                                style="text-align:left; font-size:18px; font-weight:400;  margin-left:14px; margin-right:14px; line-height:1.2rem; margin-bottom:2rem; display:block; margin-block-start:0.83em; margin-block-end:0.83em;">
+                                A new FLO token of the name <a
+                                    style="font-weight:bold; color: #5c34a2; cursor: pointer;">rupee#</a> has been
+                                created </h4>
+
+                            <hr
+                                style="display: block; unicode-bidi: isolate; margin-block-start: 0.5em; margin-block-end: 0.5em; margin-inline-start: auto; margin-inline-end: auto; box-sizing: content-box; height: 0; overflow: visible; border-bottom: none; border-left: none; border-right: none; border-top: 1px solid #f5f6fa; margin: 30px 0;">
+                            <dl class="row">
+                                <dt class="tx-detail-column-name tx-details-name-extra-padding">
+                                    Token name</dt>
+                                <dd class="tx-detail-column-data tx-details-data-extra-padding">
+                                    <a
+                                        style="cursor: pointer; background-color: transparent; color: #5c34a2; text-decoration: none;">RUPEE</a>
+                                </dd>
+                            </dl>
+                            <dl class="row">
+                                <dt class="tx-detail-column-name tx-details-name-extra-padding">
+                                    Token supply</dt>
+                                <dd class="tx-detail-column-data tx-details-data-extra-padding">
+                                    <a
+                                        style="background-color:transparent; color: inherit; text-decoration: none;">1,000,000,000</a>
+                                </dd>
+                            </dl>
+                            <dl class="row">
+                                <dt class="tx-detail-column-name tx-details-name-extra-padding">
+                                    Incorporation Address</dt>
+                                <dd class="tx-detail-column-data tx-details-data-extra-padding">
+                                    <a
+                                        style="background-color:transparent; color: #5c34a2; text-decoration: none; cursor: pointer;">FQ5EZGMYXa1s2mLsdPrs3Y41nQffaAyBVV</a>
+                                </dd>
+                            </dl>
+
+                        </div>
+                    </div>
+
+                -->
+                </div>
+
+            </section>
+        </section>
+    </div>
+
+
+    <div style="width:100%;background:rgb(60,34,106)">
+
+        <div class="footer" style="width:80%;margin:auto">
+
+
+
+            <div class="navbar-flexbox">
+                <div style="position:relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="59pt"
+                        height="27pt" viewBox="0 0 59 27" version="1.1">
+
+                        <g id="surface1">
+                            <path style=" stroke:none;fill-rule:nonzero;fill:white;"
+                                d="M 46.871094 22.328125 L 39.714844 22.328125 L 39.714844 12.007812 L 41.496094 12.007812 L 41.496094 20.691406 L 46.871094 20.691406 Z M 46.871094 22.328125 " />
+                            <path style=" stroke:none;fill-rule:nonzero;fill:white"
+                                d="M 53.628906 22.503906 C 52.839844 22.503906 52.121094 22.363281 51.46875 22.085938 C 50.816406 21.804688 50.257812 21.421875 49.789062 20.941406 C 49.324219 20.460938 48.957031 19.898438 48.695312 19.253906 C 48.433594 18.609375 48.300781 17.925781 48.300781 17.195312 L 48.300781 17.167969 C 48.300781 16.4375 48.433594 15.753906 48.695312 15.109375 C 48.957031 14.464844 49.328125 13.902344 49.804688 13.414062 C 50.28125 12.929688 50.847656 12.542969 51.5 12.257812 C 52.148438 11.972656 52.871094 11.832031 53.660156 11.832031 C 54.445312 11.832031 55.167969 11.96875 55.820312 12.25 C 56.472656 12.53125 57.03125 12.910156 57.496094 13.394531 C 57.964844 13.875 58.332031 14.4375 58.59375 15.082031 C 58.855469 15.726562 58.988281 16.410156 58.988281 17.136719 L 58.988281 17.167969 C 58.988281 17.894531 58.855469 18.578125 58.59375 19.222656 C 58.332031 19.867188 57.960938 20.433594 57.484375 20.917969 C 57.007812 21.40625 56.441406 21.792969 55.789062 22.074219 C 55.136719 22.359375 54.417969 22.503906 53.628906 22.503906 M 53.660156 20.839844 C 54.164062 20.839844 54.625 20.742188 55.046875 20.550781 C 55.46875 20.359375 55.828125 20.097656 56.128906 19.769531 C 56.429688 19.441406 56.667969 19.054688 56.835938 18.613281 C 57.003906 18.167969 57.089844 17.699219 57.089844 17.195312 L 57.089844 17.167969 C 57.089844 16.667969 57.003906 16.191406 56.835938 15.746094 C 56.667969 15.296875 56.429688 14.910156 56.125 14.578125 C 55.816406 14.25 55.453125 13.988281 55.027344 13.789062 C 54.597656 13.59375 54.132812 13.496094 53.628906 13.496094 C 53.125 13.496094 52.664062 13.589844 52.242188 13.785156 C 51.820312 13.976562 51.460938 14.234375 51.15625 14.566406 C 50.859375 14.894531 50.621094 15.28125 50.453125 15.722656 C 50.285156 16.164062 50.199219 16.636719 50.199219 17.136719 L 50.199219 17.167969 C 50.199219 17.667969 50.285156 18.140625 50.453125 18.589844 C 50.621094 19.039062 50.859375 19.425781 51.164062 19.753906 C 51.472656 20.085938 51.835938 20.347656 52.261719 20.542969 C 52.691406 20.738281 53.15625 20.839844 53.660156 20.839844 Z M 53.660156 20.839844 " />
+                            <path style=" stroke:none;fill-rule:nonzero;fill:white;"
+                                d="M 30.140625 16.488281 L 30.140625 22.328125 L 31.921875 22.328125 L 31.921875 18.125 L 37.074219 18.125 L 37.074219 16.488281 Z M 30.140625 16.488281 " />
+                            <path style=" stroke:none;fill-rule:nonzero;fill:white;"
+                                d="M 30.140625 12.007812 L 30.140625 13.644531 L 37.730469 13.644531 L 37.730469 12.007812 Z M 30.140625 12.007812 " />
+                            <path style=" stroke:none;fill-rule:nonzero;fill:white;"
+                                d="M 13.109375 19.214844 C 11.601562 21.222656 11.601562 23.203125 13.109375 25.144531 C 14.617188 23.203125 14.617188 21.222656 13.109375 19.214844 M 13.109375 2.800781 C 9.648438 7.207031 9.648438 11.6875 13.109375 16.25 C 16.570312 11.6875 16.570312 7.207031 13.109375 2.800781 Z M 5.273438 22.441406 C 6.546875 19.515625 9.21875 18.070312 12.203125 18.105469 C 8.417969 14.140625 5.128906 12.539062 2.339844 13.3125 C 2.710938 15.5 4.21875 17.359375 6.859375 18.890625 C 3.820312 17.921875 1.53125 15.578125 0 11.859375 C 4.558594 11.074219 8.152344 12.210938 10.773438 15.261719 C 8.382812 10.101562 9.160156 5.007812 13.109375 -0.0117188 C 17.058594 5.007812 17.835938 10.097656 15.445312 15.261719 C 18.066406 12.210938 21.660156 11.074219 26.21875 11.859375 C 24.6875 15.578125 22.398438 17.921875 19.359375 18.890625 C 22 17.359375 23.507812 15.5 23.878906 13.3125 C 21.089844 12.542969 17.800781 14.140625 14.015625 18.105469 C 17 18.070312 19.671875 19.515625 20.945312 22.441406 C 18.691406 22.953125 16.835938 22.601562 15.382812 21.394531 C 16.972656 22.207031 18.339844 22.328125 19.492188 21.757812 C 18.988281 20.21875 16.757812 19.152344 13.90625 18.5625 C 15.53125 21.410156 15.265625 24.21875 13.109375 26.980469 C 10.953125 24.21875 10.6875 21.410156 12.3125 18.5625 C 9.460938 19.152344 7.230469 20.21875 6.726562 21.757812 C 7.878906 22.328125 9.246094 22.207031 10.835938 21.394531 C 9.382812 22.601562 7.527344 22.953125 5.273438 22.441406 Z M 5.273438 22.441406 " />
+                        </g>
+                    </svg>
+
+                    <div style="padding-right:30px; padding-top:10px; max-width: 400px;">
+                        <h3 style="font-weight: 500">
+                            Block explorer for RanchiMall FLO Token Tracking and Smart Contract system. Built on top of
+                            the FLO blockchain.
+                        </h3>
+                    </div>
+                </div>
+
+                <div>
+                    <div style="padding-top:10px">
+                        <h3 style="font-weight: 500">How to find us?</h3>
+                    </div>
+                    <div class="social-media-icons">
+                        <a href="https://github.com/ranchimall" rel="noreferrer" target="_blank" title="Github">
+                            <i class="fab fa-github fa-lg" style="color:white;padding:0 2px;"></i>
+                        </a>
+                        <a href="https://twitter.com/ranchimallflo" rel="noreferrer" target="_blank" title="Twitter">
+                            <i class="fab fa-twitter fa-lg" style="color:white;padding:0 2px;"></i>
+                        </a>
+                        <a href="https://medium.com/ranchimall" rel="noreferrer" target="_blank" title="Medium">
+                            <i class="fab fa-medium fa-lg" style="color:white; padding:0 2px;"></i>
+                        </a>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+        <div style="height:70px"></div>
+    </div>
+
+    <script>
+
+        // THIS TAG CONTAINS CODE REQUIRED FOR THE NAVBAR TO FUNCTION
+
+        function returnHexaNumber(s) {
+            var regExp = /^[-+]?[0-9A-Fa-f]+\.?[0-9A-Fa-f]*?$/;
+            return (typeof s === 'string' && regExp.test(s));
+        }
+
+        function isInt(n) {
+            return Number(n) === n && n % 1 === 0;
+        }
+
+        function isFloat(n) {
+            return Number(n) === n && n % 1 !== 0;
+        }
+
+        function splitContractNameAddress(value, index) {
+            var tempArray = [];
+            tempArray[0] = value.substring(0, index);
+            tempArray[1] = value.substring(index + 1);
+            return tempArray
+        }
+
+        function categoriseText(text, inputElement) {
+
+            if (!isNaN(text) && isInt(Number(text))) {
+                //console.log('this is a block number');
+                inputElement.value = '';
+                window.location.href = "block.html?height=" + text;
+            }
+            else if (typeof (text) == 'string') {
+                if (text.length == 34 && text[0] == 'F') {
+                    //console.log('data entered in a FLO address');
+                    inputElement.value = '';
+                    window.location.assign("address.html?address=" + text);
+                }
+                else if (window.ranchimallflo.tokenlist.includes(text)) {
+                    //console.log('data entered is a token name');
+                    inputElement.value = '';
+                    window.location.assign("token.html?name=" + text.toLowerCase());
+                }
+                else if (window.ranchimallflo.smartcontractnamelist.includes(text)) {
+                    //console.log('data entered is a smart contract name');
+                    for (var i = 0; i < window.ranchimallflo.smartcontractnameaddresslist.length; i++) {
+
+                        var contractSplit = splitContractNameAddress(window.ranchimallflo.smartcontractnameaddresslist[i], window.ranchimallflo.smartcontractnameaddresslist[i].lastIndexOf('-'));
+
+                        if (window.ranchimallflo.smartcontractnamelist.includes(text)) {
+                            inputElement.value = '';
+                            window.location.assign("contract.html?name=" + contractSplit[0] + "&address=" + contractSplit[1]);
+
+                        }
+                    }
+
+                }
+                else if (text.length == 64 && returnHexaNumber(text)) {
+
+                    fetch(`${window.tokenapiUrl}/api/v1.0/categoriseString/` + text)
+                        .then(function (response) {
+                            return response.json();
+                        })
+                        .then(function (myJson) {
+                            if (myJson['type'] == 'transaction') {
+                                //console.log('data entered is a transaction hash');
+                                inputElement.value = '';
+                                window.location.assign("transaction.html?txhash=" + text);
+                            }
+                            else if (myJson['type'] == 'block') {
+                                //console.log('data entered is a block hash');
+                                inputElement.value = '';
+                                window.location.assign("block.html?blockhash=" + text);
+                            }
+                            else {
+                                //console.log('data entered is noise');
+                            }
+                        });
+
+                }
+                else {
+                    //console.log('data entered is noise')
+                }
+
+                document.getElementById('userinput').innerText = '';
+            }
+        }
+
+        document.addEventListener("click", (evt) => {
+            const flyoutElement = document.getElementById("navbar-search-parent");
+            let targetElement = evt.target; // clicked element
+
+            do {
+                if (targetElement == flyoutElement) {
+                    // This is a click inside. Do nothing, just return.
+                    return;
+                }
+                // Go up the DOM
+                targetElement = targetElement.parentNode;
+            } while (targetElement);
+
+
+            // This is a click outside.
+            //console.log('clicked outside');
+            if ((window.screen.width < 600) && (document.getElementById('navbar-search-parent').style.width == '100%')) {
+                // check if the search bar is not expanded 
+                document.getElementById('navbar-search-parent').style.width = '';
+                document.getElementById('navbar-search').style.width = '52px'; // 52px was value before
+                document.getElementById('searchbox-parent').style.width = '50vw'; // 50vw was value before
+                document.getElementById('searchbox-parent').style.display = 'none'; // none was value before
+
+            }
+        });
+
+
+        function processNavbarSearch() {
+            userinput = document.getElementById('userinput');
+            console.log(userinput.value);
+
+            if ((window.screen.width < 600) && (document.getElementById('navbar-search-parent').style.width == '')) {
+                // check if the search bar is not expanded 
+                document.getElementById('navbar-search-parent').style.width = '100%';
+                document.getElementById('navbar-search').style.width = 'calc(100%)'; // 52px was value before
+                var buttonWidth = document.getElementById("navbar_search_button").offsetWidth
+                document.getElementById('searchbox-parent').style.width = '80%'; // 50vw was value before
+                document.getElementById('searchbox-parent').style.display = 'initial'; // none was value before
+                document.getElementById('userinput').focus();
+
+            }
+            else {
+                if (userinput.value != '') {
+                    categoriseText(userinput.value, userinput);
+                }
+
+            }
+
+        }
+
+        function runScriptJs() {
+            var $cell = $('.card');
+
+            //open and close card when clicked on card
+            $cell.find('.js-expander').click(function () {
+
+                var $thisCell = $(this).closest('.card');
+
+                if ($thisCell.hasClass('is-collapsed')) {
+                    $cell.not($thisCell).removeClass('is-expanded').addClass('is-collapsed').addClass('is-inactive');
+                    $thisCell.removeClass('is-collapsed').addClass('is-expanded');
+
+                    if ($cell.not($thisCell).hasClass('is-inactive')) {
+                        //do nothing
+                    } else {
+                        $cell.not($thisCell).addClass('is-inactive');
+                    }
+
+                } else {
+                    $thisCell.removeClass('is-expanded').addClass('is-collapsed');
+                    $cell.not($thisCell).removeClass('is-inactive');
+                }
+            });
+
+            //close card when click on cross
+            $cell.find('.js-collapser').click(function () {
+
+                var $thisCell = $(this).closest('.card');
+
+                $thisCell.removeClass('is-expanded').addClass('is-collapsed');
+                $cell.not($thisCell).removeClass('is-inactive');
+
+            });
+        }
+
+        // First load
+        //console.log('Cursor right before the first fetch call');
+
+        // loading of global variables which contains name of all tokens and smart contracts
+
+
+        var data = [];
+        fetch(`${window.tokenapiUrl}/api/v1.0/getTokenSmartContractList`)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (myJson) {
+
+                //console.log('first line of the fetch result');
+
+                window.ranchimallflo = {};
+                ranchimallflo.tokenlist = myJson['tokens'];
+                ranchimallflo.smartcontractlist = myJson['smartContracts'];
+                ranchimallflo.smartcontractnamelist = [];
+                ranchimallflo.smartcontractnameaddresslist = [];
+                //console.log(ranchimallflo.smartcontractlist.length);
+                for (var i = 0; i < ranchimallflo.smartcontractlist.length; i++) {
+                    //ranchimallflo.smartcontractnamelist.append(ranchimallflo.smartcontractlist[i]['contractName']);
+                    data.push(ranchimallflo.smartcontractlist[i]['contractName']);
+                    ranchimallflo.smartcontractnamelist.push(ranchimallflo.smartcontractlist[i]['contractName']);
+                    ranchimallflo.smartcontractnameaddresslist.push(ranchimallflo.smartcontractlist[i]['contractName'] + '-' + ranchimallflo.smartcontractlist[i]['contractAddress']);
+
+                }
+
+                for (var i = 0; i < ranchimallflo.tokenlist.length; i++) {
+                    //ranchimallflo.smartcontractnamelist.append(ranchimallflo.smartcontractlist[i]['contractName']);
+                    data.push(ranchimallflo.tokenlist[i]);
+                }
+
+                var index = new FlexSearch({
+
+                    encode: "advanced",
+                    tokenize: "reverse",
+                    suggest: true
+                });
+
+                for (var i = 0; i < data.length; i++) {
+
+                    index.add(i, data[i]);
+                }
+
+
+
+                var suggestions = document.getElementById("suggestions");
+                var autocomplete = document.getElementById("autocomplete");
+                var userinput = document.getElementById("userinput");
+
+                userinput.addEventListener("input", show_results, true);
+                userinput.addEventListener("keyup", accept_autocomplete, true);
+                suggestions.addEventListener("click", accept_suggestion, true);
+
+                function show_results() {
+
+                    var value = this.value;
+                    var results = index.search(value, 25);
+                    var entry, childs = suggestions.childNodes;
+                    var i = 0, len = results.length;
+
+                    for (; i < len; i++) {
+
+                        entry = childs[i];
+
+                        if (!entry) {
+
+                            entry = document.createElement("div");
+                            suggestions.appendChild(entry);
+                        }
+
+                        entry.textContent = data[results[i]];
+                    }
+
+                    while (childs.length > len) {
+
+                        suggestions.removeChild(childs[i])
+                    }
+
+                    var first_result = data[results[0]];
+                    var match = first_result && first_result.toLowerCase().indexOf(value.toLowerCase());
+
+                    if (first_result && (match !== -1)) {
+
+                        autocomplete.value = value + first_result.substring(match + value.length);
+                        autocomplete.current = first_result;
+                    }
+                    else {
+
+                        autocomplete.value = autocomplete.current = value;
+                    }
+                }
+
+                function accept_autocomplete(event) {
+
+                    if ((event || window.event).keyCode === 13) {
+
+                        this.value = autocomplete.value = autocomplete.current;
+                    }
+                }
+
+                function accept_suggestion(event) {
+
+                    var target = (event || window.event).target;
+
+                    userinput.value = autocomplete.value = target.textContent;
+
+                    while (suggestions.lastChild) {
+
+                        suggestions.removeChild(suggestions.lastChild);
+                    }
+
+                    return false;
+                }
+            });
+
+        // add event listener to input dialog box
+        document.getElementById("userinput").addEventListener("keydown", function (e) {
+            if (e.keyCode === 13) {  //checks whether the pressed key is "Enter"
+                processNavbarSearch();
+            }
+        });
+
+    </script>
+
+
+    <script>
+        // get data when the page first loads 
+
+        // first we define a few functions which will help us with the job
+
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        // 1. fetch the blocknumber 
+        function getQueryVariable(variable) {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] == variable) {
+                    return pair[1];
+                }
+            }
+            alert('Query Variable ' + variable + ' not entered');
+        }
+
+        // 2. Update the top row 
+        function updateTopRow(transactionDetails, optionalParam = '') {
+
+            // update transaction hash and its href
+            document.getElementById('transaction_card_transactionHash').innerText = transactionDetails['transactionDetails']['txid'];
+            document.getElementById('transaction_card_transactionHash').href = "transaction.html?txhash=" + transactionDetails['transactionDetails']['txid'];
+
+            // update input address and its href
+            document.getElementById('tx-input-address').innerText = transactionDetails['transactionDetails']['vin'][0]['addr'];
+            document.getElementById('tx-input-address').href = "address.html?address=" + transactionDetails['transactionDetails']['vin'][0]['addr'];
+
+            // update output address and its href. Also the output amount
+            for (var i = 0; i < transactionDetails['transactionDetails']['vout'].length; i++) {
+                if (transactionDetails['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0] != transactionDetails['transactionDetails']['vin'][0]['addr']) {
+                    document.getElementById('tx-output-address').innerText = transactionDetails['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0];
+                    document.getElementById('tx-output-address').href = "address.html?address=" + transactionDetails['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0];
+                    document.getElementById('tx-amount').innerText = transactionDetails['transactionDetails']['vout'][i]['value'] + ' FLO';
+                }
+            }
+
+            // update tx block number 
+            document.getElementById('tx-block-height').innerText = transactionDetails['transactionDetails']['blockheight'];
+            document.getElementById('tx-block-height').href = "block.html?height=" + transactionDetails['transactionDetails']['blockheight'];
+
+            // update tx block confirmations 
+            document.getElementById('tx-block-confirmations').innerText = transactionDetails['transactionDetails']['confirmations'];
+
+            // update flodata 
+            document.getElementById('tx-flodata').innerText = transactionDetails['transactionDetails']['floData'];
+
+            // update tx type            
+            if (transactionDetails["parsedFloData"]["type"] == "tokenIncorporation") {
+                document.getElementById('tx-type-small').innerText = 'Token Creation';
+                document.getElementById('tx-type-big-subscript').innerText = 'Token Creation';
+                document.getElementById('tx-type-big').innerText = transactionDetails['parsedFloData']['tokenIdentification'].toUpperCase();
+                document.getElementById('tx-type-big').setAttribute('href', 'token.html?name=' + transactionDetails['parsedFloData']['tokenIdentification'].toLowerCase());
+            }
+            else if (transactionDetails["parsedFloData"]["type"] == "transfer") {
+                if (transactionDetails["parsedFloData"]["transferType"] == "token") {
+                    document.getElementById('tx-type-small').innerText = 'Token Transfer';
+                    document.getElementById('tx-type-big-subscript').innerText = 'Token Transfer';
+                    document.getElementById('tx-type-big').innerText = transactionDetails['parsedFloData']['tokenIdentification'].toUpperCase();
+                    document.getElementById('tx-type-big').setAttribute('href', 'token.html?name=' + transactionDetails['parsedFloData']['tokenIdentification'].toLowerCase());
+                }
+                else if (transactionDetails["parsedFloData"]["transferType"] == "smartContract") {
+                    document.getElementById('tx-type-small').innerText = 'Smart Contract Participation';
+                    document.getElementById('tx-type-big-subscript').innerText = 'Smart Contract Participation';
+                    document.getElementById('tx-type-big').innerText = transactionDetails['parsedFloData']['contractName'];
+                    document.getElementById('tx-type-big').setAttribute('href', 'contract.html?name=' + transactionDetails['parsedFloData']['contractName'] + '&address=' + optionalParam);
+                }
+            }
+            else if (transactionDetails["parsedFloData"]["type"] == "smartContractIncorporation") {
+                document.getElementById('tx-type-small').innerText = 'Smart Contract Creation';
+                document.getElementById('tx-type-big-subscript').innerText = 'Smart Contract Creation';
+                document.getElementById('tx-type-big').innerText = transactionDetails['parsedFloData']['contractName'];
+                document.getElementById('tx-type-big').setAttribute('href', 'contract.html?name=' + transactionDetails['parsedFloData']['contractName'] + '&address=' + transactionDetails['parsedFloData']['contractAddress']);
+            }
+            else if (transactionDetails["parsedFloData"]["type"] == "smartContractPays") {
+                document.getElementById('tx-type-small').innerText = 'Smart Contract Trigger';
+                document.getElementById('tx-type-big-subscript').innerText = 'Smart Contract Trigger';
+                document.getElementById('tx-type-big').innerText = transactionDetails['parsedFloData']['contractName'];
+                document.getElementById('tx-type-big').setAttribute('href', 'contract.html?name=' + transactionDetails['parsedFloData']['contractName'] + '&address=' + optionalParam);
+            }
+
+        }
+
+        // 3. Create bottom token incorporation card
+        function createBottomTokenIncorporation(transactionDetails) {
+
+            var transactions_card = document.createElement('div');
+            transactions_card.id = 'transactions-card';
+            transactions_card.setAttribute('class', 'container2');
+
+            var sub_transactions_card = document.createElement('div');
+            sub_transactions_card.style = 'display:flex;justify-content: space-between; flex-direction: column; flex: 1 1 auto;';
+
+            var helper_text = document.createElement('h4');
+            helper_text.style = 'text-align:left; font-size:18px; font-weight:400;  margin-left:14px; margin-right:14px; line-height:1.2rem; margin-bottom:2rem; display:block; margin-block-start:0.83em; margin-block-end:0.83em;';
+            helper_text.innerHTML = 'A new FLO token of the name <a style="font-weight:bold; color: #5c34a2; cursor: pointer; text-decoration:none" href="token.html?name=' + transactionDetails["parsedFloData"]["tokenIdentification"].toLowerCase() + '">' + transactionDetails['parsedFloData']['tokenIdentification'].toUpperCase() + '</a> has been created';
+
+            var linebreak = document.createElement('hr');
+            linebreak.style = "display: block; unicode-bidi: isolate; margin-block-start: 0.5em; margin-block-end: 0.5em; margin-inline-start: auto; margin-inline-end: auto; box-sizing: content-box; height: 0; overflow: visible; border-bottom: none; border-left: none; border-right: none; border-top: 1px solid #f5f6fa; margin: 30px 0;";
+
+            var row1 = document.createElement('dl');
+            row1.setAttribute('class', 'row');
+            var row1_dt = document.createElement('dt');
+            row1_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+            row1_dt.innerText = "Token Name";
+            var row1_dd = document.createElement('dd');
+            row1_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+            var row1_dd_a = document.createElement('a');
+            row1_dd_a.style = 'cursor: pointer; background-color: transparent; color: #5c34a2; text-decoration: none;';
+            row1_dd_a.innerText = transactionDetails['parsedFloData']['tokenIdentification'].toUpperCase();
+            row1_dd_a.href = "token.html?name=" + transactionDetails['parsedFloData']['tokenIdentification'];
+            row1_dd.append(row1_dd_a);
+            row1.append(row1_dt);
+            row1.append(row1_dd);
+
+            var row2 = document.createElement('dl');
+            row2.setAttribute('class', 'row');
+            var row2_dt = document.createElement('dt');
+            row2_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+            row2_dt.innerText = "Token Supply";
+            var row2_dd = document.createElement('dd');
+            row2_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+            var row2_dd_a = document.createElement('a');
+            row2_dd_a.style = 'background-color: transparent; color: inherit; text-decoration: none;';
+            row2_dd_a.innerText = numberWithCommas(transactionDetails['parsedFloData']['tokenAmount']);
+            row2_dd.append(row2_dd_a);
+            row2.append(row2_dt);
+            row2.append(row2_dd);
+
+            var row3 = document.createElement('dl');
+            row3.setAttribute('class', 'row');
+            var row3_dt = document.createElement('dt');
+            row3_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+            row3_dt.innerText = "Incorporation Adddress";
+            var row3_dd = document.createElement('dd');
+            row3_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+            var row3_dd_a = document.createElement('a');
+            row3_dd_a.style = 'cursor: pointer; background-color: transparent; color: #5c34a2; text-decoration: none;';
+            row3_dd_a.innerText = transactionDetails['transactionDetails']['vin'][0]['addr'];
+            row3_dd_a.href = "address.html?address=" + transactionDetails['transactionDetails']['vin'][0]['addr'];
+            row3_dd.append(row3_dd_a);
+            row3.append(row3_dt);
+            row3.append(row3_dd);
+
+            sub_transactions_card.append(helper_text);
+            sub_transactions_card.append(linebreak);
+            sub_transactions_card.append(row1);
+            sub_transactions_card.append(row2);
+            sub_transactions_card.append(row3);
+            transactions_card.append(sub_transactions_card);
+
+            document.getElementById('maincard').append(transactions_card);
+
+            /*
+            <div id="transactions-card" class="container2">
+                <div
+                    style="display:flex;justify-content: space-between; flex-direction: column; flex: 1 1 auto;">
+
+                    <h4
+                        style="text-align:left; font-size:18px; font-weight:400;  margin-left:14px; margin-right:14px; line-height:1.2rem; margin-bottom:2rem; display:block; margin-block-start:0.83em; margin-block-end:0.83em;">
+                        A new FLO token of the name <a style="font-weight:bold; color: #5c34a2; cursor: pointer;">rupee#</a> has been created </h4>
+
+                    <hr
+                        style="display: block; unicode-bidi: isolate; margin-block-start: 0.5em; margin-block-end: 0.5em; margin-inline-start: auto; margin-inline-end: auto; box-sizing: content-box; height: 0; overflow: visible; border-bottom: none; border-left: none; border-right: none; border-top: 1px solid #f5f6fa; margin: 30px 0;">
+                    <dl class="row">
+                        <dt class="tx-detail-column-name tx-details-name-extra-padding">
+                            Token name</dt>
+                        <dd class="tx-detail-column-data tx-details-data-extra-padding">
+                            <a
+                                style="cursor: pointer; background-color: transparent; color: #5c34a2; text-decoration: none;">RUPEE</a>
+                        </dd>
+                    </dl>
+                    <dl class="row">
+                        <dt class="tx-detail-column-name tx-details-name-extra-padding">
+                            Token supply</dt>
+                        <dd class="tx-detail-column-data tx-details-data-extra-padding">
+                            <a
+                                style="background-color:transparent; color: inherit; text-decoration: none;">1,000,000,000</a>
+                        </dd>
+                    </dl>
+                    <dl class="row">
+                        <dt class="tx-detail-column-name tx-details-name-extra-padding">
+                            Incorporation Address</dt>
+                        <dd class="tx-detail-column-data tx-details-data-extra-padding">
+                            <a
+                                style="background-color:transparent; color: #5c34a2; text-decoration: none; cursor: pointer;">FQ5EZGMYXa1s2mLsdPrs3Y41nQffaAyBVV</a>
+                        </dd>
+                    </dl>
+
+                </div>
+            </div>*/
+
+        }
+
+        // 4. Create bottom token transfer card
+        function createBottomTokenTransfer(transactionDetails) {
+
+            var transactions_card = document.createElement('div');
+            transactions_card.id = 'transactions-card';
+            transactions_card.setAttribute('class', 'container2');
+
+            var sub_transactions_card = document.createElement('div');
+            sub_transactions_card.style = 'display:flex;justify-content: space-between; flex-direction: column; flex: 1 1 auto;';
+
+            var helper_text = document.createElement('h4');
+            helper_text.style = 'text-align:left; font-size:18px; font-weight:400;  margin-left:14px; margin-right:14px; line-height:1.2rem; margin-bottom:2rem; display:block; margin-block-start:0.83em; margin-block-end:0.83em;';
+            helper_text.innerHTML = 'A transfer of <a style="cursor: pointer;color: #5c34a2; font-weight: bold; text-decoration:none;" href="token.html?name=' + transactionDetails['parsedFloData']['tokenIdentification'].toLowerCase() + '">' + transactionDetails['parsedFloData']['tokenIdentification'].toUpperCase() + '</a> has been made';
+
+            var linebreak = document.createElement('hr');
+            linebreak.style = "display: block; unicode-bidi: isolate; margin-block-start: 0.5em; margin-block-end: 0.5em; margin-inline-start: auto; margin-inline-end: auto; box-sizing: content-box; height: 0; overflow: visible; border-bottom: none; border-left: none; border-right: none; border-top: 1px solid #f5f6fa; margin: 30px 0;";
+
+            var row1 = document.createElement('dl');
+            row1.setAttribute('class', 'row');
+            var row1_dt = document.createElement('dt');
+            row1_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+            row1_dt.innerText = "Token Name";
+            var row1_dd = document.createElement('dd');
+            row1_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+            var row1_dd_a = document.createElement('a');
+            row1_dd_a.style = 'cursor: pointer; background-color: transparent; color: #5c34a2; text-decoration: none;';
+            row1_dd_a.innerText = transactionDetails['parsedFloData']['tokenIdentification'].toUpperCase();
+            row1_dd_a.href = "token.html?name=" + transactionDetails['parsedFloData']['tokenIdentification'].toLowerCase();
+            row1_dd.append(row1_dd_a);
+            row1.append(row1_dt);
+            row1.append(row1_dd);
+
+            var row2 = document.createElement('dl');
+            row2.setAttribute('class', 'row');
+            var row2_dt = document.createElement('dt');
+            row2_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+            row2_dt.innerText = "Transfer Amount";
+            var row2_dd = document.createElement('dd');
+            row2_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+            var row2_dd_a = document.createElement('a');
+            row2_dd_a.style = 'background-color: transparent; color: inherit; text-decoration: none;';
+            for (var i = 0; i < transactionDetails['transactionDetails']['vout'].length; i++) {
+                if (transactionDetails['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0] != transactionDetails['transactionDetails']['vin'][0]['addr']) {
+                    row2_dd_a.innerText = transactionDetails['transactionDetails']['vout'][i]['value'] + ' FLO';
+                }
+            }
+            row2_dd.append(row2_dd_a);
+            row2.append(row2_dt);
+            row2.append(row2_dd);
+
+            var row3 = document.createElement('dl');
+            row3.setAttribute('class', 'row');
+            var row3_dt = document.createElement('dt');
+            row3_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+            row3_dt.innerText = "Sender Adddress";
+            var row3_dd = document.createElement('dd');
+            row3_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+            var row3_dd_a = document.createElement('a');
+            row3_dd_a.style = 'cursor: pointer; background-color: transparent; color: #5c34a2; text-decoration: none;';
+            row3_dd_a.innerText = transactionDetails['transactionDetails']['vin'][0]['addr'];
+            row3_dd_a.href = "address.html?address=" + transactionDetails['transactionDetails']['vin'][0]['addr'];
+            row3_dd.append(row3_dd_a);
+            row3.append(row3_dt);
+            row3.append(row3_dd);
+
+            var row4 = document.createElement('dl');
+            row4.setAttribute('class', 'row');
+            var row4_dt = document.createElement('dt');
+            row4_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+            row4_dt.innerText = "Receiver Adddress";
+            var row4_dd = document.createElement('dd');
+            row4_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+            var row4_dd_a = document.createElement('a');
+            row4_dd_a.style = 'cursor: pointer; background-color: transparent; color: #5c34a2; text-decoration: none;';
+
+            for (var i = 0; i < transactionDetails['transactionDetails']['vout'].length; i++) {
+                if (transactionDetails['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0] != transactionDetails['transactionDetails']['vin'][0]['addr']) {
+                    row4_dd_a.innerText = transactionDetails['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0];
+                    row4_dd_a.href = "address.html?address=" + transactionDetails['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0];
+
+                }
+            }
+            row4_dd.append(row4_dd_a);
+            row4.append(row4_dt);
+            row4.append(row4_dd);
+
+            sub_transactions_card.append(helper_text);
+            sub_transactions_card.append(linebreak);
+            sub_transactions_card.append(row1);
+            sub_transactions_card.append(row2);
+            sub_transactions_card.append(row3);
+            sub_transactions_card.append(row4);
+            transactions_card.append(sub_transactions_card);
+
+            document.getElementById('maincard').append(transactions_card);
+
+
+            /*
+            <div id="transactions-card" class="container2">
+                <div
+                    style="display:flex;justify-content: space-between; flex-direction: column; flex: 1 1 auto;">
+
+                    <h4
+                        style="text-align:left; font-size:18px; font-weight:400;  margin-left:14px; margin-right:14px; line-height:1.2rem; margin-bottom:2rem; display:block; margin-block-start:0.83em; margin-block-end:0.83em;">
+                        A transfer of <a style="    cursor: pointer;color: #5c34a2; font-weight: bold">RMT#</a> has been made </h4>
+
+                    <hr
+                        style="display: block; unicode-bidi: isolate; margin-block-start: 0.5em; margin-block-end: 0.5em; margin-inline-start: auto; margin-inline-end: auto; box-sizing: content-box; height: 0; overflow: visible; border-bottom: none; border-left: none; border-right: none; border-top: 1px solid #f5f6fa; margin: 30px 0;">
+                    <dl class="row">
+                        <dt class="tx-detail-column-name tx-details-name-extra-padding">
+                            Token name</dt>
+                        <dd class="tx-detail-column-data tx-details-data-extra-padding">
+                            <a
+                                style="cursor: pointer; background-color: transparent; color: #5c34a2; text-decoration: none;">RMT</a>
+                        </dd>
+                    </dl>
+                    <dl class="row">
+                        <dt class="tx-detail-column-name tx-details-name-extra-padding">
+                            Transfer Amount</dt>
+                        <dd class="tx-detail-column-data tx-details-data-extra-padding">
+                            <a
+                                style="background-color:transparent; color: inherit; text-decoration: none;">0.002 RMT</a>
+                        </dd>
+                    </dl>
+                    <dl class="row">
+                        <dt class="tx-detail-column-name tx-details-name-extra-padding">
+                            Sender Address</dt>
+                        <dd class="tx-detail-column-data tx-details-data-extra-padding">
+                            <a
+                                style="    cursor: pointer;background-color:transparent; color: #5c34a2; text-decoration: none;">FTzJDDP1q2WgwfGcqgYjdUM17yFagYrax7</a>
+                        </dd>
+                    </dl>
+                    <dl class="row">
+                        <dt class="tx-detail-column-name tx-details-name-extra-padding">
+                            Receiver Address</dt>
+                        <dd class="tx-detail-column-data tx-details-data-extra-padding">
+                            <a
+                                style="    cursor: pointer;background-color:transparent; color: #5c34a2; text-decoration: none;">FGyDAHZ3AU5TqRV2zrTju9DBCbKWZtearf</a>
+                        </dd>
+                    </dl>
+
+                </div>
+            </div> */
+
+        }
+
+        function createBottomContractCreation(transactionDetails) {
+
+            var transactions_card = document.createElement('div');
+            transactions_card.id = 'transactions-card';
+            transactions_card.setAttribute('class', 'container2');
+
+            var sub_transactions_card = document.createElement('div');
+            sub_transactions_card.style = 'display:flex;justify-content: space-between; flex-direction: column; flex: 1 1 auto;';
+
+            var helper_text = document.createElement('h4');
+            helper_text.style = 'text-align:left; font-size:18px; font-weight:400;  margin-left:14px; margin-right:14px; line-height:1.2rem; margin-bottom:2rem; display:block; margin-block-start:0.83em; margin-block-end:0.83em;';
+            helper_text.innerHTML = 'A new Smart Contract of the name <a style="color: #5c34a2; font-weight: bold; cursor: pointer; text-decoration:none;" href="contract.html?name=' + transactionDetails['parsedFloData']['contractName'] + '&address=' + transactionDetails['parsedFloData']['contractAddress'] + '">' + transactionDetails['parsedFloData']['contractName'] + '</a> has been created';
+
+            var linebreak = document.createElement('hr');
+            linebreak.style = "display: block; unicode-bidi: isolate; margin-block-start: 0.5em; margin-block-end: 0.5em; margin-inline-start: auto; margin-inline-end: auto; box-sizing: content-box; height: 0; overflow: visible; border-bottom: none; border-left: none; border-right: none; border-top: 1px solid #f5f6fa; margin: 30px 0;";
+
+            var row1 = document.createElement('dl');
+            row1.setAttribute('class', 'row');
+            var row1_dt = document.createElement('dt');
+            row1_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+            row1_dt.innerText = "Contract name";
+            var row1_dd = document.createElement('dd');
+            row1_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+            var row1_dd_a = document.createElement('a');
+            row1_dd_a.style = 'cursor: pointer; background-color: transparent; color: #5c34a2; text-decoration: none;';
+            row1_dd_a.innerText = transactionDetails['parsedFloData']['contractName'];
+            row1_dd_a.href = "contract.html?name=" + transactionDetails['parsedFloData']['contractName'] + '&address=' + transactionDetails['parsedFloData']['contractAddress'];
+            row1_dd.append(row1_dd_a);
+            row1.append(row1_dt);
+            row1.append(row1_dd);
+
+
+            var row2 = document.createElement('dl');
+            row2.setAttribute('class', 'row');
+            var row2_dt = document.createElement('dt');
+            row2_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+            row2_dt.innerText = "Contract type";
+            var row2_dd = document.createElement('dd');
+            row2_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+            var row2_dd_a = document.createElement('a');
+            row2_dd_a.style = 'background-color: transparent; color: inherit; text-decoration: none;';
+            row2_dd_a.innerText = transactionDetails['parsedFloData']['contractType'];
+            row2_dd.append(row2_dd_a);
+            row2.append(row2_dt);
+            row2.append(row2_dd);
+
+
+            var row3 = document.createElement('dl');
+            row3.setAttribute('class', 'row');
+            var row3_dt = document.createElement('dt');
+            row3_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+            row3_dt.innerText = "Incorporation Adddress";
+            var row3_dd = document.createElement('dd');
+            row3_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+            var row3_dd_a = document.createElement('a');
+            row3_dd_a.style = 'cursor: pointer; background-color: transparent; color: #5c34a2; text-decoration: none;';
+            row3_dd_a.innerText = transactionDetails['transactionDetails']['vin'][0]['addr'];
+            row3_dd_a.href = "address.html?address=" + transactionDetails['transactionDetails']['vin'][0]['addr'];
+            row3_dd.append(row3_dd_a);
+            row3.append(row3_dt);
+            row3.append(row3_dd);
+
+
+            var row4 = document.createElement('dl');
+            row4.setAttribute('class', 'row');
+            var row4_dt = document.createElement('dt');
+            row4_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+            row4_dt.innerText = "Token used";
+            var row4_dd = document.createElement('dd');
+            row4_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+            var row4_dd_a = document.createElement('a');
+            row4_dd_a.style = 'cursor: pointer; background-color: transparent; color: #5c34a2; text-decoration: none;';
+            row4_dd_a.innerText = transactionDetails['parsedFloData']['tokenIdentification'].toUpperCase();
+            row4_dd_a.href = "token.html?name=" + transactionDetails['parsedFloData']['tokenIdentification'].toLowerCase();
+            row4_dd.append(row4_dd_a);
+            row4.append(row4_dt);
+            row4.append(row4_dd);
+
+            var contractConditionHeader = document.createElement('h6');
+            contractConditionHeader.style = 'text-align:left; font-size:18px; font-weight:bold;  margin-left:14px; margin-right:14px; line-height:1.2rem; margin-bottom:2rem; display:block; margin-block-start:0.83em; margin-block-end:0.83em; margin-top:2rem;';
+            contractConditionHeader.innerText = 'Contract conditions';
+
+
+            // if contract type is one-time-event
+            if (transactionDetails['parsedFloData']['contractType'] == 'one-time-event') {
+
+                // expiry time is definitely there
+                var row5 = document.createElement('dl');
+                row5.setAttribute('class', 'row');
+                var row5_dt = document.createElement('dt');
+                row5_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+                row5_dt.innerText = "Expiry time";
+                var row5_dd = document.createElement('dd');
+                row5_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+                var row5_dd_a = document.createElement('a');
+                row5_dd_a.style = 'background-color: transparent; color: inherit; text-decoration: none;';
+                row5_dd_a.innerText = transactionDetails['parsedFloData']['contractConditions']['expiryTime'];
+                row5_dd.append(row5_dd_a);
+                row5.append(row5_dt);
+                row5.append(row5_dd);
+
+
+                // either user conditions or payeeaddress
+                if ('userchoices' in transactionDetails.parsedFloData.contractConditions) {
+
+                    var row6 = document.createElement('dl');
+                    row6.setAttribute('class', 'row');
+                    /*var row7_dt = document.createElement('dt');
+                    row7_dt.setAttribute('class',"tx-detail-column-name tx-details-name-extra-padding");
+                    row7_dt.innerText = "User choices";
+                    var row7_dd = document.createElement('dd');
+                    row7_dd.setAttribute('class','tx-detail-column-data tx-details-data-extra-padding');
+                    var row7_dd_a = document.createElement('a');
+                    row7_dd_a.style = 'background-color: transparent; color: inherit; text-decoration: none;';
+                    row7_dd_a.innerText = transactionDetails['parsedFloData']['contractConditions']['expiryTime'];
+                    row7_dd_a.innerText = 'vivviv';
+                    row7_dd.append(row7_dd_a);
+                    row7.append(row7_dt);
+                    row7.append(row7_dd);  */
+
+                    for (var i = 0; i < Object.keys(transactionDetails['parsedFloData']['contractConditions']['userchoices']).length; i++) {
+
+                        if (i != 0) {
+                            var row6_dt = document.createElement('dt');
+                            row6_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+                            row6_dt.innerText = "";
+                            var row6_dd = document.createElement('dd');
+                            row6_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+                            var row6_dd_a = document.createElement('a');
+                            row6_dd_a.style = 'background-color: transparent; color: inhexpiryTimeerit; text-decoration: none;';
+                            row6_dd_a.innerText = transactionDetails['parsedFloData']['contractConditions']['userchoices'][i];
+                            row6_dd.append(row6_dd_a);
+                            row6.append(row6_dt.cloneNode(true));
+                            row6.append(row6_dd.cloneNode(true));
+                        }
+                        else {
+                            var row6_dt = document.createElement('dt');
+                            row6_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+                            row6_dt.innerText = "User choices";
+                            var row6_dd = document.createElement('dd');
+                            row6_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+                            var row6_dd_a = document.createElement('a');
+                            row6_dd_a.style = 'background-color: transparent; color: inherit; text-decoration: none;';
+                            row6_dd_a.innerText = transactionDetails['parsedFloData']['contractConditions']['userchoices'][i];
+                            row6_dd.append(row6_dd_a);
+                            row6.append(row6_dt.cloneNode(true));
+                            row6.append(row6_dd.cloneNode(true));
+
+                        }
+
+                    }
+                }
+                else if ('payeeAddress' in transactionDetails.parsedFloData.contractConditions) {
+                    var row6 = document.createElement('dl');
+                    row6.setAttribute('class', 'row');
+                    var row6_dt = document.createElement('dt');
+                    row6_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+                    row6_dt.innerText = "Payee Address";
+                    var row6_dd = document.createElement('dd');
+                    row6_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+                    var row6_dd_a = document.createElement('a');
+                    row6_dd_a.style = 'cursor: pointer; background-color: transparent; color: #5c34a2; text-decoration: none;';
+                    row6_dd_a.innerText = transactionDetails['parsedFloData']['contractConditions']['payeeAddress'];
+                    row6_dd_a.href = "address.html?address=" + transactionDetails['parsedFloData']['contractConditions']['payeeAddress'];
+                    row6_dd.append(row6_dd_a);
+                    row6.append(row6_dt);
+                    row6.append(row6_dd);
+                }
+
+
+
+                // check if participation amount exists as part of the contract conditions 
+                if ('contractAmount' in transactionDetails.parsedFloData.contractConditions) {
+                    var row7 = document.createElement('dl');
+                    row7.setAttribute('class', 'row');
+                    var row7_dt = document.createElement('dt');
+                    row7_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+                    row7_dt.innerText = "Participation amount";
+                    var row7_dd = document.createElement('dd');
+                    row7_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+                    var row7_dd_a = document.createElement('a');
+                    row7_dd_a.style = 'background-color: transparent; color: inherit; text-decoration: none;';
+                    row7_dd_a.innerText = transactionDetails['parsedFloData']['contractConditions']['contractAmount'] + ' ' + row4_dd_a.innerText.toUpperCase();
+                    row7_dd.append(row7_dd_a);
+                    row7.append(row7_dt);
+                    row7.append(row7_dd);
+                }
+
+                // check if participation amount exists as part of the contract conditions 
+                if ('maximumsubscriptionamount' in transactionDetails.parsedFloData.contractConditions) {
+                    var row8 = document.createElement('dl');
+                    row8.setAttribute('class', 'row');
+                    var row8_dt = document.createElement('dt');
+                    row8_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+                    row8_dt.innerText = "Maximum Subscription";
+                    var row8_dd = document.createElement('dd');
+                    row8_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+                    var row8_dd_a = document.createElement('a');
+                    row8_dd_a.style = 'background-color: transparent; color: inherit; text-decoration: none;';
+                    row8_dd_a.innerText = transactionDetails['parsedFloData']['contractConditions']['maximumsubscriptionamount'] + ' ' + row4_dd_a.innerText.toUpperCase();
+                    row8_dd.append(row8_dd_a);
+                    row8.append(row8_dt);
+                    row8.append(row8_dd);
+                }
+
+                // check if participation amount exists as part of the contract conditions 
+                if ('minimumsubscriptionamount' in transactionDetails.parsedFloData.contractConditions) {
+                    var row9 = document.createElement('dl');
+                    row9.setAttribute('class', 'row');
+                    var row9_dt = document.createElement('dt');
+                    row9_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+                    row9_dt.innerText = "Maximum Subscription";
+                    var row9_dd = document.createElement('dd');
+                    row9_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+                    var row9_dd_a = document.createElement('a');
+                    row9_dd_a.style = 'background-color: transparent; color: inherit; text-decoration: none;';
+                    row9_dd_a.innerText = transactionDetails['parsedFloData']['contractConditions']['minimumsubscriptionamount'] + ' ' + row4_dd_a.innerText.toUpperCase();
+                    row9_dd.append(row9_dd_a);
+                    row9.append(row9_dt);
+                    row9.append(row9_dd);
+                }
+
+
+                sub_transactions_card.append(helper_text);
+                sub_transactions_card.append(linebreak);
+                sub_transactions_card.append(row1);
+                sub_transactions_card.append(row2);
+                sub_transactions_card.append(row3);
+                sub_transactions_card.append(row4);
+                sub_transactions_card.append(contractConditionHeader);
+
+                sub_transactions_card.append(row5);
+                sub_transactions_card.append(row6);
+                if (row7) {
+                    sub_transactions_card.append(row7);
+                }
+                if (row8) {
+                    sub_transactions_card.append(row7);
+                }
+                if (row9) {
+                    sub_transactions_card.append(row7);
+                }
+
+                transactions_card.append(sub_transactions_card);
+
+                document.getElementById('maincard').append(transactions_card);
+
+
+                /* 
+                    <div id="transactions-card" class="container2">
+                        <div
+                            style="display:flex;justify-content: space-between; flex-direction: column; flex: 1 1 auto;">
+
+                            <h4
+                                style="text-align:left; font-size:18px; font-weight:400;  margin-left:14px; margin-right:14px; line-height:1.2rem; margin-bottom:2rem; display:block; margin-block-start:0.83em; margin-block-end:0.83em;">
+                                A new Smart Contract of the name <a style="color: #5c34a2; font-weight: bold;     cursor: pointer;">india-elections-2019</a> has been created </h4>
+
+                            <hr
+                                style="display: block; unicode-bidi: isolate; margin-block-start: 0.5em; margin-block-end: 0.5em; margin-inline-start: auto; margin-inline-end: auto; box-sizing: content-box; height: 0; overflow: visible; border-bottom: none; border-left: none; border-right: none; border-top: 1px solid #f5f6fa; margin: 30px 0;">
+                            
+                            <dl class="row">
+                                <dt class="tx-detail-column-name tx-details-name-extra-padding">
+                                    Contract name</dt>
+                                <dd class="tx-detail-column-data tx-details-data-extra-padding">
+                                    <a
+                                        style="cursor: pointer; background-color: transparent; color: #5c34a2; text-decoration: none;">india-elections-2019</a>
+                                </dd>
+                            </dl>
+                            <dl class="row">
+                                <dt class="tx-detail-column-name tx-details-name-extra-padding">
+                                    Contract type</dt>
+                                <dd class="tx-detail-column-data tx-details-data-extra-padding">
+                                    <a
+                                        style="background-color:transparent; color: inherit; text-decoration: none;">one-time-event</a>
+                                </dd>
+                            </dl>
+                            <dl class="row">
+                                <dt class="tx-detail-column-name tx-details-name-extra-padding">
+                                    Incorporation Address</dt>
+                                <dd class="tx-detail-column-data tx-details-data-extra-padding">
+                                    <a
+                                        style="    cursor: pointer;background-color:transparent; color: #5c34a2; text-decoration: none;">F7osBpjDDV1mSSnMNrLudEQQ3cwDJ2dPR1</a>
+                                </dd>
+                            </dl>
+                            <dl class="row">
+                                <dt class="tx-detail-column-name tx-details-name-extra-padding">
+                                    Token used</dt>
+                                <dd class="tx-detail-column-data tx-details-data-extra-padding">
+                                    <a
+                                        style="    cursor: pointer;background-color:transparent; color: #5c34a2; text-decoration: none;">RMT</a>
+                                </dd>
+                            </dl>
+
+                            <h6
+                                style="text-align:left; font-size:18px; font-weight:bold;  margin-left:14px; margin-right:14px; line-height:1.2rem; margin-bottom:2rem; display:block; margin-block-start:0.83em; margin-block-end:0.83em; margin-top:2rem;">
+                                Contract conditions </h6>
+                            
+                            
+                            <dl class="row">
+                                <dt class="tx-detail-column-name tx-details-name-extra-padding">
+                                    Participation amount</dt>
+                                <dd class="tx-detail-column-data tx-details-data-extra-padding">
+                                    <a
+                                        style="background-color:transparent; color: inherit; text-decoration: none;">0.001</a>
+                                </dd>
+                            </dl>
+                            <dl class="row">
+                                <dt class="tx-detail-column-name tx-details-name-extra-padding">
+                                    Expiry time</dt>
+                                <dd class="tx-detail-column-data tx-details-data-extra-padding">
+                                    <a
+                                        style="background-color:transparent; color: inherit; text-decoration: none;">wed may 22 2019 21:00:00 gmt+0530</a>
+                                </dd>
+                            </dl>
+                            <dl class="row">
+                                <dt class="tx-detail-column-name tx-details-name-extra-padding">
+                                    User choices</dt>
+                                <dd class="tx-detail-column-data tx-details-data-extra-padding">
+                                    <a
+                                        style="background-color:transparent; color: inherit; text-decoration: none;">"narendra modi wins"</a>
+                                </dd>
+                                <dt class="tx-detail-column-name tx-details-extra-padding"> </dt>
+                                <dd class="tx-detail-column-data tx-details-data-extra-padding">
+                                    <a
+                                        style="background-color:transparent; color: inherit; text-decoration: none;">"narendra modi loses"</a>
+                                </dd>
+                            </dl>
+
+                        </div>
+                    </div>
+
+                */
+            }
+        }
+
+        function createBottomContractParticipation(transactionDetails, contractAddress) {
+
+            var transactions_card = document.createElement('div');
+            transactions_card.id = 'transactions-card';
+            transactions_card.setAttribute('class', 'container2');
+
+            var sub_transactions_card = document.createElement('div');
+            sub_transactions_card.style = 'display:flex;justify-content: space-between; flex-direction: column; flex: 1 1 auto;';
+
+            var helper_text = document.createElement('h4');
+            helper_text.style = 'text-align:left; font-size:18px; font-weight:400;  margin-left:14px; margin-right:14px; line-height:1.2rem; margin-bottom:2rem; display:block; margin-block-start:0.83em; margin-block-end:0.83em;';
+            helper_text.innerHTML = 'An address has participated in the Smart Contract <a style="color: #5c34a2; font-weight: bold; cursor: pointer; text-decoration:none;" href="contract.html?name=' + transactionDetails['parsedFloData']['contractName'] + '&address=' + contractAddress + '">' + transactionDetails['parsedFloData']['contractName'] + '</a> has been created';
+
+            var linebreak = document.createElement('hr');
+            linebreak.style = "display: block; unicode-bidi: isolate; margin-block-start: 0.5em; margin-block-end: 0.5em; margin-inline-start: auto; margin-inline-end: auto; box-sizing: content-box; height: 0; overflow: visible; border-bottom: none; border-left: none; border-right: none; border-top: 1px solid #f5f6fa; margin: 30px 0;";
+
+            var row1 = document.createElement('dl');
+            row1.setAttribute('class', 'row');
+            var row1_dt = document.createElement('dt');
+            row1_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+            row1_dt.innerText = "Contract name";
+            var row1_dd = document.createElement('dd');
+            row1_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+            var row1_dd_a = document.createElement('a');
+            row1_dd_a.style = 'cursor: pointer; background-color: transparent; color: #5c34a2; text-decoration: none;';
+            row1_dd_a.innerText = transactionDetails['parsedFloData']['contractName'];
+            row1_dd_a.href = "contract.html?name=" + transactionDetails['parsedFloData']['contractName'] + '&address=' + contractAddress;
+            row1_dd.append(row1_dd_a);
+            row1.append(row1_dt);
+            row1.append(row1_dd);
+
+
+            var row2 = document.createElement('dl');
+            row2.setAttribute('class', 'row');
+            var row2_dt = document.createElement('dt');
+            row2_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+            row2_dt.innerText = "Contract Adddress";
+            var row2_dd = document.createElement('dd');
+            row2_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+            var row2_dd_a = document.createElement('a');
+            row2_dd_a.style = 'cursor: pointer; background-color: transparent; color: #5c34a2; text-decoration: none;';
+            for (var i = 0; i < transactionDetails['transactionDetails']['vout'].length; i++) {
+                if (transactionDetails['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0] != transactionDetails['transactionDetails']['vin'][0]['addr']) {
+                    row2_dd_a.innerText = transactionDetails['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0];
+                    row2_dd_a.href = "address.html?address=" + transactionDetails['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0];
+
+                }
+            }
+            row2_dd.append(row2_dd_a);
+            row2.append(row2_dt);
+            row2.append(row2_dd);
+
+
+            var row3 = document.createElement('dl');
+            row3.setAttribute('class', 'row');
+            var row3_dt = document.createElement('dt');
+            row3_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+            row3_dt.innerText = "Participant Adddress";
+            var row3_dd = document.createElement('dd');
+            row3_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+            var row3_dd_a = document.createElement('a');
+            row3_dd_a.style = 'cursor: pointer; background-color: transparent; color: #5c34a2; text-decoration: none;';
+            row3_dd_a.innerText = transactionDetails['transactionDetails']['vin'][0]['addr'];
+            row3_dd_a.href = "address.html?address=" + transactionDetails['transactionDetails']['vin'][0]['addr'];
+            row3_dd.append(row3_dd_a);
+            row3.append(row3_dt);
+            row3.append(row3_dd);
+
+
+            var row4 = document.createElement('dl');
+            row4.setAttribute('class', 'row');
+            var row4_dt = document.createElement('dt');
+            row4_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+            row4_dt.innerText = "Participation amount";
+            var row4_dd = document.createElement('dd');
+            row4_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+            var row4_dd_a = document.createElement('a');
+            row4_dd_a.style = 'background-color: transparent; color: inherit; text-decoration: none;';
+            row4_dd_a.innerText = transactionDetails['parsedFloData']['tokenAmount'] + ' ' + transactionDetails['parsedFloData']['tokenIdentification'].toUpperCase();
+            row4_dd.append(row4_dd_a);
+            row4.append(row4_dt);
+            row4.append(row4_dd);
+
+
+            debugger;
+            // check if a choice exists 
+            if ('userChoice' in transactionDetails['parsedFloData']) {
+                var row5 = document.createElement('dl');
+                row5.setAttribute('class', 'row');
+                var row5_dt = document.createElement('dt');
+                row5_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+                row5_dt.innerText = "Participation choice";
+                var row5_dd = document.createElement('dd');
+                row5_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+                var row5_dd_a = document.createElement('a');
+                row5_dd_a.style = 'background-color: transparent; color: inherit; text-decoration: none;';
+                row5_dd_a.innerText = transactionDetails['parsedFloData']['userChoice'];
+                row5_dd.append(row5_dd_a);
+                row5.append(row5_dt);
+                row5.append(row5_dd);
+            }
+
+            sub_transactions_card.append(helper_text);
+            sub_transactions_card.append(linebreak);
+            sub_transactions_card.append(row1);
+            sub_transactions_card.append(row2);
+            sub_transactions_card.append(row3);
+            sub_transactions_card.append(row4);
+            if (row5) {
+                sub_transactions_card.append(row5);
+            }
+            transactions_card.append(sub_transactions_card);
+
+            document.getElementById('maincard').append(transactions_card);
+
+        }
+
+        function createBottomContractTrigger(transactionDetails, contractAddress) {
+
+            var transactions_card = document.createElement('div');
+            transactions_card.id = 'transactions-card';
+            transactions_card.setAttribute('class', 'container2');
+
+            var sub_transactions_card = document.createElement('div');
+            sub_transactions_card.style = 'display:flex;justify-content: space-between; flex-direction: column; flex: 1 1 auto;';
+
+
+            var helper_text = document.createElement('h4');
+            helper_text.style = 'text-align:left; font-size:18px; font-weight:400;  margin-left:14px; margin-right:14px; line-height:1.2rem; margin-bottom:2rem; display:block; margin-block-start:0.83em; margin-block-end:0.83em;';
+            helper_text.innerHTML = 'A committee member has triggered the Smart Contract <a style="font-weight:bold; color: #5c34a2; cursor: pointer; text-decoration:none" href="contract.html?name=' + transactionDetails["parsedFloData"]["contractName"] + '&address=' + contractAddress + '">' + transactionDetails['parsedFloData']['contractName'] + '</a>';
+
+            var linebreak = document.createElement('hr');
+            linebreak.style = "display: block; unicode-bidi: isolate; margin-block-start: 0.5em; margin-block-end: 0.5em; margin-inline-start: auto; margin-inline-end: auto; box-sizing: content-box; height: 0; overflow: visible; border-bottom: none; border-left: none; border-right: none; border-top: 1px solid #f5f6fa; margin: 30px 0;";
+
+            var row1 = document.createElement('dl');
+            row1.setAttribute('class', 'row');
+            var row1_dt = document.createElement('dt');
+            row1_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+            row1_dt.innerText = "Contract Name";
+            var row1_dd = document.createElement('dd');
+            row1_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+            var row1_dd_a = document.createElement('a');
+            row1_dd_a.style = 'cursor: pointer; background-color: transparent; color: #5c34a2; text-decoration: none;';
+            row1_dd_a.innerText = transactionDetails["parsedFloData"]["contractName"];
+            row1_dd_a.href = "contract.html?name=" + transactionDetails['parsedFloData']['contractName'] + '&address=' + contractAddress;
+            row1_dd.append(row1_dd_a);
+            row1.append(row1_dt);
+            row1.append(row1_dd);
+
+            var row2 = document.createElement('dl');
+            row2.setAttribute('class', 'row');
+            var row2_dt = document.createElement('dt');
+            row2_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+            row2_dt.innerText = "Contract Address";
+            var row2_dd = document.createElement('dd');
+            row2_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+            var row2_dd_a = document.createElement('a');
+            row2_dd_a.style = 'cursor: pointer; background-color: transparent; color: #5c34a2; text-decoration: none;';
+            for (var i = 0; i < transactionDetails['transactionDetails']['vout'].length; i++) {
+                if (transactionDetails['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0] != transactionDetails['transactionDetails']['vin'][0]['addr']) {
+
+                    row2_dd_a.innerText = transactionDetails['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0];
+                    row2_dd_a.href = "address.html?address=" + transactionDetails['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0];
+
+                }
+            }
+
+            row2_dd.append(row2_dd_a);
+            row2.append(row2_dt);
+            row2.append(row2_dd);
+
+
+            var row3 = document.createElement('dl');
+            row3.setAttribute('class', 'row');
+            var row3_dt = document.createElement('dt');
+            row3_dt.setAttribute('class', "tx-detail-column-name tx-details-name-extra-padding");
+            row3_dt.innerText = "Trigger condition";
+            var row3_dd = document.createElement('dd');
+            row3_dd.setAttribute('class', 'tx-detail-column-data tx-details-data-extra-padding');
+            var row3_dd_a = document.createElement('a');
+            row3_dd_a.style = 'background-color: transparent; color: inherit; text-decoration: none;';
+            row3_dd_a.innerText = transactionDetails['parsedFloData']['triggerCondition'];
+            row3_dd.append(row3_dd_a);
+            row3.append(row3_dt);
+            row3.append(row3_dd);
+
+            sub_transactions_card.append(helper_text);
+            sub_transactions_card.append(linebreak);
+            sub_transactions_card.append(row1);
+            sub_transactions_card.append(row2);
+            sub_transactions_card.append(row3);
+            transactions_card.append(sub_transactions_card);
+
+            document.getElementById('maincard').append(transactions_card);
+        }
+
+        var transactionHash = getQueryVariable("txhash");
+        //console.log('captured txhash ' + transactionHash);
+
+        // First fetch the transaction's detials 
+
+        fetch(`${window.tokenapiUrl}/api/v1.0/getTransactionDetails/` + transactionHash)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (responseJson) {
+                //console.log('details of the transaction are');
+                //console.log(responseJson);
+
+
+                if (responseJson['result'] == 'ok') {
+                    // remove the loading icons 
+                    document.getElementById('loading-topcard-left-main').remove();
+                    document.getElementById('topcard-left-main').style.display = 'initial';
+                    document.getElementById('loading-topcard-right-up').remove();
+                    document.getElementById('topcard-right-up').style.display = 'initial';
+                    document.getElementById('loading-topcard-right-down').remove();
+                    document.getElementById('tx-flodata').style.display = 'initial';
+
+                    // Check if the number of inputs and outputs are fine first
+                    var tempAddress = responseJson.transactionDetails.vin[0].addr;
+
+                    for (var i = 0; i < responseJson.transactionDetails.vin.length; i++) {
+                        if (tempAddress != responseJson.transactionDetails.vin[i].addr) {
+                            alert('Transaction is not in the format of FLO Token and Smart Contract system. More than 1 input present');
+                        }
+                    }
+
+                    if (responseJson.transactionDetails.vout.length > 2) {
+                        alert('Transaction is not in the format of FLO Token and Smart Contract system. More than 2 output present');
+                    }
+
+                    // now check what kind of transaction it is 
+
+                    if (responseJson["parsedFloData"]["type"] == "noise") {
+                        alert('Transaction is of the type noise');
+                    }
+                    else if (responseJson["parsedFloData"]["type"] == "tokenIncorporation") {
+                        updateTopRow(responseJson);
+
+                        document.getElementById('temp-card').remove();
+                        createBottomTokenIncorporation(responseJson);
+                    }
+                    else if (responseJson["parsedFloData"]["type"] == "transfer") {
+                        if (responseJson["parsedFloData"]["transferType"] == "token") {
+                            updateTopRow(responseJson);
+
+                            document.getElementById('temp-card').remove();
+                            createBottomTokenTransfer(responseJson);
+
+                        }
+                        else if (responseJson["parsedFloData"]["transferType"] == "smartContract") {
+                            var contractAddress = '';
+                            for (var i = 0; i < responseJson['transactionDetails'].vout.length; i++) {
+                                if (responseJson['transactionDetails']['vin'][0]['addr'] != responseJson['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0]) {
+                                    contractAddress = responseJson['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0];
+                                }
+                            }
+                            updateTopRow(responseJson, contractAddress);
+
+                            document.getElementById('temp-card').remove();
+                            createBottomContractParticipation(responseJson, contractAddress);
+
+                        }
+                    }
+                    else if (responseJson["parsedFloData"]["type"] == "smartContractIncorporation") {
+                        updateTopRow(responseJson);
+
+                        document.getElementById('temp-card').remove();
+                        createBottomContractCreation(responseJson);
+
+                    }
+                    else if (responseJson["parsedFloData"]["type"] == "smartContractPays") {
+                        var contractAddress = '';
+                        for (var i = 0; i < responseJson['transactionDetails'].vout.length; i++) {
+                            if (responseJson['transactionDetails']['vin'][0]['addr'] != responseJson['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0]) {
+                                contractAddress = responseJson['transactionDetails']['vout'][i]['scriptPubKey']['addresses'][0];
+                            }
+                        }
+
+                        updateTopRow(responseJson, contractAddress);
+                        document.getElementById('temp-card').remove();
+
+                        createBottomContractTrigger(responseJson, contractAddress);
+                    }
+
+                }
+                else if (responseJson['result'] == 'error') {
+                    document.getElementById('loading-topcard-left-main').remove();
+                    document.getElementById('maincard').remove();
+                    document.getElementById('column2').remove();
+                    document.getElementById('column1').style.flex = '0 0 100%';
+                    document.getElementById('transaction-details').innerText = responseJson['description'];
+                }
+
+            });
+    </script>
+
+    <script>
+
+
+    </script>
+
+</body>
+
+</html>
