@@ -169,6 +169,7 @@
 				return page;
 			},
 			blockPage(obj) {
+				debugger;
 				let {
 					blockHeight,
 					size,
@@ -176,23 +177,25 @@
 					reward,
 					hash,
 					difficulty,
-					nonce,
+					nonce
 				} = obj,
 					page = document.createElement("div"),
 					wordForm = "transaction";
-				if (transactions > 1) wordForm = "transactions";
+				if (transactions.length > 1) wordForm = "transactions";
 				page.classList.add("page");
 				page.id = "block_page";
 
 				page.innerHTML = `
               <h5 class="label">Block Height</h5>
               <h2 class="block-height">${blockHeight}</h2>
-              <div class="card">
-                  <h4>1 ${wordForm}</h4>
-                  <h5 class="label">${size}</h5>
+			  <div class="card">
+				  <h5 class="label">Relavant Transactions</h5>
+				  <h4>${transactions.length}</h4>
+				  <h5 class="label">Confirmations</h5>
+                  <h4>${size}</h4>
                   <h5 class="label">Reward</h5>
                   <h4>${reward}</h4>
-                  <h5 class="label">Transaction ID</h5>
+                  <h5 class="label">Block Hash</h5>
                   <h4 class="breakable">${hash}</h4>
                   <h5 class="label">Difficulty</h5>
                   <h4>${difficulty}</h4>
@@ -334,8 +337,8 @@
                   <h4 class="breakable">${incAddress}</h4>
                 </div>
                 <div class="tabs">
-                    <h4 class="tab active" data-rank="1" data-target="token_balance_container">Top Balances</h4>
-                    <h4 class="tab" data-rank="2" data-target="token_transaction_container">Top Transactions</h4>
+                    <h4 class="tab active" data-rank="1" data-target="token_balance_container">Recent Balances</h4>
+                    <h4 class="tab" data-rank="2" data-target="token_transaction_container">Recent Transactions</h4>
                     <div class="line"></div>
                 </div>
                 <ul id="token_balance_container" data-tab-group="token" class="card"></ul>
@@ -778,6 +781,7 @@
 
 			if (pageId === "block_page") {
 				let [blockInfo, blockTransactions] = await Promise.all([getBlockInfo(field), getBlockTransactions(field)])
+				debugger
 				pageContainer.append(create.blockPage(blockInfo));
 				pageTitle.textContent = "block";
 				loading()
@@ -1374,11 +1378,11 @@
 		async function getBlockInfo(thisBlock) {
 			const response = await fetch(`${tokenapiUrl}/api/v1.0/getBlockDetails/${thisBlock}`),
 				info = await response.json(),
-				{ height, size, reward, hash, difficulty, nonce } = info.blockDetails
+				{ height, size, reward, hash, difficulty, nonce, tx } = info.blockDetails
 			return {
 				blockHeight: height,
 				size: size,
-				transactions: "",
+				transactions: tx,
 				reward: reward,
 				hash: hash,
 				difficulty: difficulty,
