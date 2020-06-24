@@ -547,7 +547,7 @@
 					winningChoice,
 					committeeAddress
 				} = obj,
-					card = document.createElement("div");
+				card = document.createElement("div");
 				card.classList.add("transaction", "contract-trigger");
 				card.id = hash;
 				card.innerHTML = `    <svg class="icon" viewBox="0 0 64 64">
@@ -834,11 +834,16 @@
 		}
 
 		window.addEventListener("load", async () => {
+
 			document.getElementById("main_search_field").addEventListener("keydown", function (e) {
 				if (e.key === 'Enter') {
-					processNavbarSearch();
+					processNavbarSearch()
+					hidePage('search_page')
+					e.target.value = ''
 				}
 			});
+
+			
 			let themeToggler = document.getElementById("theme_toggle"),
 				body = document.querySelector("body");
 			if (localStorage.theme === "dark") {
@@ -1765,12 +1770,29 @@
 				index.add(i, data[i]);
 			}
 
+			var suggestions = document.getElementById("suggestions");
+            var autocomplete = document.getElementById("autocomplete");
+			var userinput = document.getElementById("main_search_field");
+			
+			suggestions.addEventListener("click", accept_suggestion, true);
+
 			window.suggestion = function (str) {
 				let li = document.createElement('li')
 				li.textContent = str
 				li.tabIndex = 0
 				li.classList.add('suggestion')
 				return li;
+			}
+
+			function accept_suggestion(event) {
+		
+				var target = (event || window.event).target;
+				userinput.value = autocomplete.value = target.textContent;
+				while (suggestions.lastChild) {
+					suggestions.removeChild(suggestions.lastChild);
+				}
+
+				return false;
 			}
 
 		}
