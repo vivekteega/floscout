@@ -35,7 +35,7 @@
 				<line x1="63.65" y1="63.65" x2="42.91" y2="42.91" />
 			</svg>
 			<input id='main_search_field' autocomplete="off" type="search"
-				placeholder="block, transactions, address, token or contract">
+				placeholder="block, transactions, address, token or contract" required>
 			<ul id="suggestions"></ul>
 		</label>
 	</div>
@@ -658,6 +658,7 @@
 		function showPage(page){
 			document.getElementById(page).classList.remove('hide')
 			document.getElementById('page_container').classList.add('hide-completely')
+			document.getElementById('main_search_field').focus();
 		}
 		function hidePage(page){
 			document.getElementById(page).classList.add('hide')
@@ -835,12 +836,37 @@
 
 		window.addEventListener("load", async () => {
 
-			document.getElementById("main_search_field").addEventListener("keydown", function (e) {
+			let suggestions = document.getElementById('suggestions'),
+				mainSearch = document.getElementById("main_search_field");
+
+			mainSearch.addEventListener("keydown", function (e) {
 				if (e.key === 'Enter') {
 					processNavbarSearch()
-					hidePage('search_page')
-					e.target.value = ''
 				}
+				if(e.key === 'ArrowDown'){
+					suggestions.firstElementChild.focus()
+				}
+				if(document.activeElement.classList.contains('suggestion'))
+					mainSearch.value = document.activeElement.textContent
+			});
+			suggestions.addEventListener("keydown", function (e) {
+				if (e.key === 'ArrowDown') {
+					if (this.contains(document.activeElement) && document.activeElement.nextElementSibling)
+						document.activeElement.nextElementSibling.focus()
+				}
+				if (e.key === 'ArrowUp') {
+					if (this.contains(document.activeElement)){
+						if(document.activeElement.previousElementSibling)
+							document.activeElement.previousElementSibling.focus()
+						else
+							mainSearch.focus()
+					}
+				}
+				if (document.activeElement.classList.contains('suggestion'))
+					mainSearch.value = document.activeElement.textContent
+			});
+			suggestions.addEventListener("focus", function (e) {
+				console.log(document.activeElement)
 			});
 
 			
@@ -947,6 +973,7 @@
 				if (e.target.closest('.suggestion')) {
 					let searchBox = document.getElementById('main_search_field');
 					searchBox.value = e.target.textContent;
+					console.log(e.target.textContent, e.target.closest('.suggestion').textContent)
 					processNavbarSearch()
 				}
 				if (e.target.closest('#all_trans_btn')) {
@@ -968,7 +995,7 @@
 			});
 		});
 
-		window.addEventListener('input', e => {
+		window.addEventListener('keyup', e => {
 			if (e.target.closest('.suggestion') && e.key === 'Enter') {
 				processNavbarSearch()
 			}
@@ -1730,9 +1757,11 @@
 		}
 
 		function processNavbarSearch() {
-			userinput = document.getElementById('main_search_field');
-			if (userinput.value != '') {
-				categoriseText(userinput.value, userinput);
+			userInput = document.getElementById('main_search_field');
+			if (userInput.value != '') {
+				hidePage('search_page')
+				categoriseText(userInput.value, userInput);
+				userInput.value = ''
 			}
 		}
 
@@ -1771,7 +1800,6 @@
 			}
 
 			var suggestions = document.getElementById("suggestions");
-            var autocomplete = document.getElementById("autocomplete");
 			var userinput = document.getElementById("main_search_field");
 			
 			suggestions.addEventListener("click", accept_suggestion, true);
@@ -1785,9 +1813,8 @@
 			}
 
 			function accept_suggestion(event) {
-		
 				var target = (event || window.event).target;
-				userinput.value = autocomplete.value = target.textContent;
+				userinput.value = target.textContent;
 				while (suggestions.lastChild) {
 					suggestions.removeChild(suggestions.lastChild);
 				}
