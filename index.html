@@ -848,7 +848,7 @@
 					page: "homepage",
 					thisField: null,
 				};
-				history.pushState(appState, null, '');
+				history.pushState(appState, null, location.pathname + location.search);
 				render("homepage")
 			})
 
