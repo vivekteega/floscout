@@ -258,6 +258,10 @@
 					page = document.createElement("div");
 				page.classList.add("page");
 				page.id = "transaction_page";
+				// todo : This is a temporary fix. Fix this on the Database and API level
+				if(type =='smartContractPays' || type ==' smartContractPays'){
+					name = ''
+				}
 				page.innerHTML = `
               <div class='head'>
                   	<h5 class="label">${type}</h5>
@@ -1640,7 +1644,7 @@
 		}
 
 		async function getTxInfo(thisTx) {
-			const response = await fetch(`${tokenapiUrl}/api/v1.0/getTransactionDetails/${thisTx}`),
+			var response = await fetch(`${tokenapiUrl}/api/v1.0/getTransactionDetails/${thisTx}`),
 				transaction = await response.json(),
 				transactionHash = transaction.transactionHash,
 				{ flodata, tokenAmount, tokenIdentification, type } = transaction.parsedFloData,
@@ -1653,9 +1657,14 @@
 				}
 			}
 			console.log(transaction)
+			// todo - temporary fixes below. Fix these on the Databse and API level
 			let transactionType = ''
 			if( type=='transfer'){
 				transactionType = transaction.parsedFloData?.transferType
+			}
+			if( type=='smartContractPays'){
+				tokenAmount = '-'
+				flodata = transaction.transactionDetails.floData
 			}
 			return {
 				type: `${transactionType} ${type}`,
