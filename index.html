@@ -1653,8 +1653,12 @@
 				}
 			}
 			console.log(transaction)
+			let transactionType = ''
+			if( type=='transfer'){
+				transactionType = transaction.parsedFloData?.transferType
+			}
 			return {
-				type: `${transaction.parsedFloData?.transferType} ${type}`,
+				type: `${transactionType} ${type}`,
 				name: tokenIdentification,
 				blockHeight: blockheight,
 				amount: tokenAmount,
