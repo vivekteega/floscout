@@ -5,7 +5,7 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>FLO Scout</title>
-	<link rel="stylesheet" href="css/main.css" />
+	<link rel="stylesheet" href="css/main.min.css" />
 </head>
 
 <body data-theme="light">
@@ -259,7 +259,7 @@
 				page.classList.add("page");
 				page.id = "transaction_page";
 				// todo : This is a temporary fix. Fix this on the Database and API level
-				if(type =='smartContractPays' || type ==' smartContractPays'){
+				if (type == 'smartContractPays' || type == ' smartContractPays') {
 					name = ''
 				}
 				page.innerHTML = `
@@ -314,6 +314,16 @@
 				page.classList.add("page");
 				page.id = "all_blocks_page";
 				return page;
+			},
+			errorPage(reason) {
+				const page = document.createElement('section')
+				page.classList.add('page')
+				page.id = 'error_page'
+				page.innerHTML = `
+					<h1>Not found!</h1>
+					<p>${reason}</p>
+				`
+				return page
 			},
 			addrBalanceCard(address, balance, token) {
 				let card = document.createElement('li')
@@ -558,7 +568,7 @@
 					winningChoice,
 					committeeAddress
 				} = obj,
-				card = document.createElement("div");
+					card = document.createElement("div");
 				card.classList.add("transaction", "contract-trigger");
 				card.id = hash;
 				card.innerHTML = `    <svg class="icon" viewBox="0 0 64 64">
@@ -666,12 +676,12 @@
 			return str.replace(/ /g, "-");
 		}
 
-		function showPage(page){
+		function showPage(page) {
 			document.getElementById(page).classList.remove('hide')
 			document.getElementById('page_container').classList.add('hide-completely')
 			document.getElementById('main_search_field').focus();
 		}
-		function hidePage(page){
+		function hidePage(page) {
 			document.getElementById(page).classList.add('hide')
 			document.getElementById('page_container').classList.remove('hide-completely')
 		}
@@ -720,126 +730,139 @@
 			loading(true)
 			removePage();
 
-			if (pageId === "address_page") {
-				let [addressInfo, addressBalance, addressTxs] = await Promise.all([getAddressInfo(field), getAddressBalance(field), getAddressTxs(field)])
-				console.log(addressInfo)
-				pageContainer.append(create.addressPage({
-					balance: addressBalance,
-					address: field
-				}))
-				pageTitle.textContent = 'Address'
-				loading()
-				appendTransactions('address_transaction_container', addressTxs)
-				for (token in addressInfo) {
-					frag.append(create.tokenBalanceCard(token, addressInfo[token].balance))
-				}
-				document.getElementById('token_balance_container').append(frag)
+			switch (pageId) {
+				case "address_page":
+					let [addressInfo, addressBalance, addressTxs] = await Promise.all([getAddressInfo(field), getAddressBalance(field), getAddressTxs(field)])
+					console.log(addressInfo)
+					pageContainer.append(create.addressPage({
+						balance: addressBalance,
+						address: field
+					}))
+					pageTitle.textContent = 'Address'
+					loading()
+					appendTransactions('address_transaction_container', addressTxs)
+					for (token in addressInfo) {
+						frag.append(create.tokenBalanceCard(token, addressInfo[token].balance))
+					}
+					document.getElementById('token_balance_container').append(frag)
+
+					break
+
+				case "token_page":
+					let [tokenInfo, tokenBalances, tokenTransactions] = await Promise.all([getTokenInfo(field), getTokenBalances(field), getTokenTransactions(field)])
+					for (bal in tokenBalances) {
+						frag.append(create.addrBalanceCard(bal, tokenBalances[bal], tokenInfo.token))
+					}
+					pageContainer.append(create.tokenPage(tokenInfo));
+					pageTitle.textContent = "Token";
+					document.getElementById('token_balance_container').append(frag)
+					loading()
+					appendTransactions('token_transaction_container', tokenTransactions)
+					break
+
+				case "contract_page":
+					// todo: load contract variable dynamically
+					let contract = {
+						name: field.name,
+						address: field.address,
+					};
+
+					let [contractInfo, contractTransactions, contractParticipants] = await Promise.all([getContractInfo(contract), getContractTransactions(contract), getContractParticipants(contract)])
+					// todo : check the type of contract & then further checks like fetching details of contractParticipant 
+					pageContainer.append(create.contractPage(contractInfo));
+					pageTitle.textContent = "Contract";
+					loading()
+					console.log(contractParticipants)
+					let winners = []
+					for (participant in contractParticipants) {
+						if (contractParticipants[participant].winningAmount)
+							winners.push(contractParticipants[participant])
+					}
+					// append latest transactions
+					appendTransactions('contract_transaction_container', contractTransactions)
+					for (participant in contractParticipants) {
+						let { participantFloAddress, tokenIdentification, userChoice, tokenAmount } = contractParticipants[participant]
+						frag.append(create.contractChoiceCard(participantFloAddress, tokenIdentification, userChoice, tokenAmount))
+					}
+					document.getElementById('participant_container').append(frag)
+
+					winners.forEach(winner => {
+						let { participantFloAddress, tokenIdentification, userChoice, tokenAmount, winningAmount } = winner;
+						frag.append(create.contractChoiceCard(participantFloAddress, tokenIdentification, userChoice, tokenAmount, winningAmount))
+					})
+					document.getElementById('winners_container').append(frag)
+					break
+
+				case "block_page":
+					let [blockInfo, blockTransactions] = await Promise.all([getBlockInfo(field), getBlockTransactions(field)])
+					debugger
+					pageContainer.append(create.blockPage(blockInfo));
+					pageTitle.textContent = "block";
+					loading()
+					appendTransactions('block_transaction_container', blockTransactions)
+					break
+
+				case "homepage":
+					pageHeader.classList.add("hide-completely");
+					let [data, latestTxs, latestBlocks] = await Promise.all([getBannerData(), getLatestTxs(), getAllBlocks(6)])
+					pageContainer.append(create.homepage(data));
+					loading();
+
+					// getAllSuggestions()
+
+					latestTxs.forEach(tx => {
+						if (tx["type"] == "tokentransfer")
+							frag.append(create.tokenTransferCard(tx))
+						else if (tx["type"] == "contracttransfer")
+							frag.append(create.contractTransferCard(tx));
+					})
+					document.getElementById("top_transaction_container").append(frag);
+
+					// todo - add latest blocks
+					for (block in latestBlocks) {
+						frag.append(create.blockCard(latestBlocks[block].height, latestBlocks[block].tx.length))
+					}
+					document.getElementById('top_blocks_container').append(frag)
+					break
+
+				case "all_blocks_page":
+					let allBlocks = await getAllBlocks(100);
+					pageContainer.append(create.allBlocksPage())
+					pageTitle.textContent = "All Blocks";
+					for (block in allBlocks) {
+						frag.append(create.blockCard(allBlocks[block].height, allBlocks[block].tx.length))
+					}
+					document.getElementById('all_blocks_page').append(frag)
+					loading()
+					break
+
+				case "all_transactions_page":
+					let allTxs = await getAllTxs();
+					pageTitle.textContent = "All Transactions";
+					pageContainer.append(create.alltransactionsPage())
+					appendTransactions('all_transactions_page', allTxs)
+					loading()
+					break
+
+				case "transaction_page":
+					const [status, txInfo] = await getTxInfo(field);
+					if (status) {
+						pageContainer.append(create.transactionPage(txInfo))
+						pageTitle.textContent = "transaction";
+						loading()
+					} else {
+						render('error_page', txInfo)
+					}
+					break
+				case 'error_page':
+					pageContainer.append(create.errorPage(field));
+					loading()
+					break;
 
 			}
+			if (pageId !== 'homepage')
+				pageHeader.classList.remove("hide-completely");
 
-			if (pageId === "token_page") {
-				let [tokenInfo, tokenBalances, tokenTransactions] = await Promise.all([getTokenInfo(field), getTokenBalances(field), getTokenTransactions(field)])
-				for (bal in tokenBalances) {
-					frag.append(create.addrBalanceCard(bal, tokenBalances[bal], tokenInfo.token))
-				}
-				pageContainer.append(create.tokenPage(tokenInfo));
-				pageTitle.textContent = "Token";
-				document.getElementById('token_balance_container').append(frag)
-				loading()
-				appendTransactions('token_transaction_container', tokenTransactions)
-			}
-
-			if (pageId === "contract_page") {
-				// todo: load contract variable dynamically
-				let contract = {
-					name: field.name,
-					address: field.address,
-				};
-
-				let [contractInfo, contractTransactions, contractParticipants] = await Promise.all([getContractInfo(contract), getContractTransactions(contract), getContractParticipants(contract)])
-				// todo : check the type of contract & then further checks like fetching details of contractParticipant 
-				pageContainer.append(create.contractPage(contractInfo));
-				pageTitle.textContent = "Contract";
-				loading()
-				console.log(contractParticipants)
-				let winners = []
-				for (participant in contractParticipants) {
-					if (contractParticipants[participant].winningAmount)
-						winners.push(contractParticipants[participant])
-				}
-				// append latest transactions
-				appendTransactions('contract_transaction_container', contractTransactions)
-				for (participant in contractParticipants) {
-					let { participantFloAddress, tokenIdentification, userChoice, tokenAmount } = contractParticipants[participant]
-					frag.append(create.contractChoiceCard(participantFloAddress, tokenIdentification, userChoice, tokenAmount))
-				}
-				document.getElementById('participant_container').append(frag)
-
-				winners.forEach(winner => {
-					let { participantFloAddress, tokenIdentification, userChoice, tokenAmount, winningAmount } = winner;
-					frag.append(create.contractChoiceCard(participantFloAddress, tokenIdentification, userChoice, tokenAmount, winningAmount))
-				})
-				document.getElementById('winners_container').append(frag)
-
-			}
-
-			if (pageId === "block_page") {
-				let [blockInfo, blockTransactions] = await Promise.all([getBlockInfo(field), getBlockTransactions(field)])
-				debugger
-				pageContainer.append(create.blockPage(blockInfo));
-				pageTitle.textContent = "block";
-				loading()
-				appendTransactions('block_transaction_container', blockTransactions)
-			}
-
-			if (pageId === "homepage") {
-				pageHeader.classList.add("hide-completely");
-				let [data, latestTxs, latestBlocks] = await Promise.all([getBannerData(), getLatestTxs(), getAllBlocks(6)])
-				pageContainer.append(create.homepage(data));
-				loading();
-
-				// getAllSuggestions()
-
-				latestTxs.forEach(tx => {
-					if (tx["type"] == "tokentransfer")
-						frag.append(create.tokenTransferCard(tx))
-					else if (tx["type"] == "contracttransfer")
-						frag.append(create.contractTransferCard(tx));
-				})
-				document.getElementById("top_transaction_container").append(frag);
-
-				// todo - add latest blocks
-				for (block in latestBlocks) {
-					frag.append(create.blockCard(latestBlocks[block].height, latestBlocks[block].tx.length))
-				}
-				document.getElementById('top_blocks_container').append(frag)
-			} else pageHeader.classList.remove("hide-completely");
-
-			if (pageId === "all_blocks_page") {
-				let allBlocks = await getAllBlocks(100);
-				pageContainer.append(create.allBlocksPage())
-				pageTitle.textContent = "All Blocks";
-				for (block in allBlocks) {
-					frag.append(create.blockCard(allBlocks[block].height, allBlocks[block].tx.length))
-				}
-				document.getElementById('all_blocks_page').append(frag)
-				loading()
-			}
-
-			if (pageId === "all_transactions_page") {
-				let allTxs = await getAllTxs();
-				pageTitle.textContent = "All Transactions";
-				pageContainer.append(create.alltransactionsPage())
-				appendTransactions('all_transactions_page', allTxs)
-				loading()
-			}
-
-			if (pageId === "transaction_page") {
-				let txInfo = await getTxInfo(field);
-				pageContainer.append(create.transactionPage(txInfo))
-				pageTitle.textContent = "transaction";
-				loading()
-			}
 			prevField = field;
 			if (pageContainer.querySelector('.tab.active'))
 				pageContainer.querySelector('.tab.active').click()
@@ -851,7 +874,7 @@
 			let suggestions = document.getElementById('suggestions'),
 				mainSearch = document.getElementById("main_search_field");
 
-			document.getElementById('logo').addEventListener('click', function(e){
+			document.getElementById('logo').addEventListener('click', function (e) {
 				appState = {
 					page: "homepage",
 					thisField: null,
@@ -864,10 +887,10 @@
 				if (e.key === 'Enter') {
 					processNavbarSearch()
 				}
-				if(e.key === 'ArrowDown'){
+				if (e.key === 'ArrowDown') {
 					suggestions.firstElementChild.focus()
 				}
-				if(document.activeElement.classList.contains('suggestion'))
+				if (document.activeElement.classList.contains('suggestion'))
 					mainSearch.value = document.activeElement.textContent
 			});
 			suggestions.addEventListener("keydown", function (e) {
@@ -876,8 +899,8 @@
 						document.activeElement.nextElementSibling.focus()
 				}
 				if (e.key === 'ArrowUp') {
-					if (this.contains(document.activeElement)){
-						if(document.activeElement.previousElementSibling)
+					if (this.contains(document.activeElement)) {
+						if (document.activeElement.previousElementSibling)
 							document.activeElement.previousElementSibling.focus()
 						else
 							mainSearch.focus()
@@ -890,7 +913,7 @@
 				console.log(document.activeElement)
 			});
 
-			
+
 			let themeToggler = document.getElementById("theme_toggle"),
 				body = document.querySelector("body");
 			if (localStorage.theme === "dark") {
@@ -1188,10 +1211,9 @@
 											"transactionDetails"
 										]["vin"][0]["addr"],
 										receiver: receiveraddress,
-										amount: `${
-											latestTxs["latestTransactions"][txids[i]][
+										amount: `${latestTxs["latestTransactions"][txids[i]][
 											"parsedFloData"
-											]["tokenAmount"]
+										]["tokenAmount"]
 											}`,
 										type: "tokentransfer",
 									});
@@ -1226,20 +1248,17 @@
 											"transactionDetails"
 										]["vin"][0]["addr"],
 										receiver: receiveraddress,
-										amount: `${
-											latestTxs["latestTransactions"][txids[i]][
+										amount: `${latestTxs["latestTransactions"][txids[i]][
 											"parsedFloData"
-											]["tokenAmount"]
+										]["tokenAmount"]
 											}`,
-										contractName: `${
-											latestTxs["latestTransactions"][txids[i]][
+										contractName: `${latestTxs["latestTransactions"][txids[i]][
 											"parsedFloData"
-											]["contractName"]
+										]["contractName"]
 											}`,
-										userChoice: `${
-											latestTxs["latestTransactions"][txids[i]][
+										userChoice: `${latestTxs["latestTransactions"][txids[i]][
 											"parsedFloData"
-											]["userChoice"]
+										]["userChoice"]
 											}`,
 										type: "contracttransfer",
 									});
@@ -1459,21 +1478,20 @@
 								let transferType = txList[txids[i]]["parsedFloData"]["transferType"]
 								if (transferType == "token") {
 									let receiveraddress = "";
-									for (let i = 0, voutlist = txList[txids[i]]["transactionDetails"]["vout"]; i<voutlist.length; i++) {
-										if(txList[txids[i]] != undefined){
+									for (let i = 0, voutlist = txList[txids[i]]["transactionDetails"]["vout"]; i < voutlist.length; i++) {
+										if (txList[txids[i]] != undefined) {
 											if (voutlist[i]["scriptPubKey"]["addresses"][0] != txList[txids[i]]["transactionDetails"]["vin"][0]["addr"]) {
 												receiveraddress = voutlist[i]["scriptPubKey"]["addresses"][0];
-											}		
-										}								
+											}
+										}
 									}
 
 									obj = Object.assign({}, obj, {
 										sender: txList[txids[i]]["transactionDetails"]["vin"][0]["addr"],
 										receiver: receiveraddress,
-										amount: `${
-											txList[txids[i]][
+										amount: `${txList[txids[i]][
 											"parsedFloData"
-											]["tokenAmount"]
+										]["tokenAmount"]
 											}`,
 										type: "tokentransfer",
 									});
@@ -1511,20 +1529,17 @@
 											"transactionDetails"
 											]["vin"][0]["addr"],
 										receiver: receiveraddress,
-										amount: `${
-											txList[txids[i]][
+										amount: `${txList[txids[i]][
 											"parsedFloData"
-											]["tokenAmount"]
+										]["tokenAmount"]
 											}`,
-										contractName: `${
-											txList[txids[i]][
+										contractName: `${txList[txids[i]][
 											"parsedFloData"
-											]["contractName"]
+										]["contractName"]
 											}`,
-										userChoice: `${
-											txList[txids[i]][
+										userChoice: `${txList[txids[i]][
 											"parsedFloData"
-											]["userChoice"]
+										]["userChoice"]
 											}`,
 										type: "contracttransfer",
 									});
@@ -1644,38 +1659,49 @@
 		}
 
 		async function getTxInfo(thisTx) {
-			var response = await fetch(`${tokenapiUrl}/api/v1.0/getTransactionDetails/${thisTx}`),
-				transaction = await response.json(),
-				transactionHash = transaction.transactionHash,
-				{ flodata, tokenAmount, tokenIdentification, type } = transaction.parsedFloData,
-				{ blockheight, vin, vout, confirmations } = transaction.transactionDetails;
-			let receiver = "",
-				sender = vin[0].addr;
-			for (let i = 0; i < vout.length; i++) {
-				if (vout[i]["scriptPubKey"]["addresses"][0] !== vin[0]["addr"]) {
-					receiver = vout[i]["scriptPubKey"]["addresses"][0];
+			try {
+				const response = await fetch(`${tokenapiUrl}/api/v1.0/getTransactionDetails/${thisTx}`),
+					transaction = await response.json();
+				if (transaction.result === 'error') {
+					return [false, transaction.description]
+				} else {
+					let transactionHash = transaction.transactionHash,
+						{ flodata, tokenAmount, tokenIdentification, type } = transaction.parsedFloData,
+						{ blockheight, vin, vout, confirmations } = transaction.transactionDetails;
+					let receiver = "",
+						sender = vin[0].addr;
+					for (let i = 0; i < vout.length; i++) {
+						if (vout[i]["scriptPubKey"]["addresses"][0] !== vin[0]["addr"]) {
+							receiver = vout[i]["scriptPubKey"]["addresses"][0];
+						}
+					}
+					console.log(transaction)
+					// todo - temporary fixes below. Fix these on the Databse and API level
+					let transactionType = ''
+					if (type == 'transfer') {
+						transactionType = transaction.parsedFloData?.transferType
+					}
+					if (type == 'smartContractPays') {
+						tokenAmount = '-'
+						flodata = transaction.transactionDetails.floData
+					}
+					return [
+						true, {
+							type: `${transactionType} ${type}`,
+							name: tokenIdentification,
+							blockHeight: blockheight,
+							amount: tokenAmount,
+							sender: sender,
+							receiver: receiver,
+							floData: flodata,
+							hash: transactionHash,
+							confirmations: confirmations
+						}
+					]
 				}
 			}
-			console.log(transaction)
-			// todo - temporary fixes below. Fix these on the Databse and API level
-			let transactionType = ''
-			if( type=='transfer'){
-				transactionType = transaction.parsedFloData?.transferType
-			}
-			if( type=='smartContractPays'){
-				tokenAmount = '-'
-				flodata = transaction.transactionDetails.floData
-			}
-			return {
-				type: `${transactionType} ${type}`,
-				name: tokenIdentification,
-				blockHeight: blockheight,
-				amount: tokenAmount,
-				sender: sender,
-				receiver: receiver,
-				floData: flodata,
-				hash: transactionHash,
-				confirmations: confirmations
+			catch (err) {
+				console.error(err)
 			}
 		}
 
@@ -1746,7 +1772,7 @@
 						var contractSplit = splitContractNameAddress(window.ranchimallflo.smartcontractnameaddresslist[i], window.ranchimallflo.smartcontractnameaddresslist[i].lastIndexOf('-'));
 
 						if (window.ranchimallflo.smartcontractnamelist.includes(text)) {
-              
+			  
 						}
 					}*/
 
@@ -1777,7 +1803,7 @@
 							} else {
 								//console.log('data entered is noise');
 							}
-						});
+						}).catch(err => console.error(err))
 
 				} else {
 					//console.log('data entered is noise')
@@ -1831,7 +1857,7 @@
 
 			var suggestions = document.getElementById("suggestions");
 			var userinput = document.getElementById("main_search_field");
-			
+
 			suggestions.addEventListener("click", accept_suggestion, true);
 
 			window.suggestion = function (str) {
