@@ -96,7 +96,7 @@
 	<!-- Set urls for token and flo Apis -->
 	<script>
 		window.tokenapiUrl = 'https://ranchimallflo.duckdns.org'
-		window.floapiUrl = 'https://livenet.flocha.in'
+		window.floApiUrl = 'https://flosight.duckdns.org'
 	</script>
 
 	<script>
@@ -1647,7 +1647,7 @@
 		}
 
 		async function getAddressBalance(floAddress) {
-			const response = await fetch(`${floapiUrl}/api/addr/${floAddress}/balance`),
+			const response = await fetch(`${floApiUrl}/api/addr/${floAddress}/balance`),
 				balance = await response.json()
 			return balance;
 		}
