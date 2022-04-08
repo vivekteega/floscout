@@ -169,7 +169,6 @@
 				return page;
 			},
 			blockPage(obj) {
-				debugger;
 				let {
 					blockHeight,
 					size,
@@ -795,7 +794,6 @@
 
 				case "block_page":
 					let [blockInfo, blockTransactions] = await Promise.all([getBlockInfo(field), getBlockTransactions(field)])
-					debugger
 					pageContainer.append(create.blockPage(blockInfo));
 					pageTitle.textContent = "block";
 					loading()
@@ -1143,10 +1141,9 @@
 			}
 		}
 
+
 		function getLatestTxs() {
-			return fetch(
-				`${tokenapiUrl}/api/v1.0/getLatestTransactionDetails?numberOfLatestBlocks=4`
-			)
+			return fetch(`${tokenapiUrl}/api/v1.0/getLatestTransactionDetails?numberOfLatestBlocks=4`)
 				.then(function (response) {
 					return response.json();
 				})
@@ -1157,18 +1154,11 @@
 					for (let i = 0; i < txids.length; i++) {
 						// determine txhash and blockHeight
 						let obj = {
-							hash: latestTxs["latestTransactions"][txids[i]][
-								"transactionDetails"
-							]["txid"],
-							blockHeight: latestTxs["latestTransactions"][txids[i]][
-								"transactionDetails"
-							]["blockheight"],
+							hash: latestTxs["latestTransactions"][txids[i]]["transactionDetails"]["txid"],
+							blockHeight: latestTxs["latestTransactions"][txids[i]]["transactionDetails"]["blockheight"],
 						};
 
-						let txtype =
-							latestTxs["latestTransactions"][txids[i]]["parsedFloData"][
-							"type"
-							];
+						let txtype = latestTxs["latestTransactions"][txids[i]]["parsedFloData"]["type"];
 
 						if (txtype != "smartContractPays") {
 							// determine token
@@ -1188,28 +1178,16 @@
 																			  hash, blockHeight, token, sender, receiver, amount */
 
 									let receiveraddress = "";
-									for (
-										let i = 0,
-										voutlist =
-											latestTxs["latestTransactions"][txids[i]][
-											"transactionDetails"
-											]["vout"]; i < voutlist.length; i++
-									) {
+									for (let j = 0, voutlist = latestTxs["latestTransactions"][txids[i]]["transactionDetails"]["vout"]; j < voutlist.length; j++) {
 										if (
-											voutlist[i]["scriptPubKey"]["addresses"][0] !=
-											latestTxs["latestTransactions"][txids[i]][
-											"transactionDetails"
-											]["vin"][0]["addr"]
+											voutlist[j]["scriptPubKey"]["addresses"][0] != latestTxs["latestTransactions"][txids[i]]["transactionDetails"]["vin"][0]["addr"]
 										) {
-											receiveraddress =
-												voutlist[i]["scriptPubKey"]["addresses"][0];
+											receiveraddress = voutlist[j]["scriptPubKey"]["addresses"][0];
 										}
 									}
-
+									
 									obj = Object.assign({}, obj, {
-										sender: latestTxs["latestTransactions"][txids[i]][
-											"transactionDetails"
-										]["vin"][0]["addr"],
+										sender: latestTxs["latestTransactions"][txids[i]]["transactionDetails"]["vin"][0]["addr"],
 										receiver: receiveraddress,
 										amount: `${latestTxs["latestTransactions"][txids[i]][
 											"parsedFloData"
