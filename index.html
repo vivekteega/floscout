@@ -197,7 +197,12 @@
 			document.addEventListener('copy', () => {
 				notify('copied', 'success')
 			})
-			routeTo(window.location.hash)
+			getAllSuggestions().then(suggestions => {
+				routeTo(window.location.hash)
+			}).catch(e => {
+				console.error(e)
+				notify(e, 'error')
+			})
 			getRef("main_search_field").addEventListener("keydown", function (e) {
 				if (e.key === 'Enter') {
 					processNavbarSearch()
@@ -225,8 +230,6 @@
 				if (document.activeElement.classList.contains('suggestion'))
 					getRef("main_search_field").value = document.activeElement.textContent.trim()
 			});
-
-			getAllSuggestions();
 
 			this.addEventListener("click", (e) => {
 				if (e.target.closest('.suggestion')) {
@@ -1478,15 +1481,17 @@
 					location.href = `#/contract/${text}`
 					resolve('contract')
 				} else if (text.length == 64 && returnHexNumber(text)) {
-					fetch(`${window.tokenApiUrl}/api/v1.0/categoriseString/` + text)
+					fetchJson(`${window.tokenApiUrl}/api/v1.0/categoriseString/` + text)
 						.then(function (myJson) {
+							console.log(`${window.tokenApiUrl}/api/v1.0/categoriseString/` + text)
 							console.log(myJson)
 							if (myJson['type'] == 'transaction') {
 								//console.log('data entered is a transaction hash');
 								location.href = `#/transaction/${text}`
 							} else if (myJson['type'] == 'block') {
-								//console.log('data entered is a block hash');
-								location.href = `#/block/${myJson['blockNumber']}`
+								console.log('data entered is a block hash');
+
+								location.href = `#/block/${text}`
 							} else {
 								//console.log('data entered is noise');
 							}
