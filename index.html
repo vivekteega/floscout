@@ -1484,13 +1484,11 @@
 					fetchJson(`${window.tokenApiUrl}/api/v1.0/categoriseString/` + text)
 						.then(function (myJson) {
 							console.log(`${window.tokenApiUrl}/api/v1.0/categoriseString/` + text)
-							console.log(myJson)
 							if (myJson['type'] == 'transaction') {
 								//console.log('data entered is a transaction hash');
 								location.href = `#/transaction/${text}`
 							} else if (myJson['type'] == 'block') {
-								console.log('data entered is a block hash');
-
+								// console.log('data entered is a block hash');
 								location.href = `#/block/${text}`
 							} else {
 								//console.log('data entered is noise');
