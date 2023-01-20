@@ -186,7 +186,7 @@
 				return timestamp;
 			}
 		}
-		window.addEventListener('hashchange', e => routeTo(window.location.hash))
+		// window.addEventListener('hashchange', e => routeTo(window.location.hash))
 		window.addEventListener("load", () => {
 			document.body.classList.remove('hidden')
 			document.addEventListener("pointerdown", (e) => {
@@ -198,7 +198,7 @@
 				notify('copied', 'success')
 			})
 			getAllSuggestions().then(suggestions => {
-				routeTo(window.location.hash)
+				router.routeTo(window.location.hash)
 			}).catch(e => {
 				console.error(e)
 				notify(e, 'error')
@@ -268,187 +268,180 @@
 			};
 		}
 
-		const appState = {
-			params: {},
-		}
-		async function routeTo(targetPage) {
-			const routingAnimation = { in: slideInUp, out: slideOutUp }
-			let pageId
-			let subPageId1
-			let searchParams
-			let params
-			if (targetPage === '') {
-				pageId = 'home'
-				history.replaceState(null, null, '#/home');
-			} else {
-				if (targetPage.includes('/')) {
-					if (targetPage.includes('?')) {
-						const splitAddress = targetPage.split('?')
-						searchParams = splitAddress.pop();
-						[, pageId, subPageId1] = splitAddress.pop().split('/')
-					} else {
-						[, pageId, subPageId1] = targetPage.split('/')
-					}
+		class Router {
+			constructor(options = {}) {
+				const { routes = {}, state = {}, routingStart, routingEnd } = options
+				this.routes = routes
+				this.state = state
+				this.routingStart = routingStart
+				this.routingEnd = routingEnd
+				window.addEventListener('hashchange', e => this.routeTo(window.location.hash))
+			}
+			addRoute(route, callback) {
+				this.routes[route] = callback
+			}
+			async routeTo(path) {
+				let page
+				let wildcards = []
+				let queryString
+				let params
+				[path, queryString] = path.split('?');
+				if (path.includes('#'))
+					path = path.split('#')[1];
+				if (path.includes('/'))
+					[, page, ...wildcards] = path.split('/')
+				else
+					page = path
+				this.state = { page, wildcards }
+				if (queryString) {
+					params = new URLSearchParams(queryString)
+					this.state.params = Object.fromEntries(params)
+				}
+				if (this.routingStart) {
+					this.routingStart(this.state)
+				}
+				if (this.routes[page]) {
+					await this.routes[page](this.state)
+					this.state.lastPage = page
 				} else {
-					pageId = targetPage
+					this.routes['404'](this.state)
+				}
+				if (this.routingEnd) {
+					this.routingEnd(this.state)
 				}
 			}
-			appState.currentPage = pageId
-			if (searchParams) {
-				const urlSearchParams = new URLSearchParams('?' + searchParams);
-				params = Object.fromEntries(urlSearchParams.entries());
+		}
+		const router = new Router({
+			routingStart(state) {
+				loading()
+				if ("scrollRestoration" in history) {
+					history.scrollRestoration = "manual";
+				}
+				window.scrollTo(0, 0);
+				if (state.page !== 'home')
+					getRef("page_header").classList.remove("hidden");
+			},
+			routingEnd() {
+				loading(false)
 			}
-			if (params)
-				appState.params = params
-			loading()
-			if ("scrollRestoration" in history) {
-				history.scrollRestoration = "manual";
+		})
+		async function renderHome(state) {
+			getRef("page_header").classList.add("hidden");
+			let [data, latestTxs, latestBlocks] = await Promise.all([getBannerData(), getLatestTxs(), getAllBlocks(6)])
+			renderElem(getRef("page_container"), html`${render.homepage(data)}`);
+			renderTransactions('top_transaction_container', latestTxs)
+			const renderedBlocks = latestBlocks.map(block => render.blockCard(block))
+			renderElem(document.getElementById('top_blocks_container'), html`${renderedBlocks}`)
+		}
+		router.addRoute('', (state) => {
+			history.replaceState({}, '', '#/home')
+			renderHome(state)
+		})
+		router.addRoute('home', renderHome)
+		router.addRoute('address', async state => {
+			const [floAddress] = state.wildcards
+			if (!floAddress) return;
+			let [addressInfo, addressBalance, addressTxs] = await Promise.all([getAddressInfo(floAddress), getAddressBalance(floAddress), getAddressTxs(floAddress)])
+			renderElem(getRef("page_container"), html`${render.addressPage({ balance: addressBalance, address: floAddress })}`);
+			getRef("page_title").textContent = 'Address'
+
+			renderTransactions('address_transaction_container', addressTxs)
+			const tokenHolders = []
+			for (const token in addressInfo) {
+				tokenHolders.push(render.tokenBalanceCard(token, addressInfo[token].balance))
 			}
-			window.scrollTo(0, 0);
-			if (pageId !== 'home')
-				getRef("page_header").classList.remove("hidden");
-			switch (pageId) {
-				case "home": {
-					getRef("page_header").classList.add("hidden");
-					let [data, latestTxs, latestBlocks] = await Promise.all([getBannerData(), getLatestTxs(), getAllBlocks(6)])
-					renderElem(getRef("page_container"), html`${render.homepage(data)}`);
-					renderTransactions('top_transaction_container', latestTxs)
-					const renderedBlocks = latestBlocks.map(block => render.blockCard(block))
-					renderElem(document.getElementById('top_blocks_container'), html`${renderedBlocks}`)
+			renderElem(document.getElementById('token_balance_container'), html`${tokenHolders}`)
+		})
+		router.addRoute('token', async state => {
+			const token = state.wildcards[0].toLowerCase()
+			if (!token) return;
+			try {
+				let [tokenInfo, tokenBalances, tokenTransactions] = await Promise.all([getTokenInfo(token), getTokenBalances(token), getTokenTransactions(token)])
+				const tokenHolders = []
+				for (const address in tokenBalances) {
+					tokenHolders.push(render.addrBalanceCard(address, tokenBalances[address], tokenInfo.token))
 				}
-					break
-				case "address": {
-					if (!subPageId1) return;
-					let [addressInfo, addressBalance, addressTxs] = await Promise.all([getAddressInfo(subPageId1), getAddressBalance(subPageId1), getAddressTxs(subPageId1)])
-					renderElem(getRef("page_container"), html`${render.addressPage({ balance: addressBalance, address: subPageId1 })}`);
-					getRef("page_title").textContent = 'Address'
+				renderElem(getRef("page_container"), html`${render.tokenPage(tokenInfo)}`);
+				getRef("page_title").textContent = "Token";
+				renderElem(document.getElementById('token_balance_container'), html`${tokenHolders}`)
+				renderTransactions('token_transaction_container', tokenTransactions)
+			} catch (e) {
+				console.log(e)
+				renderElem(getRef("page_container"), html`${render.errorPage(e)}`);
+			}
+		})
+		router.addRoute('contract', async state => {
+			const [contractId] = state.wildcards
+			if (!contractId) return;
+			// todo: load contract variable dynamically
+			const contract = splitContractNameAddress(contractId);
+			let [contractInfo, contractTransactions, contractParticipants] = await Promise.all([getContractInfo(contract), getContractTransactions(contract), getContractParticipants(contract)])
+			// todo : check the type of contract & then further checks like fetching details of contractParticipant 
+			getRef("page_container").append(render.contractPage(contractInfo));
+			getRef("page_title").textContent = "Contract";
 
-					renderTransactions('address_transaction_container', addressTxs)
-					const tokenHolders = []
-					for (const token in addressInfo) {
-						tokenHolders.push(render.tokenBalanceCard(token, addressInfo[token].balance))
-					}
-					renderElem(document.getElementById('token_balance_container'), html`${tokenHolders}`)
-				} break;
-				case "token": {
-					if (!subPageId1) return;
-					const token = subPageId1.toLowerCase()
-					let [tokenInfo, tokenBalances, tokenTransactions] = await Promise.all([getTokenInfo(token), getTokenBalances(token), getTokenTransactions(token)])
-					const tokenHolders = []
-					for (const address in tokenBalances) {
-						tokenHolders.push(render.addrBalanceCard(address, tokenBalances[address], tokenInfo.token))
-					}
-					renderElem(getRef("page_container"), html`${render.tokenPage(tokenInfo)}`);
-					getRef("page_title").textContent = "Token";
-					renderElem(document.getElementById('token_balance_container'), html`${tokenHolders}`)
-					renderTransactions('token_transaction_container', tokenTransactions)
-				}
-					break
+			console.log(contractParticipants)
+			let winners = []
+			for (const participant in contractParticipants) {
+				if (contractParticipants[participant].winningAmount)
+					winners.push(contractParticipants[participant])
+			}
+			// append latest transactions
+			renderTransactions('contract_transaction_container', contractTransactions)
+			for (participant in contractParticipants) {
+				let { participantFloAddress, tokenIdentification, userChoice, tokenAmount } = contractParticipants[participant]
+				frag.append(render.contractChoiceCard(participantFloAddress, tokenIdentification, userChoice, tokenAmount))
+			}
+			document.getElementById('participant_container').append(frag)
 
-				case "contract": {
-					// todo: load contract variable dynamically
-					if (!subPageId1) return;
-					const contract = splitContractNameAddress(subPageId1);
-					let [contractInfo, contractTransactions, contractParticipants] = await Promise.all([getContractInfo(contract), getContractTransactions(contract), getContractParticipants(contract)])
-					// todo : check the type of contract & then further checks like fetching details of contractParticipant 
-					getRef("page_container").append(render.contractPage(contractInfo));
-					getRef("page_title").textContent = "Contract";
+			winners.forEach(winner => {
+				let { participantFloAddress, tokenIdentification, userChoice, tokenAmount, winningAmount } = winner;
+				frag.append(render.contractChoiceCard(participantFloAddress, tokenIdentification, userChoice, tokenAmount, winningAmount))
+			})
+			document.getElementById('winners_container').append(frag)
+		})
 
-					console.log(contractParticipants)
-					let winners = []
-					for (const participant in contractParticipants) {
-						if (contractParticipants[participant].winningAmount)
-							winners.push(contractParticipants[participant])
-					}
-					// append latest transactions
-					renderTransactions('contract_transaction_container', contractTransactions)
-					for (participant in contractParticipants) {
-						let { participantFloAddress, tokenIdentification, userChoice, tokenAmount } = contractParticipants[participant]
-						frag.append(render.contractChoiceCard(participantFloAddress, tokenIdentification, userChoice, tokenAmount))
-					}
-					document.getElementById('participant_container').append(frag)
-
-					winners.forEach(winner => {
-						let { participantFloAddress, tokenIdentification, userChoice, tokenAmount, winningAmount } = winner;
-						frag.append(render.contractChoiceCard(participantFloAddress, tokenIdentification, userChoice, tokenAmount, winningAmount))
-					})
-					document.getElementById('winners_container').append(frag)
-				}
-					break;
-				case "block": {
-					if (!subPageId1) return;
-					let [blockInfo, blockTransactions] = await Promise.all([getBlockInfo(subPageId1), getBlockTransactions(subPageId1)])
-					getRef("page_title").textContent = "block";
-					renderElem(getRef("page_container"), html`${render.blockPage(blockInfo)}`);
-					renderTransactions('block_transaction_container', blockTransactions)
-				}
-					break
-
-				case "blocks": {
-					let allBlocks = await getAllBlocks(100);
-					getRef("page_title").textContent = "All Blocks";
-					const renderedBlocks = allBlocks.map(block => render.blockCard(block))
-					renderElem(getRef("page_container"), html`
+		router.addRoute('block', async state => {
+			const [blockId] = state.wildcards
+			if (!blockId) return;
+			let [blockInfo, blockTxs] = await Promise.all([getBlockInfo(blockId), getBlockTxs(blockId)])
+			renderElem(getRef("page_container"), html`${render.blockPage(blockInfo)}`);
+			getRef("page_title").textContent = 'Block'
+			renderTransactions('block_transaction_container', blockTxs)
+		})
+		router.addRoute('blocks', async state => {
+			let allBlocks = await getAllBlocks(100);
+			getRef("page_title").textContent = "All Blocks";
+			const renderedBlocks = allBlocks.map(block => render.blockCard(block))
+			renderElem(getRef("page_container"), html`
 						<div id="all_blocks_page" class="page">
 							${renderedBlocks}
 						</div>
 					`)
-
-				}
-					break
-
-				case "transactions": {
-					let allTxs = await getAllTxs();
-					getRef("page_title").textContent = "All Transactions";
-					renderElem(getRef("page_container"), html`
+		})
+		router.addRoute('transactions', async state => {
+			let allTxs = await getAllTxs();
+			getRef("page_title").textContent = "All Transactions";
+			renderElem(getRef("page_container"), html`
 						<div id="all_transactions_page" class="page transaction-container"> </div>
 					`)
-					renderTransactions('all_transactions_page', allTxs)
-				}
-					break
-				case "transaction": {
-					if (!subPageId1) return
-					const [status, txInfo] = await getTxInfo(subPageId1);
-					if (status) {
-						renderElem(getRef("page_container"), html`${render.transactionPage(txInfo)}`);
-						getRef("page_title").textContent = "transaction";
+			renderTransactions('all_transactions_page', allTxs)
+		})
+		router.addRoute('transaction', async state => {
+			const [txId] = state.wildcards
+			if (!txId) return
+			const [status, txInfo] = await getTxInfo(txId);
+			if (status) {
+				renderElem(getRef("page_container"), html`${render.transactionPage(txInfo)}`);
+				getRef("page_title").textContent = "transaction";
 
-					} else {
-						render('error_page', txInfo)
-					}
-				}
-					break
-				case 'error_page': {
-					getRef("page_container").append(render.errorPage(field));
-
-				}
-					break;
+			} else {
+				renderElem(getRef("page_container"), html`${render.errorPage(txInfo)}`);
 			}
-			switch (appState.lastPage) {
-				case 'intern':
-					routingAnimation.in = slideInRight;
-					routingAnimation.out = slideOutRight;
-					break;
-			}
-			switch (pageId) {
-				case 'intern':
-					routingAnimation.in = slideInLeft;
-					routingAnimation.out = slideOutLeft;
-					break;
-			}
-			loading(false)
-			if (appState.lastPage !== pageId) {
-				// if (appState.lastPage) {
-				// 	getRef(appState.lastPage).animate(routingAnimation.out, { duration: floGlobals.prefersReducedMotion ? 0 : 150, fill: 'forwards', easing: 'ease' }).onfinish = (e) => {
-				// 		e.target.effect.target.classList.add('hidden')
-				// 	}
-				// }
-				// getRef(pageId).classList.remove('hidden')
-				// getRef(pageId).animate(routingAnimation.in, { duration: floGlobals.prefersReducedMotion ? 0 : 150, fill: 'forwards', easing: 'ease' }).onfinish = (e) => {
-				// 	appState.lastPage = pageId
-				// }
-			}
-		}
+		})
+		router.addRoute('404', state => {
+			renderElem(getRef("page_container"), html`${render.errorPage('404 Not Found')}`);
+		})
 		function loading(show = true) {
 			if (show) {
 				getRef('loading').classList.remove('hidden')
@@ -1182,23 +1175,27 @@
 		}
 
 		function getTokenInfo(thisToken) {
-			return fetchJson(
-				`${tokenApiUrl}/api/v1.0/getTokenInfo?token=${thisToken.toLowerCase()}`
-			)
-				.then(function (tokenInfo) {
+			return new Promise((resolve, reject) => {
+				fetchJson(
+					`${tokenApiUrl}/api/v1.0/getTokenInfo?token=${thisToken.toLowerCase()}`
+				).then(function (tokenInfo) {
+					if (tokenInfo.result === "error")
+						reject(tokenInfo.description);
 					let associatedSC = {};
-					for (let i = 0, associatedScList = tokenInfo["associatedSmartContracts"]; i < associatedScList.length; i++) {
-						associatedSC[`${associatedScList[i]["contractName"]}-${associatedScList[i]["contractAddress"]}`] = associatedScList[i];
-					}
-					let obj = {
+					tokenInfo.associatedSmartContracts.forEach((sc) => {
+						associatedSC[`${sc.contractName}-${sc.contractAddress}`] = sc;
+					});
+					resolve({
 						token: tokenInfo["token"],
 						supply: tokenInfo["tokenSupply"],
 						incAddress: tokenInfo["incorporationAddress"],
 						associatedContracts: associatedSC,
 						blockchainReference: tokenInfo["blockchainReference"],
-					};
-					return obj;
+					});
+				}).catch((err) => {
+					reject(err);
 				});
+			})
 		}
 
 		async function getTokenBalances(tokenName) {
