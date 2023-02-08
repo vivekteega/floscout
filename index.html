@@ -339,18 +339,21 @@
 		})
 		router.addRoute('home', renderHome)
 		router.addRoute('address', async state => {
-			const [floAddress] = state.wildcards
-			if (!floAddress) return;
-			let [addressInfo, addressBalance, addressTxs] = await Promise.all([getAddressInfo(floAddress), getAddressBalance(floAddress), getAddressTxs(floAddress)])
-			renderElem(getRef("page_container"), html`${render.addressPage({ balance: addressBalance, address: floAddress })}`);
-			getRef("page_title").textContent = 'Address'
-
-			renderTransactions('address_transaction_container', addressTxs)
-			const tokenHolders = []
-			for (const token in addressInfo) {
-				tokenHolders.push(render.tokenBalanceCard(token, addressInfo[token].balance))
+			try {
+				const [floAddress] = state.wildcards
+				if (!floAddress) return;
+				let [addressInfo, addressBalance, addressTxs] = await Promise.all([getAddressInfo(floAddress), getAddressBalance(floAddress), getAddressTxs(floAddress)])
+				renderElem(getRef("page_container"), html`${render.addressPage({ balance: addressBalance, address: floAddress })}`);
+				getRef("page_title").textContent = 'Address'
+				renderTransactions('address_transaction_container', addressTxs)
+				const tokenHolders = []
+				for (const token in addressInfo) {
+					tokenHolders.push(render.tokenBalanceCard(token, addressInfo[token].balance))
+				}
+				renderElem(document.getElementById('token_balance_container'), html`${tokenHolders.length ? tokenHolders : html`<div>No tokens found</div>`}`)
+			} catch (e) {
+				notify(e, 'error')
 			}
-			renderElem(document.getElementById('token_balance_container'), html`${tokenHolders}`)
 		})
 		router.addRoute('token', async state => {
 			const token = state.wildcards[0].toLowerCase()
@@ -363,7 +366,7 @@
 				}
 				renderElem(getRef("page_container"), html`${render.tokenPage(tokenInfo)}`);
 				getRef("page_title").textContent = "Token";
-				renderElem(document.getElementById('token_balance_container'), html`${tokenHolders}`)
+				renderElem(document.getElementById('token_balance_container'), html`${tokenHolders?.length ? tokenHolders : html`<div>No token holders found</div>`}`)
 				renderTransactions('token_transaction_container', tokenTransactions)
 			} catch (e) {
 				console.log(e)
@@ -428,15 +431,20 @@
 			renderTransactions('all_transactions_page', allTxs)
 		})
 		router.addRoute('transaction', async state => {
-			const [txId] = state.wildcards
-			if (!txId) return
-			const [status, txInfo] = await getTxInfo(txId);
-			if (status) {
-				renderElem(getRef("page_container"), html`${render.transactionPage(txInfo)}`);
-				getRef("page_title").textContent = "transaction";
+			try {
+				const [txId] = state.wildcards
+				if (!txId) return
+				const [status, txInfo] = await getTxInfo(txId);
+				if (status) {
+					renderElem(getRef("page_container"), html`${render.transactionPage(txInfo)}`);
+					getRef("page_title").textContent = "transaction";
 
-			} else {
-				renderElem(getRef("page_container"), html`${render.errorPage(txInfo)}`);
+				} else {
+					renderElem(getRef("page_container"), html`${render.errorPage(txInfo)}`);
+				}
+			} catch (e) {
+				console.error(e)
+				renderElem(getRef("page_container"), html`${render.errorPage(e)}`);
 			}
 		})
 		router.addRoute('404', state => {
@@ -1002,7 +1010,7 @@
 			return str.replace(/ /g, "-");
 		}
 
-		async function renderTransactions(container, transactions) {
+		async function renderTransactions(container, transactions = []) {
 			let txFrag = getTxFrag(transactions);
 			const renderedTransactions = txFrag.map(tx => {
 				switch (tx.type) {
@@ -1023,7 +1031,7 @@
 						break;
 				}
 			})
-			renderElem(document.getElementById(container), html`${renderedTransactions}`)
+			renderElem(document.getElementById(container), html`${renderedTransactions.length ? renderedTransactions : html`<div class="no-results">No transactions found</div>`}`)
 		}
 
 		getRef('suggestions').addEventListener('keyup', e => {
