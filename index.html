@@ -328,6 +328,7 @@
 		async function renderHome(state) {
 			getRef("page_header").classList.add("hidden");
 			let [data, latestTxs, latestBlocks] = await Promise.all([getBannerData(), getLatestTxs(), getAllBlocks(6)])
+			console.log(latestTxs)
 			renderElem(getRef("page_container"), html`${render.homepage(data)}`);
 			renderTransactions('top_transaction_container', latestTxs)
 			const renderedBlocks = latestBlocks.map(block => render.blockCard(block))
@@ -667,11 +668,15 @@
 				`;
 			},
 			transactionPage(obj) {
-				let { type, name, blockHeight, amount, sender, receiver, floData, hash, confirmations } = obj;
+				let { type, name, blockHeight, amount, sender, receiver, floData, hash, confirmations,nftHash} = obj;
 				// todo : This is a temporary fix. Fix this on the Database and API level
 				if (type == 'smartContractPays' || type == ' smartContractPays') {
 					name = ''
 				}
+				if(type.trim() === 'nftIncorporation')
+					type = 'NFT Incorporation'
+				else if(type.trim() === 'nft transfer')
+					type = 'NFT Transfer'
 				return html`
 					<div id="transaction_page" class="page">
 						<div class='head'>
@@ -699,10 +704,16 @@
 							</div>
 						</div>
 						<div class="card">
-								<h5 class="label">FLO Data</h5>
-								<p>${floData}</p>
-								<h5 class="label">Block Confirmations</h5>
-								<h4>${confirmations}</h4>
+							<h5 class="label">FLO Data</h5>
+							<p>${floData}</p>
+							<h5 class="label">Block Confirmations</h5>
+							<h4>${confirmations}</h4>
+							${
+								nftHash?html`
+									<h5 class="label">NFT hash</h5>
+									<sm-copy value=${nftHash} clip-text></sm-copy>
+								`:''
+							}
 						</div>
 					</div>
               `;
@@ -852,12 +863,16 @@
 					</div>`;
 			},
 			tokenTransferCard(obj) {
-				const { hash, blockHeight, token, sender, receiver, amount } = obj;
+				const { hash, blockHeight, token, sender, receiver, amount,type } = obj;
+				let title = 'Token transfer';
+				console.log(type)
+				if(type === 'nfttransfer')
+					title = 'NFT transfer';
 				return html`
 					<div id=${hash} class="transaction token-transfer">
 						<svg class="icon" viewBox="0 0 64 64"> <title>transfer</title> <polyline points="17.04 35.97 14.57 33.5 40.15 7.9 32.75 0.5 55.52 0.5 55.52 23.28 48.12 15.87 23.86 40.14 15.88 48.13 8.48 40.72 8.48 63.5 31.25 63.5 23.85 56.1 49.43 30.5 46.96 28.03"/> </svg>
 						<div class="contract-type">
-							<h5 class="label">Token transfer</h5>
+							<h5 class="label">${title}</h5>
 							<a href=${`#/token/${token}`} class="">${token}</a>
 						</div>
 						<div class="contract-info">
@@ -877,12 +892,15 @@
 				`;
 			},
 			tokenCreationCard(obj) {
-				const { hash, blockHeight, token, incAddress, supply } = obj;
+				const { hash, blockHeight, token, incAddress, supply,type,nftHash } = obj;
+				let title = 'Token creation';
+				if(type === 'nftincorp')
+					title = 'NFT creation';
 				return html`
 					<div id=${hash} class="transaction token-creation">
 						<svg class="icon" viewBox="0 0 64 64"> <title>token</title> <circle cx="32" cy="32" r="31"/> <circle cx="32" cy="32" r="25.19"/> <line x1="37" y1="21.74" x2="43.14" y2="21.74"/> <path d="M20.86,21.74H32V43.23"/> </svg>
 						<div class="contract-type">
-							<h5 class="label">token creation</h5>
+							<h5 class="label">${title}</h5>
 							<a href=${`#/token/${token}`} class="token uppercase">${token}</a>
 						</div>
 						<div class="contract-info">
@@ -898,6 +916,12 @@
 								<h5 class="label">supply</h5>
 								<h4>${supply}</h4>
 							</div>
+							${
+								type === 'nftincorp'? html`<div class="flex flex-direction-column">
+									<h5 class="label">NFT hash</h5>
+									<sm-copy value="${nftHash}"></sm-copy>
+								</div>`:''
+							}
 							<div class="flex align-center space-between flex-wrap gap-1">
 								<div class="flex flex-direction-column">
 									<h5 class="label">Transaction ID</h5>
@@ -1015,12 +1039,14 @@
 			const renderedTransactions = txFrag.map(tx => {
 				switch (tx.type) {
 					case 'tokentransfer':
+					case 'nfttransfer':
 						return render.tokenTransferCard(tx)
 						break;
 					case 'contracttransfer':
 						return render.contractTransferCard(tx);
 						break;
 					case 'tokenincorp':
+					case 'nftincorp':
 						return render.tokenCreationCard(tx);
 						break;
 					case 'contractincorp':
@@ -1031,6 +1057,7 @@
 						break;
 				}
 			})
+			console.log(renderedTransactions)
 			renderElem(document.getElementById(container), html`${renderedTransactions.length ? renderedTransactions : html`<div class="no-results">No transactions found</div>`}`)
 		}
 
@@ -1073,7 +1100,7 @@
 				.then(function (latestTxs) {
 					let latestTxArray = [];
 					for (const transactionKey in latestTxs.latestTransactions) {
-						const { transactionDetails: { txid, blockHeight, vin, vout }, parsedFloData: { type, tokenAmount, tokenIdentification, transferType, contractName, triggerCondition, userChoice } } = latestTxs.latestTransactions[transactionKey];
+						const { transactionDetails: { txid, blockHeight, vin, vout }, parsedFloData: { type, tokenAmount, tokenIdentification, transferType, contractName, triggerCondition, userChoice,nftHash } } = latestTxs.latestTransactions[transactionKey];
 						// determine txhash and blockHeight
 						let obj = {
 							hash: txid,
@@ -1085,7 +1112,7 @@
 							obj["token"] = tokenIdentification;
 
 							if (type == "transfer") {
-								if (transferType == "token") {
+								if (transferType == "token" || transferType == "nft") {
 									// token transfer
 									/* tokenTransferCard
 									hash, blockHeight, token, sender, receiver, amount */
@@ -1147,6 +1174,16 @@
 									type: "tokenincorp",
 								});
 								latestTxArray.push(obj);
+							} else if (type === "nftIncorporation") {
+								// token incorporation
+								// smart contract incorporation
+								obj = Object.assign({}, obj, {
+									incAddress: vin[0]["addr"],
+									supply: tokenAmount,
+									type,
+									nftHash,
+								});
+								latestTxArray.push(obj);
 							}
 						} else {
 							// smart contract committee trigger
@@ -1169,6 +1206,8 @@
 						}
 					}
 					return latestTxArray;
+				}).catch((err) => {
+					console.log(err)
 				});
 		}
 
@@ -1272,18 +1311,21 @@
 			// Object
 			let latestTxArray = [];
 			for (const transactionKey in txList) {
-				const { transactionDetails: { txid, blockHeight, vin, vout }, parsedFloData: { contractAddress, contractType, expiryTime, contractAmount, type, tokenAmount, tokenIdentification, transferType, contractName, triggerCondition, userChoice } } = txList[transactionKey];
+				console.log(transactionKey)
+				if(transactionKey == '11571ce7e5eed0bce30e24de89bb1ba6cc432df7b5b40bbc9f0225b98968cb47'){
+					//debugger
+				}
+				const { transactionDetails: { txid, blockHeight, vin, vout }, parsedFloData: { contractAddress, contractType, expiryTime, contractAmount, type, tokenAmount, tokenIdentification, transferType, contractName, triggerCondition, userChoice,nftHash } } = txList[transactionKey];
 				let obj = {
 					hash: txid,
 					blockHeight,
 				};
-
 				if (type != "smartContractPays") {
 					// determine token
 					obj["token"] = tokenIdentification;
 					switch (type) {
 						case 'transfer':
-							if (transferType == "token") {
+							if (transferType == "token" || transferType == 'nft') {
 								let receiverAddress = "";
 								for (const output of vout) {
 									if (output["scriptPubKey"]["addresses"][0] !== vin[0]["addr"]) {
@@ -1296,7 +1338,7 @@
 									sender: vin[0]["addr"],
 									receiver: receiverAddress,
 									amount: tokenAmount,
-									type: "tokentransfer",
+									type: transferType == "token" ? "tokentransfer" : "nfttransfer",
 								});
 								latestTxArray.push(obj);
 								break;
@@ -1331,7 +1373,6 @@
 							});
 							latestTxArray.push(obj);
 							break;
-
 						case 'smartContractIncorporation':
 							// smart contract incorporation
 							// todo : add checks to determine obj for different types of smart contract incorporation
@@ -1346,7 +1387,17 @@
 							});
 							latestTxArray.push(obj);
 							break;
-					}
+						case 'nftIncorporation':
+							// nft incorporation
+							obj = Object.assign({}, obj, {
+								incAddress: vin[0]["addr"],
+								supply: tokenAmount,
+								type: "nftincorp",
+								nftHash
+							});
+							latestTxArray.push(obj);
+							break;
+						}
 
 				} else {
 					// transaction is a FLO Smart Contract Committee trigger
@@ -1405,7 +1456,7 @@
 					return [false, transaction.description]
 				} else {
 					let transactionHash = transaction.transactionHash,
-						{ flodata, tokenAmount, tokenIdentification, type } = transaction.parsedFloData,
+						{ flodata, tokenAmount, tokenIdentification, type,nftHash } = transaction.parsedFloData,
 						{ blockheight, vin, vout, confirmations } = transaction.transactionDetails;
 					let receiver = "",
 						sender = vin[0].addr;
@@ -1415,7 +1466,7 @@
 						}
 					}
 					console.log(transaction)
-					// todo - temporary fixes below. Fix these on the Databse and API level
+					// todo - temporary fixes below. Fix these on the Database and API level
 					let transactionType = ''
 					if (type == 'transfer') {
 						transactionType = transaction.parsedFloData?.transferType
@@ -1430,11 +1481,12 @@
 							name: tokenIdentification,
 							blockHeight: blockheight,
 							amount: tokenAmount,
-							sender: sender,
-							receiver: receiver,
+							sender,
+							receiver,
 							floData: flodata,
 							hash: transactionHash,
-							confirmations: confirmations
+							confirmations,
+							nftHash
 						}
 					]
 				}
@@ -1530,7 +1582,6 @@
 			ranchimallFlo.smartContractNameAddressList = [];
 			//console.log(ranchimallFlo.smartContractList.length);
 			ranchimallFlo.smartContractList.forEach(contract => {
-				console.log(contract.contractName);
 				allSuggestions.push(`${contract.contractName}-${contract.contractAddress}`);
 				ranchimallFlo.smartContractNameList.push(contract.contractName);
 				ranchimallFlo.smartContractNameAddressList.push(`${contract.contractName}-${contract.contractAddress}`);
