@@ -981,6 +981,9 @@ p {
   border-radius: 1rem;
   background: rgba(var(--text-color), 0.1);
 }
+.transaction time {
+  font-size: 0.9rem;
+}
 
 #loading {
   position: fixed;
