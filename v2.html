@@ -11,7 +11,6 @@
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 	<script src="https://unpkg.com/uhtml@3.0.1/es.js"></script>
 	<script src="components.min.js"></script>
-	<link rel="shortcut icon" href="floscout.svg" type="image/x-icon">
 </head>
 
 <body data-theme="light" class="hidden">
@@ -62,6 +61,7 @@
 		let floGlobals = {}
 		tokenApiUrl = 'https://ranchimallflov2.ranchimall.net'
 		floApiUrl = 'https://flosight.ranchimall.net'
+
 	</script>
 	<script>
 		/*jshint esversion: 8 */
@@ -144,8 +144,9 @@
 		}
 		// fetch data and return json
 		async function fetchJson(url, options = {}) {
+			console.log(url)
 			let response = await fetch(url, options)
-			if (response.ok) {
+			if (response.status === 200) {
 				return await response.json()
 			} else {
 				throw new Error(response.statusText)
@@ -352,6 +353,85 @@
 				for (const token in addressInfo) {
 					tokenHolders.push(render.tokenBalanceCard(token, addressInfo[token].balance))
 				}
+#####
+					break
+				case "address": {
+					if (!subPageId1) return;
+					let [addressInfo, addressBalance, addressTxs] = await Promise.all([getAddressInfo(subPageId1), getAddressBalance(subPageId1), getAddressTxs(subPageId1)])
+					renderElem(getRef("page_container"), html`${render.addressPage({ balance: addressBalance, address: subPageId1 })}`);
+					getRef("page_title").textContent = 'Address'
+
+					renderTransactions('address_transaction_container', addressTxs)
+					const tokenHolders = []
+					for (const token in addressInfo) {
+						tokenHolders.push(render.tokenBalanceCard(token, addressInfo[token].balance))
+					}
+					renderElem(document.getElementById('token_balance_container'), html`${tokenHolders}`)
+				} break;
+				case "token": {
+					if (!subPageId1) return;
+					const token = subPageId1.toLowerCase()
+					Promise.all([getTokenInfo(token), getTokenBalances(token), getTokenTransactions(token)]).then(([tokenInfo, tokenBalances, tokenTransactions]) => {
+						const tokenHolders = []
+						for (const address in tokenBalances) {
+							tokenHolders.push(render.addrBalanceCard(address, tokenBalances[address], tokenInfo.token))
+						}
+						renderElem(getRef("page_container"), html`${render.tokenPage(tokenInfo)}`);
+						getRef("page_title").textContent = "Token";
+						renderElem(document.getElementById('token_balance_container'), html`${tokenHolders}`)
+						renderTransactions('token_transaction_container', tokenTransactions)
+					}).catch(err => {
+						console.log(err)
+						getRef("page_container").append(render.errorPage(err));
+					})
+				}
+					break
+
+				case "contract": {
+					// todo: load contract variable dynamically
+					if (!subPageId1) return;
+					const contract = splitContractNameAddress(subPageId1);
+					getContractInfo(contract).then(contractInfo => {
+						renderElem(getRef("page_container"), render.contractPage(contractInfo));
+						getRef("page_title").textContent = "Contract";
+						getContractTransactions(contract).then(contractTransactions => {
+							renderTransactions('contract_transaction_container', contractTransactions)
+						}).catch(err => {
+							console.log(err)
+						})
+						getContractParticipants(contract)
+							.then(contractParticipants => {
+								// todo : check the type of contract & then further checks like fetching details of contractParticipant 
+								let winnerCards = []
+								let participantCards = []
+								for (const participant in contractParticipants) {
+									if (contractParticipants[participant].winningAmount) {
+										winnerCards.push(render.contractChoiceCard(contractParticipants[participant]))
+									}
+									let { participantFloAddress, tokenIdentification, userChoice, tokenAmount } = contractParticipants[participant]
+									participantCards.push(render.contractChoiceCard(contractParticipants[participant]))
+								}
+								// append latest transactions
+								renderElem(document.getElementById('participant_container'), html`${participantCards}`)
+								renderElem(document.getElementById('winners_container'), html`${winnerCards}`)
+							}).catch(err => {
+								console.log(err)
+
+							})
+					}).catch(err => {
+						console.log(err)
+					})
+				}
+					break;
+				case "block": {
+					if (!subPageId1) return;
+					let [blockInfo, blockTransactions] = await Promise.all([getBlockInfo(subPageId1), getBlockTransactions(subPageId1)])
+					getRef("page_title").textContent = "block";
+					renderElem(getRef("page_container"), html`${render.blockPage(blockInfo)}`);
+					renderTransactions('block_transaction_container', blockTransactions)
+				}
+					break
+#####=======
 				renderElem(document.getElementById('token_balance_container'), html`${tokenHolders.length ? tokenHolders : html`<div>No tokens found</div>`}`)
 			} catch (e) {
 				notify(e, 'error')
@@ -405,6 +485,7 @@
 			})
 			document.getElementById('winners_container').append(frag)
 		})
+#####
 
 		router.addRoute('block', async state => {
 			const [blockId] = state.wildcards
@@ -430,6 +511,25 @@
 			renderElem(getRef("page_container"), html`
 						<div id="all_transactions_page" class="page transaction-container"> </div>
 					`)
+#####
+					renderTransactions('all_transactions_page', allTxs)
+				}
+					break
+				case "transaction": {
+					if (!subPageId1) return
+					const [status, txInfo] = await getTxInfo(subPageId1);
+					if (status) {
+						renderElem(getRef("page_container"), html`${render.transactionPage(txInfo)}`);
+						getRef("page_title").textContent = "transaction";
+
+					} else {
+						render('error_page', txInfo)
+					}
+				}
+					break
+				case 'error_page': {
+					getRef("page_container").append(render.errorPage(field));
+#####=======
 			renderTransactions('all_transactions_page', allTxs)
 		})
 		router.addRoute('transaction', async state => {
@@ -443,6 +543,7 @@
 
 				} else {
 					renderElem(getRef("page_container"), html`${render.errorPage(txInfo)}`);
+#####
 				}
 			} catch (e) {
 				console.error(e)
@@ -674,19 +775,15 @@
 				if (type == 'smartContractPays' || type == ' smartContractPays') {
 					name = ''
 				}
-
 				if(type.trim() === 'nftIncorporation')
 					type = 'NFT Incorporation'
 				else if(type.trim() === 'nft transfer')
 					type = 'NFT Transfer'
-
 				return html`
 					<div id="transaction_page" class="page">
 						<div class='head'>
 							<h5 class="label">${type}</h5>
-							<h2 class="token uppercase">
-								<a href=${`#/token/${name}`} style="text-decoration:none;">${name}</a>
-							</h2>
+							<h2 class="token uppercase">${name}</h2>
 							<h5 class="label">Transaction ID</h5>
 							<sm-copy value=${hash} clip-text></sm-copy>
 						</div>
@@ -750,10 +847,10 @@
 				return html`
 				<div id="token_page" class="page">
 					<div class="card">
-					<h2 class="uppercase">${token}</h2>
+					<h2>${token}</h2>
 					<h5 class="label">Supply</h5>
 					<h4>${formatAmount(supply, token.toLowerCase() === 'rupee' ? 'inr' : 'usd')}</h4>
-					<h5 class="label">Incorporation address</h5>
+					<h5 class="label">Address</h5>
 					<h4 class="wrap-around">${incAddress}</h4>
 					</div>
 					<sm-chips data-target="token_views" onchange="changeView(event)">
@@ -768,15 +865,39 @@
               `;
 			},
 			contractPage(obj) {
-				let { status, contract, contractType, contractAddress, expiration, token, participationFees, userChoices, payeeAddress, minAmount, maxAmount } = obj;
+				let {
+					acceptingToken,
+					sellingToken,
+					subtype,
+					priceType,
+					price,
+					numberOfDeposits,
+					numberOfParticipants,
+					totalHonorAmount,
+					totalParticipationAmount,
+					status,
+					contractName,
+					contractType,
+					contractAddress,
+					expiryTime,
+					tokenIdentification,
+					participationFees,
+					userChoices,
+					payeeAddress,
+					minAmount,
+					maxAmount
+				} = obj;
+				console.log(obj);
 				return html`
 					<div id="contract_page" class="page">
-						<div class="status closed">${status}</div>
-                    	<h3 class="uppercase">${replaceDash(contract)}</h3>
+						${status ? html`
+							<div class="status ${status}">${status}</div>
+						`: ''}
+                    	<h3 class="uppercase">${replaceDash(contractName)}</h3>
 						${userChoices ? html`
 							<h3 class="heading">User Choices</h3>
 							<ul type="circle" class="card">
-								${object.keys(userChoices).map(choice => html`
+								${Object.keys(userChoices).map(choice => html`
 									<li>${userChoices[choice]}</li>
 								`)}
 							</ul>
@@ -786,60 +907,129 @@
 							<h4>${replaceDash(contractType)}</h4>
 							<h5 class="label">Contract Address</h5>
 							<a href=${`#/address/${contractAddress}`} class="address wrap-around">${contractAddress}</a>
-							${expiration ? html`
-								<h5 class="label">Expiration</h5>
-								<h4>${expiration}</h4>
-							` : ''}
-							${payeeAddress ? html`
-								<h5 class="label">Payee Address</h5>
-                  				<h4>${payeeAddress}</h4>
-							`: ''}
-							${minAmount ? html`
-								<h5 class="label">Min. Subscription Amount</h5>
-                  				<h4>${formatAmount(minAmount, 'usd')}</h4>
-							`: ''}
-							${maxAmount ? html`
-								<h5 class="label">Max. Subscription Amount</h5>
-				  				<h4>${formatAmount(maxAmount, 'usd')}</h4>
-							`: ''}
-							${participationFees ? html`
-								<h5 class="label">Participation Fees</h5>
-								<h4>${formatAmount(participationFees, 'usd')}</h4>
-							`: ''}
-							<h5 class="label">Token Used</h5>
-                        	<h4>${token}</h4>
+							<div id="contract_details">
+								${acceptingToken ? html`
+									<div class="grid">
+										<h5 class="label">Accepting Token</h5>
+										<h4>${acceptingToken}</h4>
+									</div>
+								`: ''}
+								${sellingToken ? html`
+									<div class="grid">
+										<h5 class="label">Selling Token</h5>
+										<h4>${sellingToken}</h4>
+									</div>
+									`: ''}
+								${subtype ? html`
+									<div class="grid">
+										<h5 class="label">Subtype</h5>
+										<h4>${subtype}</h4>
+									</div>
+									`: ''}
+								${priceType ? html`
+									<div class="grid">
+										<h5 class="label">Price Type</h5>
+										<h4>${priceType}</h4>
+									</div>
+									`: ''}
+								${price ? html`
+									<div class="grid">
+										<h5 class="label">Price</h5>
+										<h4>${formatAmount(price)} ${acceptingToken}</h4>
+									</div>
+									`: ''}
+								${numberOfDeposits ? html`
+									<div class="grid">
+										<h5 class="label">Number of Deposits</h5>
+										<h4>${numberOfDeposits}</h4>
+									</div>
+									`: ''}
+								${numberOfParticipants ? html`
+									<div class="grid">
+										<h5 class="label">Number of Participants</h5>
+										<h4>${numberOfParticipants}</h4>
+									</div>
+									`: ''}
+								${totalHonorAmount ? html`
+									<div class="grid">
+										<h5 class="label">Total Honor Amount</h5>
+										<h4>${formatAmount(totalHonorAmount)} ${sellingToken}</h4>
+									</div>
+									`: ''}
+								${totalParticipationAmount ? html`
+									<div class="grid">
+										<h5 class="label">Total Participation Amount</h5>
+										<h4>${formatAmount(totalParticipationAmount)} ${acceptingToken}</h4>
+									</div>
+									`: ''}
+								${expiryTime ? html`
+									<div class="grid">
+										<h5 class="label">Expiration</h5>
+										<h4>${getFormattedTime(new Date(expiryTime).getTime())}</h4>
+									</div>
+									` : ''}
+								${payeeAddress ? html`
+									<div class="grid">
+										<h5 class="label">Payee Address</h5>
+										<h4>${payeeAddress}</h4>
+									</div>
+									`: ''}
+								${minAmount ? html`
+									<div class="grid">
+										<h5 class="label">Min. Subscription Amount</h5>
+										<h4>${formatAmount(minAmount, 'usd')} ${tokenIdentification}</h4>
+									</div>
+									`: ''}
+								${maxAmount ? html`
+									<div class="grid">
+										<h5 class="label">Max. Subscription Amount</h5>
+										<h4>${formatAmount(maxAmount, 'usd')} ${tokenIdentification}</h4>
+									</div>
+								`: ''}
+								${participationFees ? html`
+									<div class="grid">
+										<h5 class="label">Participation Fees</h5>
+										<h4>${formatAmount(participationFees, 'usd')} ${tokenIdentification}</h4>
+									</div>
+								`: ''}
+								${tokenIdentification ? html`
+									<div class="grid">
+										<h5 class="label">Token Used</h5>
+										<h4>${tokenIdentification}</h4>
+									</div>
+								`: ''}
+							</div>
 						</div>
-					</div>
-					<sm-chips data-target="contract_views" onchange="changeView(event)">
-						<sm-chip value="0" selected>Transactions</sm-chip>
-						<sm-chip value="1">Participants</sm-chip>
-						<sm-chip value="2">Winners</sm-chip>
-					</sm-chips>
-					<div id="contract_views" class="view-wrapper">
-						<ul id="participant_container" class="card"></ul>
-						<ul id="winners_container" class="card hidden"></ul>
-						<div id="contract_transaction_container" class="transaction-container"></div>
+						<sm-chips data-target="contract_views" onchange="changeView(event)">
+							<sm-chip value="0" selected>Transactions</sm-chip>
+							<sm-chip value="1">Participants</sm-chip>
+							${userChoices ? html` <sm-chip value="2">Winners</sm-chip> ` : ''}
+						</sm-chips>
+						<div id="contract_views" class="view-wrapper">
+							<div id="contract_transaction_container" class="transaction-container"></div>
+							<ul id="participant_container" class="card hidden"></ul>
+							${userChoices ? html` <ul id="winners_container" class="card hidden"></ul> ` : ''}
+						</div>
 					</div>
 				`;
 			},
-			contractChoiceCard(address, token, choice, amount, winningAmount) {
-				let card = document.createElement('li'),
-					action;
-				card.classList.add('contract-choice')
+			contractChoiceCard(details) {
+				const { participantFloAddress, tokenIdentification = '', userChoice, tokenAmount, winningAmount } = details
+				let action;
 				if (winningAmount) {
 					action = 'Won'
-					amount = winningAmount
-				}
-				else
+				} else
 					action = 'Invested'
-				card.innerHTML = `   
-					<a href=${`#/address/${address}`} class="address wrap-around">${address}</a>
-                    <h4>${choice}</h4>
-                    <h4>${formatAmount(amount, token.toLowerCase() === 'rupee' ? 'inr' : 'usd')} ${token} ${action}</h4>
+				return html` 
+					<li class="contract-choice">  
+						<a href=${`#/address/${participantFloAddress}`} class="address wrap-around">${participantFloAddress}</a>
+						${userChoice ? html`<h4>${userChoice}</h4>` : ''}
+						<h4>${formatAmount(winningAmount || tokenAmount, tokenIdentification.toLowerCase() === 'rupee' ? 'inr' : 'usd')} ${tokenIdentification} ${action}</h4>
+					</li>
 					`
-				return card;
 			},
 			contractTransferCard(obj) {
+				console.log(obj)
 				const { hash, blockHeight, token, sender, receiver, amount, contractName, userChoice } = obj;
 				return html`
 					<div id=${hash} class="transaction token-transfer">
@@ -877,10 +1067,8 @@
 					<div id=${hash} class="transaction token-transfer">
 						<svg class="icon" viewBox="0 0 64 64"> <title>transfer</title> <polyline points="17.04 35.97 14.57 33.5 40.15 7.9 32.75 0.5 55.52 0.5 55.52 23.28 48.12 15.87 23.86 40.14 15.88 48.13 8.48 40.72 8.48 63.5 31.25 63.5 23.85 56.1 49.43 30.5 46.96 28.03"/> </svg>
 						<div class="contract-type">
-
 							<h5 class="label">${title}</h5>
 							<a href=${`#/token/${token}`} class="">${token}</a>
-
 						</div>
 						<div class="contract-info">
 							<div class="flex flex-direction-column">
@@ -1002,10 +1190,12 @@
 								<h5 class="label">contract type</h5>
 								<h4>${replaceDash(contractType)}</h4>
 							</div>
-							<div class="flex flex-direction-column">
-								<h5 class="label">expiration</h5>
-								<h4 class="capitalise">${expiration}</h4>
-							</div>
+							${expiration ? html`
+								<div class="flex flex-direction-column">
+									<h5 class="label">expiration</h5>
+									<h4 class="capitalise">${expiration}</h4>
+								</div>
+							`: ''}
 							<div class="flex flex-direction-column">
 								<h5 class="label">participation amount</h5>
 								<h4>${participationFees} ${token}</h4>
@@ -1087,7 +1277,7 @@
 			renderElem(getRef('suggestions'), html`${renderedSuggestions}`)
 		}, 100))
 		async function getBannerData() {
-			const { systemTransactionCount, systemAddressCount } = await fetchJson(`${tokenApiUrl}/api/v1.0/getSystemData`)
+			const { systemTransactionCount, systemAddressCount } = await fetchJson(`${tokenApiUrl}/api/v2/info`)
 			return {
 				topToken: "RMT",
 				totalTransactions: systemTransactionCount,
@@ -1103,7 +1293,7 @@
 		}
 
 		function getLatestTxs() {
-			return fetchJson(`${tokenApiUrl}/api/v1.0/getLatestTransactionDetails?numberOfLatestBlocks=4`)
+			return fetchJson(`${tokenApiUrl}/api/v2/latestTransactionDetails?numberOfLatestBlocks=4`)
 				.then(function (latestTxs) {
 					let latestTxArray = [];
 					for (const transactionKey in latestTxs.latestTransactions) {
@@ -1218,18 +1408,31 @@
 				});
 		}
 
-		function getLatestBlocks() {
-			return fetchJson(
-				`${tokenApiUrl}/api/v1.0/getLatestBlockDetails?numberOfLatestBlocks=4`
-			)
-				.then(function (latestBlocks) {
-					let obj = {};
-					return obj;
-				});
-		}
-
 		function getTokenInfo(thisToken) {
 			return new Promise((resolve, reject) => {
+#####
+				fetchJson(`${tokenApiUrl}/api/v2/tokenInfo/${thisToken.toLowerCase()}`)
+					.then(function (tokenInfo) {
+						console.log(tokenInfo.result);
+						if (tokenInfo.result === 'error') {
+							reject(tokenInfo.description);
+						}
+						let associatedSC = {};
+						for (let i = 0, associatedScList = tokenInfo["associatedSmartContracts"]; i < associatedScList.length; i++) {
+							associatedSC[`${associatedScList[i]["contractName"]}-${associatedScList[i]["contractAddress"]}`] = associatedScList[i];
+						}
+						let obj = {
+							token: tokenInfo["token"],
+							supply: tokenInfo["tokenSupply"],
+							incAddress: tokenInfo["incorporationAddress"],
+							associatedContracts: associatedSC,
+							blockchainReference: tokenInfo["blockchainReference"],
+						};
+						resolve(obj);
+					}).catch(function (error) {
+						reject(error);
+					});
+#####=======
 				fetchJson(
 					`${tokenApiUrl}/api/v1.0/getTokenInfo?token=${thisToken.toLowerCase()}`
 				).then(function (tokenInfo) {
@@ -1249,21 +1452,22 @@
 				}).catch((err) => {
 					reject(err);
 				});
+#####
 			})
 		}
 
 		async function getTokenBalances(tokenName) {
-			const tokenDetails = await fetchJson(`${tokenApiUrl}/api/v1.0/getTokenBalances?token=` + tokenName)
+			const tokenDetails = await fetchJson(`${tokenApiUrl}/api/v2/tokenBalances/` + tokenName)
 			return tokenDetails.balances
 		}
 
 		async function getTokenTransactions(tokenName) {
-			const transactions = await fetchJson(`${tokenApiUrl}/api/v1.0/getTokenTransactions?token=` + tokenName)
+			const transactions = await fetchJson(`${tokenApiUrl}/api/v2/tokenTransactions/` + tokenName)
 			return transactions.transactions
 		}
 
 		async function getBlockInfo(thisBlock) {
-			const info = await fetchJson(`${tokenApiUrl}/api/v1.0/getBlockDetails/${thisBlock}`);
+			const info = await fetchJson(`${tokenApiUrl}/api/v2/blockDetails/${thisBlock}`);
 			const { height, size, reward, hash, difficulty, nonce, tx } = info.blockDetails
 			return {
 				blockHeight: height,
@@ -1278,36 +1482,47 @@
 
 
 		async function getBlockTransactions(thisBlock) {
-			const blockTransactions = await fetchJson(`${tokenApiUrl}/api/v1.0/getBlockTransactions/${thisBlock}`)
+			const blockTransactions = await fetchJson(`${tokenApiUrl}/api/v2/blockTransactions/${thisBlock}`)
 			return blockTransactions.transactions
 		}
 
 		async function getContractInfo(contract) {
-			const info = await fetchJson(`${tokenApiUrl}/api/v1.0/getSmartContractInfo?contractName=${contract.name}&contractAddress=${contract.address}`);
+			// TODO: camelCase minimumsubscriptionamount and maximumsubscriptionamount
+			const info = await fetchJson(`${tokenApiUrl}/api/v2/smartContractInfo?contractName=${contract.name}&contractAddress=${contract.address}`);
 			console.log(info, contract)
-			const { contractInfo: { contractType, status, expiryTime, payeeAddress, userChoice, tokenIdentification, contractAmount, minimumsubscriptionamount, maximumsubscriptionamount }, contractAddress, contractName } = info
+			const { contractInfo, contractAddress, contractName } = info
 			return {
-				contract: contractName,
+				acceptingToken: contractInfo.accepting_token,
+				sellingToken: contractInfo.selling_token,
+				subtype: contractInfo.subtype,
+				priceType: contractInfo.pricetype,
+				price: contractInfo.price,
+				numberOfDeposits: contractInfo.numberOfDeposits,
+				numberOfParticipants: contractInfo.numberOfParticipants,
+				totalHonorAmount: contractInfo.totalHonorAmount,
+				totalParticipationAmount: contractInfo.totalParticipationAmount,
+				contractName,
 				contractAddress,
-				contractType,
-				status,
-				expiration: expiryTime,
-				payeeAddress,
-				userChoices: userChoice,
-				token: tokenIdentification,
-				participationFees: contractAmount,
-				minAmount: minimumsubscriptionamount,
-				maxAmount: maximumsubscriptionamount
+				contractType: contractInfo.contractType,
+				status: contractInfo.status,
+				expiryTime: contractInfo.expiryTime,
+				payeeAddress: contractInfo.payeeAddress,
+				userChoices: contractInfo.userChoice,
+				tokenIdentification: contractInfo.tokenIdentification,
+				participationFees: contractInfo.contractAmount,
+				minAmount: contractInfo.minimumsubscriptionamount,
+				maxAmount: contractInfo.maximumsubscriptionamount,
+
 			}
 		}
 
 		async function getContractParticipants(contract) {
-			const participants = await fetchJson(`${tokenApiUrl}/api/v1.0/getSmartContractParticipants?contractName=${contract.name}&contractAddress=${contract.address}`)
+			const participants = await fetchJson(`${tokenApiUrl}/api/v2/smartContractParticipants?contractName=${contract.name}&contractAddress=${contract.address}`)
 			return participants.participantInfo
 		}
 
 		async function getContractTransactions(contract) {
-			const transactions = await fetchJson(`${tokenApiUrl}/api/v1.0/getSmartContractTransactions?contractName=${contract.name}&contractAddress=${contract.address}`)
+			const transactions = await fetchJson(`${tokenApiUrl}/api/v2/smartContractTransactions?contractName=${contract.name}&contractAddress=${contract.address}`)
 			return transactions.contractTransactions
 		}
 
@@ -1318,11 +1533,22 @@
 			// Object
 			let latestTxArray = [];
 			for (const transactionKey in txList) {
+#####
+				const {
+					transactionDetails: {
+						txid, blockHeight, vin, vout
+					}
+					, parsedFloData: {
+						contractAddress, contractType, expiryTime, contractAmount, type, tokenAmount, tokenIdentification, transferType, contractName, triggerCondition, userChoice
+					}
+				} = txList[transactionKey];
+#####=======
 				console.log(transactionKey)
 				if(transactionKey == '11571ce7e5eed0bce30e24de89bb1ba6cc432df7b5b40bbc9f0225b98968cb47'){
 					//debugger
 				}
 				const { transactionDetails: { txid, blockHeight, vin, vout }, parsedFloData: { contractAddress, contractType, expiryTime, contractAmount, type, tokenAmount, tokenIdentification, transferType, contractName, triggerCondition, userChoice,nftHash } } = txList[transactionKey];
+#####
 				let obj = {
 					hash: txid,
 					blockHeight,
@@ -1433,17 +1659,17 @@
 		}
 
 		async function getAllBlocks(number) {
-			const allBlocks = await fetchJson(`${tokenApiUrl}/api/v1.0/getLatestBlockDetails${number ? `?limit=${number}` : ''}`)
+			const allBlocks = await fetchJson(`${tokenApiUrl}/api/v2/latestBlockDetails${number ? `?limit=${number}` : ''}`)
 			return Object.values(allBlocks.latestBlocks).sort((a, b) => b.height - a.height)
 		}
 
 		async function getAllTxs() {
-			const allTxs = await fetchJson(`${tokenApiUrl}/api/v1.0/getLatestTransactionDetails?limit=200`)
+			const allTxs = await fetchJson(`${tokenApiUrl}/api/v2/latestTransactionDetails?limit=200`)
 			return allTxs.latestTransactions
 		}
 
 		async function getAddressInfo(floAddress) {
-			const addressInfo = await fetchJson(`${tokenApiUrl}/api/v1.0/getFloAddressInfo?floAddress=${floAddress}`)
+			const addressInfo = await fetchJson(`${tokenApiUrl}/api/v2/floAddressInfo?floAddress=${floAddress}`)
 			return addressInfo.floAddressBalances
 		}
 
@@ -1452,13 +1678,13 @@
 		}
 
 		async function getAddressTxs(floAddress) {
-			const transactions = await fetchJson(`${tokenApiUrl}/api/v1.0/getFloAddressTransactions?floAddress=${floAddress}`)
+			const transactions = await fetchJson(`${tokenApiUrl}/api/v2/floAddressTransactions?floAddress=${floAddress}`)
 			return transactions.transactions
 		}
 
 		async function getTxInfo(thisTx) {
 			try {
-				const transaction = await fetchJson(`${tokenApiUrl}/api/v1.0/getTransactionDetails/${thisTx}`)
+				const transaction = await fetchJson(`${tokenApiUrl}/api/v2/transactionDetails/${thisTx}`)
 				if (transaction.result === 'error') {
 					return [false, transaction.description]
 				} else {
@@ -1541,7 +1767,7 @@
 					//console.log('data entered is a token name');
 					location.href = `#/token/${text}`
 					resolve('token')
-				} else if (window.ranchimallFlo.smartContractNameAddressList.includes(text)) {
+				} else if (window.ranchimallFlo.smartContractNameAddressList.has(text)) {
 					location.href = `#/contract/${text}`
 					resolve('contract')
 				} else if (text.length == 64 && returnHexNumber(text)) {
@@ -1581,17 +1807,15 @@
 		async function getAllSuggestions() {
 			window.allSuggestions = [];
 			window.ranchimallFlo = {};
-			let { tokens, smartContracts } = await fetchJson(`${window.tokenApiUrl}/api/v1.0/getTokenSmartContractList`);
+			let { tokens, smartContracts } = await fetchJson(`${window.tokenApiUrl}/api/v2/tokenSmartContractList`);
 			//console.log('first line of the fetch result');
 			ranchimallFlo.tokenList = tokens;
 			ranchimallFlo.smartContractList = smartContracts;
-			ranchimallFlo.smartContractNameList = [];
-			ranchimallFlo.smartContractNameAddressList = [];
+			ranchimallFlo.smartContractNameAddressList = new Set();
 			//console.log(ranchimallFlo.smartContractList.length);
 			ranchimallFlo.smartContractList.forEach(contract => {
 				allSuggestions.push(`${contract.contractName}-${contract.contractAddress}`);
-				ranchimallFlo.smartContractNameList.push(contract.contractName);
-				ranchimallFlo.smartContractNameAddressList.push(`${contract.contractName}-${contract.contractAddress}`);
+				ranchimallFlo.smartContractNameAddressList.add(`${contract.contractName}-${contract.contractAddress}`);
 			})
 			ranchimallFlo.tokenList.forEach(token => allSuggestions.push(token));
 			flexSearch = new FlexSearch({
@@ -1602,6 +1826,22 @@
 
 			allSuggestions.forEach((suggestion, index) => {
 				flexSearch.add(index, suggestion);
+			})
+		}
+
+		function getSmartContractsList() {
+			return new Promise((resolve, reject) => {
+				fetchJson(`${window.tokenApiUrl}/api/v2/smartContractList`)
+					.then(myJson => {
+						myJson.smartContracts.forEach(contract => {
+							console.log(contract.contractName, contract.contractAddress);
+						})
+						resolve(myJson.smartContracts)
+					})
+					.catch(err => {
+						console.error(err)
+						resolve([])
+					})
 			})
 		}
 
