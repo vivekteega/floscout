@@ -751,7 +751,7 @@
 					<div class="card">
 					<h2 class="uppercase">${token}</h2>
 					<h5 class="label">Supply</h5>
-					<h4>${formatAmount(supply, token.toLowerCase() === 'rupee' ? 'inr' : 'usd')}</h4>
+					<h4> ${supply ? formatAmount(supply, token.toLowerCase() === 'rupee' ? 'inr' : 'usd') : 'Infinite'} </h4>
 					<h5 class="label">Incorporation address</h5>
 					<h4 class="wrap-around">${incAddress}</h4>
 					</div>
