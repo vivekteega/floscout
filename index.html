@@ -408,7 +408,7 @@
 		router.addRoute('block', async state => {
 			const [blockId] = state.wildcards
 			if (!blockId) return;
-			let [blockInfo, blockTxs] = await Promise.all([getBlockInfo(blockId), getBlockTxs(blockId)])
+			let [blockInfo, blockTxs] = await Promise.all([getBlockInfo(blockId), getBlockTransactions(blockId)])
 			renderElem(getRef("page_container"), html`${render.blockPage(blockInfo)}`);
 			getRef("page_title").textContent = 'Block'
 			renderTransactions('block_transaction_container', blockTxs)
@@ -879,7 +879,17 @@
 							<h5 class="label">${title}</h5>
 							<a href=${`#/token/${token}`} class="">${token}</a>
 						</div>
-						<div class="contract-info">
+						<div class="contract-info">						
+							<div class="flex flex-wrap gap-1">	
+								<div class="flex flex-direction-column">
+									<h5 class="label">Sender</h5>
+									<a href=${`#/address/${sender}`} class="address wrap-around">${sender}</a> 
+								</div>
+								<div class="flex flex-direction-column">
+									<h5 class="label">Receiver</h5>
+									<a href=${`#/address/${receiver}`} class="address wrap-around">${receiver}</a> 
+								</div>
+							</div>
 							<div class="flex flex-direction-column">
 								<h5 class="label">Amount</h5>
 								<h4>${formatAmount(amount, token.toLowerCase() === 'rupee' ? 'inr' : 'usd')} ${token}</h4>
@@ -1157,7 +1167,6 @@
 			}
 		}
 
-
 		async function getBlockTransactions(thisBlock) {
 			const blockTransactions = await fetchJson(`${tokenApiUrl}/api/v2/blockTransactions/${thisBlock}`)
 			return blockTransactions.transactions
@@ -1193,6 +1202,9 @@
 		}
 
 		function parseTransactions(txList) {
+			console.log(txList)
+			if(!Array.isArray(txList))
+			txList = Object.values(txList)
 			let latestTxArray = [];
 			txList.forEach(tx => {
 				// console.log(transactionKey)
