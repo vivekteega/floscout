@@ -11,6 +11,7 @@
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 	<script src="https://unpkg.com/uhtml@3.0.1/es.js"></script>
 	<script src="components.min.js"></script>
+	<link rel="shortcut icon" href="floscout.svg" type="image/x-icon">
 </head>
 
 <body data-theme="light" class="hidden">
@@ -673,15 +674,19 @@
 				if (type == 'smartContractPays' || type == ' smartContractPays') {
 					name = ''
 				}
+
 				if(type.trim() === 'nftIncorporation')
 					type = 'NFT Incorporation'
 				else if(type.trim() === 'nft transfer')
 					type = 'NFT Transfer'
+
 				return html`
 					<div id="transaction_page" class="page">
 						<div class='head'>
 							<h5 class="label">${type}</h5>
-							<h2 class="token uppercase">${name}</h2>
+							<h2 class="token uppercase">
+								<a href=${`#/token/${name}`} style="text-decoration:none;">${name}</a>
+							</h2>
 							<h5 class="label">Transaction ID</h5>
 							<sm-copy value=${hash} clip-text></sm-copy>
 						</div>
@@ -745,10 +750,10 @@
 				return html`
 				<div id="token_page" class="page">
 					<div class="card">
-					<h2>${token}</h2>
+					<h2 class="uppercase">${token}</h2>
 					<h5 class="label">Supply</h5>
 					<h4>${formatAmount(supply, token.toLowerCase() === 'rupee' ? 'inr' : 'usd')}</h4>
-					<h5 class="label">Address</h5>
+					<h5 class="label">Incorporation address</h5>
 					<h4 class="wrap-around">${incAddress}</h4>
 					</div>
 					<sm-chips data-target="token_views" onchange="changeView(event)">
@@ -872,8 +877,10 @@
 					<div id=${hash} class="transaction token-transfer">
 						<svg class="icon" viewBox="0 0 64 64"> <title>transfer</title> <polyline points="17.04 35.97 14.57 33.5 40.15 7.9 32.75 0.5 55.52 0.5 55.52 23.28 48.12 15.87 23.86 40.14 15.88 48.13 8.48 40.72 8.48 63.5 31.25 63.5 23.85 56.1 49.43 30.5 46.96 28.03"/> </svg>
 						<div class="contract-type">
+
 							<h5 class="label">${title}</h5>
 							<a href=${`#/token/${token}`} class="">${token}</a>
+
 						</div>
 						<div class="contract-info">
 							<div class="flex flex-direction-column">
