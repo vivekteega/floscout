@@ -329,7 +329,6 @@
 		async function renderHome(state) {
 			getRef("page_header").classList.add("hidden");
 			let [data, latestTxs, latestBlocks] = await Promise.all([getBannerData(), getLatestTxs(), getAllBlocks(6)])
-			console.log(latestTxs)
 			renderElem(getRef("page_container"), html`${render.homepage(data)}`);
 			renderTransactions('top_transaction_container', latestTxs)
 			const renderedBlocks = latestBlocks.map(block => render.blockCard(block))
@@ -877,10 +876,8 @@
 					<div id=${hash} class="transaction token-transfer">
 						<svg class="icon" viewBox="0 0 64 64"> <title>transfer</title> <polyline points="17.04 35.97 14.57 33.5 40.15 7.9 32.75 0.5 55.52 0.5 55.52 23.28 48.12 15.87 23.86 40.14 15.88 48.13 8.48 40.72 8.48 63.5 31.25 63.5 23.85 56.1 49.43 30.5 46.96 28.03"/> </svg>
 						<div class="contract-type">
-
 							<h5 class="label">${title}</h5>
 							<a href=${`#/token/${token}`} class="">${token}</a>
-
 						</div>
 						<div class="contract-info">
 							<div class="flex flex-direction-column">
@@ -1042,7 +1039,7 @@
 		}
 
 		async function renderTransactions(container, transactions = []) {
-			let txFrag = getTxFrag(transactions);
+			let txFrag = parseTransactions(transactions);
 			const renderedTransactions = txFrag.map(tx => {
 				switch (tx.type) {
 					case 'tokentransfer':
@@ -1064,7 +1061,6 @@
 						break;
 				}
 			})
-			console.log(renderedTransactions)
 			renderElem(document.getElementById(container), html`${renderedTransactions.length ? renderedTransactions : html`<div class="no-results">No transactions found</div>`}`)
 		}
 
@@ -1087,7 +1083,7 @@
 			renderElem(getRef('suggestions'), html`${renderedSuggestions}`)
 		}, 100))
 		async function getBannerData() {
-			const { systemTransactionCount, systemAddressCount } = await fetchJson(`${tokenApiUrl}/api/v1.0/getSystemData`)
+			const { systemTransactionCount, systemAddressCount } = await fetchJson(`${tokenApiUrl}/api/v2/info`)
 			return {
 				topToken: "RMT",
 				totalTransactions: systemTransactionCount,
@@ -1103,135 +1099,20 @@
 		}
 
 		function getLatestTxs() {
-			return fetchJson(`${tokenApiUrl}/api/v1.0/getLatestTransactionDetails?numberOfLatestBlocks=4`)
-				.then(function (latestTxs) {
-					let latestTxArray = [];
-					for (const transactionKey in latestTxs.latestTransactions) {
-						const { transactionDetails: { txid, blockHeight, vin, vout }, parsedFloData: { type, tokenAmount, tokenIdentification, transferType, contractName, triggerCondition, userChoice,nftHash } } = latestTxs.latestTransactions[transactionKey];
-						// determine txhash and blockHeight
-						let obj = {
-							hash: txid,
-							blockHeight,
-						};
-
-						if (type != "smartContractPays") {
-							// determine token
-							obj["token"] = tokenIdentification;
-
-							if (type == "transfer") {
-								if (transferType == "token" || transferType == "nft") {
-									// token transfer
-									/* tokenTransferCard
-									hash, blockHeight, token, sender, receiver, amount */
-
-									let receiverAddress = "";
-									for (const output of vout) {
-										if (output["scriptPubKey"]["addresses"][0] !== vin[0]["addr"]) {
-											receiverAddress = output["scriptPubKey"]["addresses"][0];
-											break;
-										}
-									}
-
-									obj = Object.assign({}, obj, {
-										sender: vin[0]["addr"],
-										receiver: receiverAddress,
-										amount: tokenAmount,
-										type: "tokentransfer",
-									});
-									latestTxArray.push(obj);
-								} else if (transferType === "smartContract") {
-									// smart contract transfer
-									let receiverAddress = "";
-									for (const output of vout) {
-										if (output["scriptPubKey"]["addresses"][0] != vin[0]["addr"]) {
-											receiverAddress = output["scriptPubKey"]["addresses"][0];
-											break;
-										}
-									}
-
-									obj = Object.assign({}, obj, {
-										sender: vin[0]["addr"],
-										receiver: receiverAddress,
-										amount: tokenAmount,
-										contractName: contractName,
-										userChoice: userChoice,
-										type: "contracttransfer",
-									});
-									latestTxArray.push(obj);
-								}
-							} else if (type === "smartContractIncorporation") {
-								// smart contract incorporation
-								// todo : add checks to determine obj for different types of smart contract incorporation
-								obj = Object.assign({}, obj, {
-									contractName: contractName,
-									incAddress: contractAddress,
-									contractType: contractType,
-									expiration: expiryTime,
-									participationFees: contractAmount,
-									availableChoices: "",
-									type: "contractincorp",
-								});
-								latestTxArray.push(obj);
-							} else if (type === "tokenIncorporation") {
-								// token incorporation
-								// smart contract incorporation
-								obj = Object.assign({}, obj, {
-									incAddress: vin[0]["addr"],
-									supply: tokenAmount,
-									type: "tokenincorp",
-								});
-								latestTxArray.push(obj);
-							} else if (type === "nftIncorporation") {
-								// token incorporation
-								// smart contract incorporation
-								obj = Object.assign({}, obj, {
-									incAddress: vin[0]["addr"],
-									supply: tokenAmount,
-									type,
-									nftHash,
-								});
-								latestTxArray.push(obj);
-							}
-						} else {
-							// smart contract committee trigger
-							// smart contract incorporation
-							let receiverAddress = "";
-							for (const output of vout) {
-								if (output["scriptPubKey"]["addresses"][0] != vin[0]["addr"]) {
-									receiverAddress = output["scriptPubKey"]["addresses"][0];
-									break;
-								}
-							}
-							obj = Object.assign({}, obj, {
-								contractName,
-								contractAddress: receiverAddress,
-								winningChoice: triggerCondition,
-								committeeAddress: vin[0]["addr"],
-								type: "contracttrigger",
-							});
-							latestTxArray.push(obj);
-						}
-					}
-					return latestTxArray;
-				}).catch((err) => {
-					console.log(err)
-				});
-		}
-
-		function getLatestBlocks() {
-			return fetchJson(
-				`${tokenApiUrl}/api/v1.0/getLatestBlockDetails?numberOfLatestBlocks=4`
-			)
-				.then(function (latestBlocks) {
-					let obj = {};
-					return obj;
-				});
+			return new Promise((resolve,reject) => {
+				fetchJson(`${tokenApiUrl}/api/v2/latestTransactionDetails?limit=4`)
+					.then(function (latestTxs) {
+						resolve(latestTxs.latestTransactions)
+					}).catch((err) => {
+						reject(err)
+					});
+			}) 
 		}
 
 		function getTokenInfo(thisToken) {
 			return new Promise((resolve, reject) => {
 				fetchJson(
-					`${tokenApiUrl}/api/v1.0/getTokenInfo?token=${thisToken.toLowerCase()}`
+					`${tokenApiUrl}/api/v2/tokenInfo/${thisToken.toLowerCase()}`
 				).then(function (tokenInfo) {
 					if (tokenInfo.result === "error")
 						reject(tokenInfo.description);
@@ -1253,17 +1134,17 @@
 		}
 
 		async function getTokenBalances(tokenName) {
-			const tokenDetails = await fetchJson(`${tokenApiUrl}/api/v1.0/getTokenBalances?token=` + tokenName)
+			const tokenDetails = await fetchJson(`${tokenApiUrl}/api/v2/tokenBalances/` + tokenName)
 			return tokenDetails.balances
 		}
 
 		async function getTokenTransactions(tokenName) {
-			const transactions = await fetchJson(`${tokenApiUrl}/api/v1.0/getTokenTransactions?token=` + tokenName)
+			const transactions = await fetchJson(`${tokenApiUrl}/api/v2/tokenTransactions/` + tokenName)
 			return transactions.transactions
 		}
 
 		async function getBlockInfo(thisBlock) {
-			const info = await fetchJson(`${tokenApiUrl}/api/v1.0/getBlockDetails/${thisBlock}`);
+			const info = await fetchJson(`${tokenApiUrl}/api/v2/blockDetails/${thisBlock}`);
 			const { height, size, reward, hash, difficulty, nonce, tx } = info.blockDetails
 			return {
 				blockHeight: height,
@@ -1278,12 +1159,12 @@
 
 
 		async function getBlockTransactions(thisBlock) {
-			const blockTransactions = await fetchJson(`${tokenApiUrl}/api/v1.0/getBlockTransactions/${thisBlock}`)
+			const blockTransactions = await fetchJson(`${tokenApiUrl}/api/v2/blockTransactions/${thisBlock}`)
 			return blockTransactions.transactions
 		}
 
 		async function getContractInfo(contract) {
-			const info = await fetchJson(`${tokenApiUrl}/api/v1.0/getSmartContractInfo?contractName=${contract.name}&contractAddress=${contract.address}`);
+			const info = await fetchJson(`${tokenApiUrl}/api/v2/smartContractInfo?contractName=${contract.name}&contractAddress=${contract.address}`);
 			console.log(info, contract)
 			const { contractInfo: { contractType, status, expiryTime, payeeAddress, userChoice, tokenIdentification, contractAmount, minimumsubscriptionamount, maximumsubscriptionamount }, contractAddress, contractName } = info
 			return {
@@ -1302,27 +1183,29 @@
 		}
 
 		async function getContractParticipants(contract) {
-			const participants = await fetchJson(`${tokenApiUrl}/api/v1.0/getSmartContractParticipants?contractName=${contract.name}&contractAddress=${contract.address}`)
+			const participants = await fetchJson(`${tokenApiUrl}/api/v2/smartContractParticipants?contractName=${contract.name}&contractAddress=${contract.address}`)
 			return participants.participantInfo
 		}
 
 		async function getContractTransactions(contract) {
-			const transactions = await fetchJson(`${tokenApiUrl}/api/v1.0/getSmartContractTransactions?contractName=${contract.name}&contractAddress=${contract.address}`)
+			const transactions = await fetchJson(`${tokenApiUrl}/api/v2/smartContractTransactions?contractName=${contract.name}&contractAddress=${contract.address}`)
 			return transactions.contractTransactions
 		}
 
-		function getTxFrag(txList) {
-			// Check if "txList" is array or object
-			if (Array.isArray(txList))
-				return txList;
-			// Object
+		function parseTransactions(txList) {
 			let latestTxArray = [];
-			for (const transactionKey in txList) {
-				console.log(transactionKey)
-				if(transactionKey == '11571ce7e5eed0bce30e24de89bb1ba6cc432df7b5b40bbc9f0225b98968cb47'){
-					//debugger
-				}
-				const { transactionDetails: { txid, blockHeight, vin, vout }, parsedFloData: { contractAddress, contractType, expiryTime, contractAmount, type, tokenAmount, tokenIdentification, transferType, contractName, triggerCondition, userChoice,nftHash } } = txList[transactionKey];
+			txList.forEach(tx => {
+				// console.log(transactionKey)
+				// if(transactionKey == '11571ce7e5eed0bce30e24de89bb1ba6cc432df7b5b40bbc9f0225b98968cb47'){
+				// 	//debugger
+				// }
+				const { 
+					transactionDetails: { 
+						txid, blockHeight, vin, vout },
+					parsedFloData: {
+							contractAddress, contractType, expiryTime, contractAmount, type, tokenAmount, tokenIdentification, transferType, contractName, triggerCondition, userChoice,nftHash 
+							} 
+						} = tx;
 				let obj = {
 					hash: txid,
 					blockHeight,
@@ -1340,7 +1223,7 @@
 										break;
 									}
 								}
-
+	
 								obj = Object.assign({}, obj, {
 									sender: vin[0]["addr"],
 									receiver: receiverAddress,
@@ -1358,7 +1241,7 @@
 										break;
 									}
 								}
-
+	
 								obj = Object.assign({}, obj, {
 									sender: vin[0]["addr"],
 									receiver: receiverAddress,
@@ -1405,10 +1288,10 @@
 							latestTxArray.push(obj);
 							break;
 						}
-
+	
 				} else {
 					// transaction is a FLO Smart Contract Committee trigger
-
+	
 					let receiver = "", sender = vin[0]['addr'];
 					for (const output of vout) {
 						if (output["scriptPubKey"]["addresses"][0] !== vin[0]["addr"]) {
@@ -1416,7 +1299,7 @@
 							break;
 						}
 					}
-
+	
 					obj = Object.assign({}, obj, {
 						hash: txid,
 						blockHeight,
@@ -1428,22 +1311,23 @@
 					});
 					latestTxArray.push(obj);
 				}
-			}
+			})
+
 			return latestTxArray;
 		}
 
 		async function getAllBlocks(number) {
-			const allBlocks = await fetchJson(`${tokenApiUrl}/api/v1.0/getLatestBlockDetails${number ? `?limit=${number}` : ''}`)
+			const allBlocks = await fetchJson(`${tokenApiUrl}/api/v2/latestBlockDetails${number ? `?limit=${number}` : ''}`)
 			return Object.values(allBlocks.latestBlocks).sort((a, b) => b.height - a.height)
 		}
 
 		async function getAllTxs() {
-			const allTxs = await fetchJson(`${tokenApiUrl}/api/v1.0/getLatestTransactionDetails?limit=200`)
+			const allTxs = await fetchJson(`${tokenApiUrl}/api/v2/latestTransactionDetails?limit=200`)
 			return allTxs.latestTransactions
 		}
 
 		async function getAddressInfo(floAddress) {
-			const addressInfo = await fetchJson(`${tokenApiUrl}/api/v1.0/getFloAddressInfo?floAddress=${floAddress}`)
+			const addressInfo = await fetchJson(`${tokenApiUrl}/api/v2/floAddressInfo/${floAddress}`)
 			return addressInfo.floAddressBalances
 		}
 
@@ -1452,13 +1336,13 @@
 		}
 
 		async function getAddressTxs(floAddress) {
-			const transactions = await fetchJson(`${tokenApiUrl}/api/v1.0/getFloAddressTransactions?floAddress=${floAddress}`)
+			const transactions = await fetchJson(`${tokenApiUrl}/api/v2/floAddressTransactions/${floAddress}`)
 			return transactions.transactions
 		}
 
 		async function getTxInfo(thisTx) {
 			try {
-				const transaction = await fetchJson(`${tokenApiUrl}/api/v1.0/getTransactionDetails/${thisTx}`)
+				const transaction = await fetchJson(`${tokenApiUrl}/api/v2/transactionDetails/${thisTx}`)
 				if (transaction.result === 'error') {
 					return [false, transaction.description]
 				} else {
@@ -1545,9 +1429,9 @@
 					location.href = `#/contract/${text}`
 					resolve('contract')
 				} else if (text.length == 64 && returnHexNumber(text)) {
-					fetchJson(`${window.tokenApiUrl}/api/v1.0/categoriseString/` + text)
+					fetchJson(`${window.tokenApiUrl}/api/v2/categoriseString/` + text)
 						.then(function (myJson) {
-							console.log(`${window.tokenApiUrl}/api/v1.0/categoriseString/` + text)
+							console.log(`${window.tokenApiUrl}/api/v2/categoriseString/` + text)
 							if (myJson['type'] == 'transaction') {
 								//console.log('data entered is a transaction hash');
 								location.href = `#/transaction/${text}`
@@ -1581,7 +1465,7 @@
 		async function getAllSuggestions() {
 			window.allSuggestions = [];
 			window.ranchimallFlo = {};
-			let { tokens, smartContracts } = await fetchJson(`${window.tokenApiUrl}/api/v1.0/getTokenSmartContractList`);
+			let { tokens, smartContracts } = await fetchJson(`${window.tokenApiUrl}/api/v2/tokenSmartContractList`);
 			//console.log('first line of the fetch result');
 			ranchimallFlo.tokenList = tokens;
 			ranchimallFlo.smartContractList = smartContracts;
