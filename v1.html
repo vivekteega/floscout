@@ -11,7 +11,6 @@
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 	<script src="https://unpkg.com/uhtml@3.0.1/es.js"></script>
 	<script src="components.min.js"></script>
-	<link rel="shortcut icon" href="floscout.svg" type="image/x-icon">
 </head>
 
 <body data-theme="light" class="hidden">
@@ -329,6 +328,7 @@
 		async function renderHome(state) {
 			getRef("page_header").classList.add("hidden");
 			let [data, latestTxs, latestBlocks] = await Promise.all([getBannerData(), getLatestTxs(), getAllBlocks(6)])
+			console.log(latestTxs)
 			renderElem(getRef("page_container"), html`${render.homepage(data)}`);
 			renderTransactions('top_transaction_container', latestTxs)
 			const renderedBlocks = latestBlocks.map(block => render.blockCard(block))
@@ -408,7 +408,7 @@
 		router.addRoute('block', async state => {
 			const [blockId] = state.wildcards
 			if (!blockId) return;
-			let [blockInfo, blockTxs] = await Promise.all([getBlockInfo(blockId), getBlockTransactions(blockId)])
+			let [blockInfo, blockTxs] = await Promise.all([getBlockInfo(blockId), getBlockTxs(blockId)])
 			renderElem(getRef("page_container"), html`${render.blockPage(blockInfo)}`);
 			getRef("page_title").textContent = 'Block'
 			renderTransactions('block_transaction_container', blockTxs)
@@ -668,24 +668,20 @@
 				`;
 			},
 			transactionPage(obj) {
-				let { type, name, blockHeight, amount, sender, receiver, floData, hash, confirmations, nftHash } = obj;
+				let { type, name, blockHeight, amount, sender, receiver, floData, hash, confirmations,nftHash} = obj;
 				// todo : This is a temporary fix. Fix this on the Database and API level
 				if (type == 'smartContractPays' || type == ' smartContractPays') {
 					name = ''
 				}
-
-				if (type.trim() === 'nftIncorporation')
+				if(type.trim() === 'nftIncorporation')
 					type = 'NFT Incorporation'
-				else if (type.trim() === 'nft transfer')
+				else if(type.trim() === 'nft transfer')
 					type = 'NFT Transfer'
-
 				return html`
 					<div id="transaction_page" class="page">
 						<div class='head'>
 							<h5 class="label">${type}</h5>
-							<h2 class="token uppercase">
-								<a href=${`#/token/${name}`} style="text-decoration:none;">${name}</a>
-							</h2>
+							<h2 class="token uppercase">${name}</h2>
 							<h5 class="label">Transaction ID</h5>
 							<sm-copy value=${hash} clip-text></sm-copy>
 						</div>
@@ -712,11 +708,12 @@
 							<p>${floData}</p>
 							<h5 class="label">Block Confirmations</h5>
 							<h4>${confirmations}</h4>
-							${nftHash ? html`
+							${
+								nftHash?html`
 									<h5 class="label">NFT hash</h5>
 									<sm-copy value=${nftHash} clip-text></sm-copy>
-								`: ''
-					}
+								`:''
+							}
 						</div>
 					</div>
               `;
@@ -748,10 +745,10 @@
 				return html`
 				<div id="token_page" class="page">
 					<div class="card">
-					<h2 class="uppercase">${token}</h2>
+					<h2>${token}</h2>
 					<h5 class="label">Supply</h5>
-					<h4> ${supply ? formatAmount(supply, token.toLowerCase() === 'rupee' ? 'inr' : 'usd') : 'Infinite'} </h4>
-					<h5 class="label">Incorporation address</h5>
+					<h4>${formatAmount(supply, token.toLowerCase() === 'rupee' ? 'inr' : 'usd')}</h4>
+					<h5 class="label">Address</h5>
 					<h4 class="wrap-around">${incAddress}</h4>
 					</div>
 					<sm-chips data-target="token_views" onchange="changeView(event)">
@@ -838,7 +835,7 @@
 				return card;
 			},
 			contractTransferCard(obj) {
-				const { hash, blockHeight, token, sender, receiver, amount, contractName, userChoice, time } = obj;
+				const { hash, blockHeight, token, sender, receiver, amount, contractName, userChoice } = obj;
 				return html`
 					<div id=${hash} class="transaction token-transfer">
 						<svg class="icon" viewBox="0 0 64 64"> <title>contract</title> <path d="M4.75,49.27A8,8,0,0,0,4.2,61.14a7.82,7.82,0,0,0,4.34,2.24,7.42,7.42,0,0,0,1.34.12H47.41a8.06,8.06,0,0,0,8.05-8V7.87"/> <path d="M8.54,56.13V8.54a8.06,8.06,0,0,1,8.05-8H54.12a7.42,7.42,0,0,1,1.34.12A7.82,7.82,0,0,1,59.8,2.86a8,8,0,0,1-.55,11.87"/> <line x1="17.93" y1="22.62" x2="46.07" y2="22.62"/> <line x1="17.93" y1="32" x2="46.07" y2="32"/> <line x1="17.93" y1="41.38" x2="38.03" y2="41.38"/> </svg>
@@ -847,7 +844,6 @@
 							<a href=${`#/token/${token}`} class="">${token}</a>
 						</div>
 						<div class="contract-info">
-							<time>${getFormattedTime(time)}</time>
 							<div class="flex flex-direction-column">
 								<h5 class="label">Amount</h5>
 								<h4>${formatAmount(amount, token.toLowerCase() === 'rupee' ? 'inr' : 'usd')} ${token}</h4>
@@ -867,10 +863,10 @@
 					</div>`;
 			},
 			tokenTransferCard(obj) {
-				const { hash, blockHeight, token, sender, receiver, amount, type, time } = obj;
+				const { hash, blockHeight, token, sender, receiver, amount,type } = obj;
 				let title = 'Token transfer';
 				console.log(type)
-				if (type === 'nfttransfer')
+				if(type === 'nfttransfer')
 					title = 'NFT transfer';
 				return html`
 					<div id=${hash} class="transaction token-transfer">
@@ -879,18 +875,7 @@
 							<h5 class="label">${title}</h5>
 							<a href=${`#/token/${token}`} class="">${token}</a>
 						</div>
-						<div class="contract-info">						
-							<time>${getFormattedTime(time)}</time>
-							<div class="flex flex-wrap gap-1">	
-								<div class="flex flex-direction-column">
-									<h5 class="label">Sender</h5>
-									<a href=${`#/address/${sender}`} class="address wrap-around">${sender}</a> 
-								</div>
-								<div class="flex flex-direction-column">
-									<h5 class="label">Receiver</h5>
-									<a href=${`#/address/${receiver}`} class="address wrap-around">${receiver}</a> 
-								</div>
-							</div>
+						<div class="contract-info">
 							<div class="flex flex-direction-column">
 								<h5 class="label">Amount</h5>
 								<h4>${formatAmount(amount, token.toLowerCase() === 'rupee' ? 'inr' : 'usd')} ${token}</h4>
@@ -907,9 +892,9 @@
 				`;
 			},
 			tokenCreationCard(obj) {
-				const { hash, blockHeight, token, incAddress, supply, type, nftHash, time } = obj;
+				const { hash, blockHeight, token, incAddress, supply,type,nftHash } = obj;
 				let title = 'Token creation';
-				if (type === 'nftincorp')
+				if(type === 'nftincorp')
 					title = 'NFT creation';
 				return html`
 					<div id=${hash} class="transaction token-creation">
@@ -919,7 +904,6 @@
 							<a href=${`#/token/${token}`} class="token uppercase">${token}</a>
 						</div>
 						<div class="contract-info">
-							<time>${getFormattedTime(time)}</time>
 							<div class="flex flex-direction-column">
 								<h5 class="label">Incorporation address</h5>
 								<a href=${`#/address/${incAddress}`} class="address wrap-around">${incAddress}</a>
@@ -932,11 +916,12 @@
 								<h5 class="label">supply</h5>
 								<h4>${supply}</h4>
 							</div>
-							${type === 'nftincorp' ? html`<div class="flex flex-direction-column">
+							${
+								type === 'nftincorp'? html`<div class="flex flex-direction-column">
 									<h5 class="label">NFT hash</h5>
 									<sm-copy value="${nftHash}"></sm-copy>
-								</div>`: ''
-					}
+								</div>`:''
+							}
 							<div class="flex align-center space-between flex-wrap gap-1">
 								<div class="flex flex-direction-column">
 									<h5 class="label">Transaction ID</h5>
@@ -948,7 +933,7 @@
 					</div>`;
 			},
 			contractTriggerCard(obj) {
-				const { hash, blockHeight, contractName, contractAddress, winningChoice, committeeAddress, time } = obj;
+				const { hash, blockHeight, contractName, contractAddress, winningChoice, committeeAddress } = obj;
 				return html`
 					<div id=${hash} class="transaction contract-trigger">
 						<svg class="icon" viewBox="0 0 64 64"> <circle cx="32" cy="32" r="31"/> <polyline points="32 13.47 32 32 43.4 43.4"/> </svg>
@@ -957,7 +942,6 @@
 							<h4 class="uppercase">trigger</h4>
 						</div>
 						<div class="contract-info">
-							<time>${getFormattedTime(time)}</time>
 							<div class="flex flex-direction-column">
 								<h5 class="label">Contract name</h5>
 								<h4>${contractName}</h4>
@@ -986,7 +970,7 @@
 				`;
 			},
 			contractCreationCard(obj) {
-				const { hash, blockHeight, token, contractName, incAddress, contractType, expiration, participationFees, availableChoices, time } = obj;
+				const { hash, blockHeight, token, contractName, incAddress, contractType, expiration, participationFees, availableChoices } = obj;
 				return html`
 					<div id=${hash} class="transaction contract-creation">
 						<svg class="icon" viewBox="0 0 64 64"> <title>contract creation</title> <path d="M47.07,23.85V11"/> <path d="M3,47A7,7,0,0,0,.48,52.39a6.89,6.89,0,0,0,2.05,4.93,6.78,6.78,0,0,0,3.78,2,6.34,6.34,0,0,0,1.16.1H40.09a7,7,0,0,0,7-7V44"/> <path d="M6.31,53V11.61a7,7,0,0,1,7-7H45.91a6.26,6.26,0,0,1,1.16.1,6.74,6.74,0,0,1,3.78,1.95A7,7,0,0,1,50.37,17"/> <line x1="14.46" y1="23.85" x2="38.92" y2="23.85"/> <line x1="14.46" y1="32" x2="38.92" y2="32"/> <line x1="14.46" y1="40.15" x2="31.93" y2="40.15"/> <path d="M57.79,24.44l-2.88-2.9,3.79-3.79a1,1,0,0,1,1.39,0l3.11,3.11a1,1,0,0,1,0,1.39L40.34,45.1a1,1,0,0,1-.52.28L36,46A1,1,0,0,1,34.9,44.9l.67-3.77a1,1,0,0,1,.27-.52L52.65,23.8"/> </svg>
@@ -995,7 +979,6 @@
 							<a href=${`#/token/${token}`} class="">${token}</a>
 						</div>
 						<div class="contract-info">
-							<time>${getFormattedTime(time)}</time>
 							<div class="flex flex-direction-column">
 								<h5 class="label">Contract name</h5>
 								<h4>${contractName}</h4>
@@ -1052,7 +1035,7 @@
 		}
 
 		async function renderTransactions(container, transactions = []) {
-			let txFrag = parseTransactions(transactions);
+			let txFrag = getTxFrag(transactions);
 			const renderedTransactions = txFrag.map(tx => {
 				switch (tx.type) {
 					case 'tokentransfer':
@@ -1074,6 +1057,7 @@
 						break;
 				}
 			})
+			console.log(renderedTransactions)
 			renderElem(document.getElementById(container), html`${renderedTransactions.length ? renderedTransactions : html`<div class="no-results">No transactions found</div>`}`)
 		}
 
@@ -1096,7 +1080,7 @@
 			renderElem(getRef('suggestions'), html`${renderedSuggestions}`)
 		}, 100))
 		async function getBannerData() {
-			const { systemTransactionCount, systemAddressCount } = await fetchJson(`${tokenApiUrl}/api/v2/info`)
+			const { systemTransactionCount, systemAddressCount } = await fetchJson(`${tokenApiUrl}/api/v1.0/getSystemData`)
 			return {
 				topToken: "RMT",
 				totalTransactions: systemTransactionCount,
@@ -1112,20 +1096,135 @@
 		}
 
 		function getLatestTxs() {
-			return new Promise((resolve, reject) => {
-				fetchJson(`${tokenApiUrl}/api/v2/latestTransactionDetails?limit=4`)
-					.then(function (latestTxs) {
-						resolve(latestTxs.latestTransactions)
-					}).catch((err) => {
-						reject(err)
-					});
-			})
+			return fetchJson(`${tokenApiUrl}/api/v1.0/getLatestTransactionDetails?numberOfLatestBlocks=4`)
+				.then(function (latestTxs) {
+					let latestTxArray = [];
+					for (const transactionKey in latestTxs.latestTransactions) {
+						const { transactionDetails: { txid, blockHeight, vin, vout }, parsedFloData: { type, tokenAmount, tokenIdentification, transferType, contractName, triggerCondition, userChoice,nftHash } } = latestTxs.latestTransactions[transactionKey];
+						// determine txhash and blockHeight
+						let obj = {
+							hash: txid,
+							blockHeight,
+						};
+
+						if (type != "smartContractPays") {
+							// determine token
+							obj["token"] = tokenIdentification;
+
+							if (type == "transfer") {
+								if (transferType == "token" || transferType == "nft") {
+									// token transfer
+									/* tokenTransferCard
+									hash, blockHeight, token, sender, receiver, amount */
+
+									let receiverAddress = "";
+									for (const output of vout) {
+										if (output["scriptPubKey"]["addresses"][0] !== vin[0]["addr"]) {
+											receiverAddress = output["scriptPubKey"]["addresses"][0];
+											break;
+										}
+									}
+
+									obj = Object.assign({}, obj, {
+										sender: vin[0]["addr"],
+										receiver: receiverAddress,
+										amount: tokenAmount,
+										type: "tokentransfer",
+									});
+									latestTxArray.push(obj);
+								} else if (transferType === "smartContract") {
+									// smart contract transfer
+									let receiverAddress = "";
+									for (const output of vout) {
+										if (output["scriptPubKey"]["addresses"][0] != vin[0]["addr"]) {
+											receiverAddress = output["scriptPubKey"]["addresses"][0];
+											break;
+										}
+									}
+
+									obj = Object.assign({}, obj, {
+										sender: vin[0]["addr"],
+										receiver: receiverAddress,
+										amount: tokenAmount,
+										contractName: contractName,
+										userChoice: userChoice,
+										type: "contracttransfer",
+									});
+									latestTxArray.push(obj);
+								}
+							} else if (type === "smartContractIncorporation") {
+								// smart contract incorporation
+								// todo : add checks to determine obj for different types of smart contract incorporation
+								obj = Object.assign({}, obj, {
+									contractName: contractName,
+									incAddress: contractAddress,
+									contractType: contractType,
+									expiration: expiryTime,
+									participationFees: contractAmount,
+									availableChoices: "",
+									type: "contractincorp",
+								});
+								latestTxArray.push(obj);
+							} else if (type === "tokenIncorporation") {
+								// token incorporation
+								// smart contract incorporation
+								obj = Object.assign({}, obj, {
+									incAddress: vin[0]["addr"],
+									supply: tokenAmount,
+									type: "tokenincorp",
+								});
+								latestTxArray.push(obj);
+							} else if (type === "nftIncorporation") {
+								// token incorporation
+								// smart contract incorporation
+								obj = Object.assign({}, obj, {
+									incAddress: vin[0]["addr"],
+									supply: tokenAmount,
+									type,
+									nftHash,
+								});
+								latestTxArray.push(obj);
+							}
+						} else {
+							// smart contract committee trigger
+							// smart contract incorporation
+							let receiverAddress = "";
+							for (const output of vout) {
+								if (output["scriptPubKey"]["addresses"][0] != vin[0]["addr"]) {
+									receiverAddress = output["scriptPubKey"]["addresses"][0];
+									break;
+								}
+							}
+							obj = Object.assign({}, obj, {
+								contractName,
+								contractAddress: receiverAddress,
+								winningChoice: triggerCondition,
+								committeeAddress: vin[0]["addr"],
+								type: "contracttrigger",
+							});
+							latestTxArray.push(obj);
+						}
+					}
+					return latestTxArray;
+				}).catch((err) => {
+					console.log(err)
+				});
+		}
+
+		function getLatestBlocks() {
+			return fetchJson(
+				`${tokenApiUrl}/api/v1.0/getLatestBlockDetails?numberOfLatestBlocks=4`
+			)
+				.then(function (latestBlocks) {
+					let obj = {};
+					return obj;
+				});
 		}
 
 		function getTokenInfo(thisToken) {
 			return new Promise((resolve, reject) => {
 				fetchJson(
-					`${tokenApiUrl}/api/v2/tokenInfo/${thisToken.toLowerCase()}`
+					`${tokenApiUrl}/api/v1.0/getTokenInfo?token=${thisToken.toLowerCase()}`
 				).then(function (tokenInfo) {
 					if (tokenInfo.result === "error")
 						reject(tokenInfo.description);
@@ -1147,17 +1246,17 @@
 		}
 
 		async function getTokenBalances(tokenName) {
-			const tokenDetails = await fetchJson(`${tokenApiUrl}/api/v2/tokenBalances/` + tokenName)
+			const tokenDetails = await fetchJson(`${tokenApiUrl}/api/v1.0/getTokenBalances?token=` + tokenName)
 			return tokenDetails.balances
 		}
 
 		async function getTokenTransactions(tokenName) {
-			const transactions = await fetchJson(`${tokenApiUrl}/api/v2/tokenTransactions/` + tokenName)
+			const transactions = await fetchJson(`${tokenApiUrl}/api/v1.0/getTokenTransactions?token=` + tokenName)
 			return transactions.transactions
 		}
 
 		async function getBlockInfo(thisBlock) {
-			const info = await fetchJson(`${tokenApiUrl}/api/v2/blockDetails/${thisBlock}`);
+			const info = await fetchJson(`${tokenApiUrl}/api/v1.0/getBlockDetails/${thisBlock}`);
 			const { height, size, reward, hash, difficulty, nonce, tx } = info.blockDetails
 			return {
 				blockHeight: height,
@@ -1170,13 +1269,14 @@
 			}
 		}
 
+
 		async function getBlockTransactions(thisBlock) {
-			const blockTransactions = await fetchJson(`${tokenApiUrl}/api/v2/blockTransactions/${thisBlock}`)
+			const blockTransactions = await fetchJson(`${tokenApiUrl}/api/v1.0/getBlockTransactions/${thisBlock}`)
 			return blockTransactions.transactions
 		}
 
 		async function getContractInfo(contract) {
-			const info = await fetchJson(`${tokenApiUrl}/api/v2/smartContractInfo?contractName=${contract.name}&contractAddress=${contract.address}`);
+			const info = await fetchJson(`${tokenApiUrl}/api/v1.0/getSmartContractInfo?contractName=${contract.name}&contractAddress=${contract.address}`);
 			console.log(info, contract)
 			const { contractInfo: { contractType, status, expiryTime, payeeAddress, userChoice, tokenIdentification, contractAmount, minimumsubscriptionamount, maximumsubscriptionamount }, contractAddress, contractName } = info
 			return {
@@ -1195,35 +1295,30 @@
 		}
 
 		async function getContractParticipants(contract) {
-			const participants = await fetchJson(`${tokenApiUrl}/api/v2/smartContractParticipants?contractName=${contract.name}&contractAddress=${contract.address}`)
+			const participants = await fetchJson(`${tokenApiUrl}/api/v1.0/getSmartContractParticipants?contractName=${contract.name}&contractAddress=${contract.address}`)
 			return participants.participantInfo
 		}
 
 		async function getContractTransactions(contract) {
-			const transactions = await fetchJson(`${tokenApiUrl}/api/v2/smartContractTransactions?contractName=${contract.name}&contractAddress=${contract.address}`)
+			const transactions = await fetchJson(`${tokenApiUrl}/api/v1.0/getSmartContractTransactions?contractName=${contract.name}&contractAddress=${contract.address}`)
 			return transactions.contractTransactions
 		}
 
-		function parseTransactions(txList) {
-			if (!Array.isArray(txList))
-				txList = Object.values(txList)
+		function getTxFrag(txList) {
+			// Check if "txList" is array or object
+			if (Array.isArray(txList))
+				return txList;
+			// Object
 			let latestTxArray = [];
-			txList.forEach(tx => {
-				// console.log(transactionKey)
-				// if(transactionKey == '11571ce7e5eed0bce30e24de89bb1ba6cc432df7b5b40bbc9f0225b98968cb47'){
-				// 	//debugger
-				// }
-				const {
-					transactionDetails: {
-						txid, blockHeight, vin, vout, time },
-					parsedFloData: {
-						contractAddress, contractType, expiryTime, contractAmount, type, tokenAmount, tokenIdentification, transferType, contractName, triggerCondition, userChoice, nftHash
-					}
-				} = tx;
+			for (const transactionKey in txList) {
+				console.log(transactionKey)
+				if(transactionKey == '11571ce7e5eed0bce30e24de89bb1ba6cc432df7b5b40bbc9f0225b98968cb47'){
+					//debugger
+				}
+				const { transactionDetails: { txid, blockHeight, vin, vout }, parsedFloData: { contractAddress, contractType, expiryTime, contractAmount, type, tokenAmount, tokenIdentification, transferType, contractName, triggerCondition, userChoice,nftHash } } = txList[transactionKey];
 				let obj = {
 					hash: txid,
 					blockHeight,
-					time
 				};
 				if (type != "smartContractPays") {
 					// determine token
@@ -1302,7 +1397,7 @@
 							});
 							latestTxArray.push(obj);
 							break;
-					}
+						}
 
 				} else {
 					// transaction is a FLO Smart Contract Committee trigger
@@ -1326,23 +1421,22 @@
 					});
 					latestTxArray.push(obj);
 				}
-			})
-
+			}
 			return latestTxArray;
 		}
 
 		async function getAllBlocks(number) {
-			const allBlocks = await fetchJson(`${tokenApiUrl}/api/v2/latestBlockDetails${number ? `?limit=${number}` : ''}`)
+			const allBlocks = await fetchJson(`${tokenApiUrl}/api/v1.0/getLatestBlockDetails${number ? `?limit=${number}` : ''}`)
 			return Object.values(allBlocks.latestBlocks).sort((a, b) => b.height - a.height)
 		}
 
 		async function getAllTxs() {
-			const allTxs = await fetchJson(`${tokenApiUrl}/api/v2/latestTransactionDetails?limit=200`)
+			const allTxs = await fetchJson(`${tokenApiUrl}/api/v1.0/getLatestTransactionDetails?limit=200`)
 			return allTxs.latestTransactions
 		}
 
 		async function getAddressInfo(floAddress) {
-			const addressInfo = await fetchJson(`${tokenApiUrl}/api/v2/floAddressInfo/${floAddress}`)
+			const addressInfo = await fetchJson(`${tokenApiUrl}/api/v1.0/getFloAddressInfo?floAddress=${floAddress}`)
 			return addressInfo.floAddressBalances
 		}
 
@@ -1351,18 +1445,18 @@
 		}
 
 		async function getAddressTxs(floAddress) {
-			const transactions = await fetchJson(`${tokenApiUrl}/api/v2/floAddressTransactions/${floAddress}`)
+			const transactions = await fetchJson(`${tokenApiUrl}/api/v1.0/getFloAddressTransactions?floAddress=${floAddress}`)
 			return transactions.transactions
 		}
 
 		async function getTxInfo(thisTx) {
 			try {
-				const transaction = await fetchJson(`${tokenApiUrl}/api/v2/transactionDetails/${thisTx}`)
+				const transaction = await fetchJson(`${tokenApiUrl}/api/v1.0/getTransactionDetails/${thisTx}`)
 				if (transaction.result === 'error') {
 					return [false, transaction.description]
 				} else {
 					let transactionHash = transaction.transactionHash,
-						{ flodata, tokenAmount, tokenIdentification, type, nftHash } = transaction.parsedFloData,
+						{ flodata, tokenAmount, tokenIdentification, type,nftHash } = transaction.parsedFloData,
 						{ blockheight, vin, vout, confirmations } = transaction.transactionDetails;
 					let receiver = "",
 						sender = vin[0].addr;
@@ -1444,9 +1538,9 @@
 					location.href = `#/contract/${text}`
 					resolve('contract')
 				} else if (text.length == 64 && returnHexNumber(text)) {
-					fetchJson(`${window.tokenApiUrl}/api/v2/categoriseString/` + text)
+					fetchJson(`${window.tokenApiUrl}/api/v1.0/categoriseString/` + text)
 						.then(function (myJson) {
-							console.log(`${window.tokenApiUrl}/api/v2/categoriseString/` + text)
+							console.log(`${window.tokenApiUrl}/api/v1.0/categoriseString/` + text)
 							if (myJson['type'] == 'transaction') {
 								//console.log('data entered is a transaction hash');
 								location.href = `#/transaction/${text}`
@@ -1480,7 +1574,7 @@
 		async function getAllSuggestions() {
 			window.allSuggestions = [];
 			window.ranchimallFlo = {};
-			let { tokens, smartContracts } = await fetchJson(`${window.tokenApiUrl}/api/v2/tokenSmartContractList`);
+			let { tokens, smartContracts } = await fetchJson(`${window.tokenApiUrl}/api/v1.0/getTokenSmartContractList`);
 			//console.log('first line of the fetch result');
 			ranchimallFlo.tokenList = tokens;
 			ranchimallFlo.smartContractList = smartContracts;
