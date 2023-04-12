@@ -144,11 +144,13 @@
 		}
 		// fetch data and return json
 		async function fetchJson(url, options = {}) {
-			let response = await fetch(url, options)
+			const response = await fetch(url, options)
+			const json = await response.json()
 			if (response.ok) {
-				return await response.json()
+				return json
 			} else {
-				throw new Error(response.statusText)
+				console.error(json)
+				throw new Error(json.description)
 			}
 		}
 		function getFormattedTime(timestamp, format) {
@@ -343,17 +345,12 @@
 			try {
 				const [floAddress] = state.wildcards
 				if (!floAddress) return;
-				let [addressInfo, addressBalance, addressTxs] = await Promise.all([getAddressInfo(floAddress), getAddressBalance(floAddress), getAddressTxs(floAddress)])
-				renderElem(getRef("page_container"), html`${render.addressPage({ balance: addressBalance, address: floAddress })}`);
+				let [ownedTokens, floBalance, addressTxs] = await Promise.all([getAddressInfo(floAddress), getAddressBalance(floAddress), getAddressTxs(floAddress)])
+				renderElem(getRef("page_container"), html`${render.addressPage({ floBalance, floAddress, ownedTokens })}`);
 				getRef("page_title").textContent = 'Address'
 				renderTransactions('address_transaction_container', addressTxs)
-				const tokenHolders = []
-				for (const token in addressInfo) {
-					tokenHolders.push(render.tokenBalanceCard(token, addressInfo[token].balance))
-				}
-				renderElem(document.getElementById('token_balance_container'), html`${tokenHolders.length ? tokenHolders : html`<div>No tokens found</div>`}`)
 			} catch (e) {
-				notify(e, 'error')
+				renderElem(getRef("page_container"), html`${render.errorPage(e)}`);
 			}
 		})
 		router.addRoute('token', async state => {
@@ -640,28 +637,29 @@
 				`;
 			},
 			addressPage(obj) {
-				let { balance, address } = obj;
+				const { floBalance, floAddress, ownedTokens = {} } = obj;
+				console.log(obj)
 				return html`
 				<div id="address_page" class="page">
 					<div class="balance-card">
-							<h2 class="wrap-around margin-bottom-2">${address}</h2>
-							<h5 class="label">Balance</h5>
-							<h3>${balance} FLO</h3>
+							<h2 class="wrap-around margin-bottom-2">${floAddress}</h2>
+							<h5 class="label">FLO Balance</h5>
+							<h3 class="margin-bottom-2">${floBalance} FLO</h3>
+							<div class="grid gap-0-5">
+								<h5>Tokens</h5>
+								<ul id="token_balance_list">
+									${Object.keys(ownedTokens).map(token => render.tokenBalanceCard(token, ownedTokens[token].balance))}
+								</ul>
+							</div>
 						</div>
-						<sm-chips data-target="address_views" onchange="changeView(event)">
-							<sm-chip value="0" selected>Transactions</sm-chip>
-							<sm-chip value="1">Tokens</sm-chip>
-						</sm-chips>
-						<div id="address_views" class="view-wrapper">
-							<ul id="address_transaction_container" class="transaction-container"></ul>
-							<ul id="token_balance_container" class="hidden"></ul>
-						</div>
+						<h4>Transactions</h4>
+						<ul id="address_transaction_container" class="transaction-container"></ul>
 					</div>
 				`;
 			},
 			tokenBalanceCard(token, balance) {
 				return html`
-				  <li class="card">
+				  <li class="token-balance">
 					<a href=${`#/token/${token}`} class="label token">${token}</a>
 					<h4>${formatAmount(balance, token.toLowerCase() === 'rupee' ? 'inr' : 'usd')}</h4>
 				  </li>

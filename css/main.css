@@ -857,7 +857,6 @@ theme-toggle {
   align-items: center;
 }
 #page_header h3 {
-  font-weight: 500;
   text-transform: capitalize;
 }
 
@@ -875,7 +874,6 @@ theme-toggle {
 p {
   overflow-wrap: break-word;
   line-height: 1.6em;
-  text-transform: capitalize;
 }
 
 .balance-card {
@@ -885,8 +883,8 @@ p {
   background-size: cover;
   color: white;
   border-radius: 0.5rem;
-  padding: 2rem 1.5rem;
-  margin-bottom: 1rem;
+  padding: max(1.5rem, 3vw);
+  margin-bottom: 2rem;
 }
 .balance-card h2,
 .balance-card h3,
@@ -953,6 +951,20 @@ p {
 }
 .contract-choice:last-of-type {
   margin-bottom: 0;
+}
+
+#token_balance_list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.token-balance {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 0.5rem;
 }
 
 .transaction {
