@@ -389,10 +389,6 @@
 			// append latest transactions
 			renderTransactions('contract_transaction_container', contractTransactions)
 			console.log(contractParticipants)
-			renderElem(
-				document.getElementById('participant_container'),
-				html`${Object.keys(contractParticipants).map(participant => render.contractChoiceCard(contractParticipants[participant]))}`
-			)
 			switch (contractInfo.contractType) {
 				case 'one-time-event':
 					let winners = []
@@ -405,9 +401,30 @@
 					} else {
 						renderElem(document.getElementById('winners_container'), html`<div>No winners found</div>`)
 					}
+					renderElem(
+						document.getElementById('participant_container'),
+						html`${Object.keys(contractParticipants).map(participant => render.contractChoiceCard(contractParticipants[participant]))}`
+					)
 					break;
 				case 'continuos-event':
 					console.log('should render continuos-event')
+					switch (contractInfo.contractSubtype) {
+						case 'tokenswap':
+							renderElem(
+								document.getElementById('participant_container'),
+								html`${
+									Object.keys(contractParticipants)
+									.map(participant => render.participantCard({
+										accepting_token: contractInfo.accepting_token,
+										selling_token: contractInfo.selling_token,
+										...contractParticipants[participant]}
+									))
+								}`
+							)
+							break;
+						default:
+							break;
+					}
 					break;
 			}
 		})
@@ -925,6 +942,17 @@
 							${contractType === 'continuos-event' && contractSubtype === 'token-swap' ? html`<ul id="deposits_container" class="card hidden"></ul>` : ''}
 						</div>
 					</div>
+				`;
+			},
+			participantCard(details){
+				const {participantFloAddress, participationAmount,swapAmount,swapPrice,transactionHash,accepting_token, selling_token} = details;
+				return html`
+					<li class="flex align-center flex-wrap participant">
+						<a href=${`#/address/${participantFloAddress}`} class="address wrap-around">${participantFloAddress}</a> swapped 
+						<h4>${formatAmount(participationAmount, 'usd')} ${accepting_token}</h4> to
+						<h4>${formatAmount(swapAmount, 'usd')} ${selling_token}</h4> @
+						<h4>${formatAmount(swapPrice, 'usd')} ${accepting_token}</h4>/token
+					</li>
 				`;
 			},
 			contractChoiceCard(details) {
