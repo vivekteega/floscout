@@ -384,7 +384,7 @@
 			renderElem(getRef("page_container"), html`${render.contractPage(contractInfo)}`);
 			getRef("page_title").textContent = "Contract";
 
-			const {contractName,contractAddress,contractType,contractSubtype,participantInfo} = contractParticipants
+			const { contractName, contractAddress, contractType, contractSubtype, participantInfo } = contractParticipants
 
 			// append latest transactions
 			renderTransactions('contract_transaction_container', contractTransactions)
@@ -770,25 +770,25 @@
               `;
 			},
 			contractPage(obj) {
-				let { 
-					status, 
-					contract, 
-					contractType, 
-					contractSubtype, 
-					contractAddress, 
-					expiration, token, 
-					participationFees, 
+				let {
+					status,
+					contract,
+					contractType,
+					contractSubtype,
+					contractAddress,
+					expiration, token,
+					participationFees,
 					userChoices,
-					payeeAddress, 
-					minAmount, 
-					maxAmount ,
+					payeeAddress,
+					minAmount,
+					maxAmount,
 					accepting_token,
 					selling_token,
 					numberOfDeposits,
 					numberOfParticipants,
 					totalHonorAmount,
 					totalParticipationAmount,
-				 	priceType,
+					priceType,
 					oracle_address,
 					price
 				} = obj;
@@ -797,7 +797,7 @@
 					<div id="contract_page" class="page">
 						${status ? html`
 							<div class="status closed">${status}</div>
-						`:''}
+						`: ''}
                     	<h3 class="uppercase">${replaceDash(contract)}</h3>
 						${userChoices ? html`
 							<h3 class="heading">User Choices</h3>
@@ -807,103 +807,103 @@
 								`)}
 							</ul>
 						`: ''}
-						<div class="card">
-							<div class="flex align-center gap-0-5 info-row">
+						<div class="card grid gap-1-5">
+							<div class="flex gap-0-5 info-row">
 								<h5 class="label">Contract Type</h5>
 								<h4>${replaceDash(contractType)}</h4>
 							</div>
 							${contractSubtype ? html`
-								<div class="flex align-center gap-0-5 info-row">
+								<div class="flex gap-0-5 info-row">
 									<h5 class="label">Contract Subtype</h5>
 									<h4>${replaceDash(contractSubtype)}</h4>
 								</div>
 							` : ''}
-							<div class="flex align-center gap-0-5 info-row">
+							<div class="flex gap-0-5 info-row">
 								<h5 class="label">Contract Address</h5>
 								<a href=${`#/address/${contractAddress}`} class="address wrap-around">${contractAddress}</a>
 							</div>
 							${expiration ? html`
-								<div class="flex align-center gap-0-5 info-row">
+								<div class="flex gap-0-5 info-row">
 									<h5 class="label">Expiration</h5>
 									<h4>${expiration}</h4>
 								</div>
 							` : ''}
 							${payeeAddress ? html`
-								<div class="flex align-center gap-0-5 info-row">
+								<div class="flex gap-0-5 info-row">
 									<h5 class="label">Payee Address</h5>
 									<h4>${payeeAddress}</h4>
 								</div>
 							`: ''}
 							${minAmount ? html`
-								<div class="flex align-center gap-0-5 info-row">
+								<div class="flex gap-0-5 info-row">
 									<h5 class="label">Min. Subscription Amount</h5>
 									<h4>${formatAmount(minAmount, 'usd')}</h4>
 								</div>
 							`: ''}
 							${maxAmount ? html`
-								<div class="flex align-center gap-0-5 info-row">
+								<div class="flex gap-0-5 info-row">
 									<h5 class="label">Max. Subscription Amount</h5>
 									<h4>${formatAmount(maxAmount, 'usd')}</h4>
 								</div>
 							`: ''}
 							${participationFees ? html`
-								<div class="flex align-center gap-0-5 info-row">
+								<div class="flex gap-0-5 info-row">
 									<h5 class="label">Participation Fees</h5>
 									<h4>${formatAmount(participationFees, 'usd')}</h4>
 								</div>
 							`: ''}
 							${contractType === 'one-time-event' ? html`
-								<div class="flex align-center gap-0-5 info-row">
+								<div class="flex gap-0-5 info-row">
 									<h5 class="label">Token Used</h5>
 									<h4>${token}</h4>
 								</div>
 							`: ''}
 							${contractType === 'continuos-event' && contractSubtype === 'tokenswap' ? html`
-								<div class="flex align-center gap-0-5 info-row">
+								<div class="flex gap-0-5 info-row">
 									<h5 class="label">Input token</h5>
 									<h4>${accepting_token}</h4>
 								</div>
-								<div class="flex align-center gap-0-5 info-row">
+								<div class="flex gap-0-5 info-row">
 									<h5 class="label">Output token</h5>
 									<h4>${selling_token}</h4>	
 								</div>
-								<div class="flex align-center gap-0-5 info-row">
+								<div class="flex gap-0-5 info-row">
 									<h5 class="label">exchange rate</h5>
 									<h4>1 ${selling_token} = ${price} ${accepting_token}</h4>
 								</div>
 							`: ''}
 							${numberOfDeposits ? html`
-								<div class="flex align-center gap-0-5 info-row">
+								<div class="flex gap-0-5 info-row">
 									<h5 class="label">Number of deposits</h5>
 									<h4>${numberOfDeposits}</h4>
 								</div>
 							`: ''}
 							${numberOfParticipants ? html`
-								<div class="flex align-center gap-0-5 info-row">
+								<div class="flex gap-0-5 info-row">
 									<h5 class="label">Number of participants</h5>
 									<h4>${numberOfParticipants}</h4>
 								</div>
 							`: ''}
 							${priceType ? html`
-								<div class="flex align-center gap-0-5 info-row">
+								<div class="flex gap-0-5 info-row">
 									<h5 class="label">Price type</h5>
 									<h4>${priceType}</h4>
 								</div>
 							`: ''}
 							${oracle_address ? html`
-								<div class="flex align-center gap-0-5 info-row">
+								<div class="flex gap-0-5 info-row">
 									<h5 class="label">Oracle address</h5>
 									<a href=${`#/address/${oracle_address}`} class="address wrap-around">${oracle_address}</a>
 								</div>
 							`: ''}
 							${totalParticipationAmount ? html`
-								<div class="flex align-center gap-0-5 info-row">
+								<div class="flex gap-0-5 info-row">
 									<h5 class="label">Total participation amount</h5>
 									<h4>${formatAmount(totalParticipationAmount, 'usd')} ${accepting_token}</h4>
 								</div>
 							`: ''}
 							${totalHonorAmount ? html`
-								<div class="flex align-center gap-0-5 info-row">
+								<div class="flex gap-0-5 info-row">
 									<h5 class="label">Total output amount</h5>
 									<h4>${formatAmount(totalHonorAmount, 'usd')} ${selling_token}</h4>
 								</div>
@@ -913,12 +913,12 @@
 					<sm-chips data-target="contract_views" onchange="changeView(event)">
 						<sm-chip value="0" selected>Transactions</sm-chip>
 						<sm-chip value="1">Participants</sm-chip>
-						${contractType === 'one-time-event' && contractSubtype === 'external-trigger' ? html`<sm-chip value="2">Winners</sm-chip>`: ''}
+						${contractType === 'one-time-event' && contractSubtype === 'external-trigger' ? html`<sm-chip value="2">Winners</sm-chip>` : ''}
 					</sm-chips>
 					<div id="contract_views" class="view-wrapper">
 						<div id="contract_transaction_container" class="transaction-container"></div>
 						<ul id="participant_container" class="card"></ul>
-						${contractType === 'one-time-event' && contractSubtype === 'external-trigger' ? html`<ul id="winners_container" class="card hidden"></ul>`: ''}
+						${contractType === 'one-time-event' && contractSubtype === 'external-trigger' ? html`<ul id="winners_container" class="card hidden"></ul>` : ''}
 					</div>
 				`;
 			},
@@ -1281,29 +1281,29 @@
 		async function getContractInfo(contract) {
 			const info = await fetchJson(`${tokenApiUrl}/api/v2/smartContractInfo?contractName=${contract.name}&contractAddress=${contract.address}`);
 			console.log(info, contract)
-			const { 
+			const {
 				contractInfo: {
 					contractType,
 					numberOfDeposits,
 					numberOfParticipants,
 					priceType,
-					oracle_address, 
+					oracle_address,
 					contractSubtype,
 					status,
 					expiryTime,
 					payeeAddress,
-					userChoice, 
+					userChoice,
 					tokenIdentification,
-					accepting_token, 
+					accepting_token,
 					selling_token,
-					contractAmount, 
-					minimumsubscriptionamount, 
+					contractAmount,
+					minimumsubscriptionamount,
 					maximumsubscriptionamount,
 					totalHonorAmount,
 					totalParticipationAmount,
 					price
 				}, contractAddress,
-				 contractName 
+				contractName
 			} = info
 			return {
 				contract: contractName,

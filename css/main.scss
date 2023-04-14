@@ -952,6 +952,9 @@ p {
     grid-area: 1/1;
   }
 }
+.info-row {
+  flex-direction: column;
+}
 @media only screen and (min-width: 640px) {
   .margin,
   .page {
@@ -996,9 +999,11 @@ p {
     grid-template-columns: 2fr 1fr 1fr;
     align-items: center;
   }
-  .info-row{
-    h5{
-      min-width: 8rem;
+  .info-row {
+    flex-wrap: wrap;
+    flex-direction: row;
+    h5 {
+      min-width: 12rem;
     }
   }
 }

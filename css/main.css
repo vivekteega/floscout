@@ -1045,6 +1045,10 @@ p {
   grid-area: 1/1;
 }
 
+.info-row {
+  flex-direction: column;
+}
+
 @media only screen and (min-width: 640px) {
   .margin,
 .page {
@@ -1083,8 +1087,12 @@ p {
     grid-template-columns: 2fr 1fr 1fr;
     align-items: center;
   }
+  .info-row {
+    flex-wrap: wrap;
+    flex-direction: row;
+  }
   .info-row h5 {
-    min-width: 8rem;
+    min-width: 12rem;
   }
 }
 @media only screen and (min-width: 1280px) {
@@ -1105,4 +1113,3 @@ p {
     cursor: pointer;
   }
 }
-/*# sourceMappingURL=main.css.map */
