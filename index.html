@@ -388,25 +388,19 @@
 
 			// append latest transactions
 			renderTransactions('contract_transaction_container', contractTransactions)
-			// console.log(contractParticipants)
-			// let winners = []	
-			// for (const participant in contractParticipants) {
-			// 	if (contractParticipants[participant].winningAmount)
-			// 		winners.push(contractParticipants[participant])
-			// }
-			// for (const participant in contractParticipants) {
-			// 	console.log(contractParticipants[participant])
-			// 	let { participantFloAddress, tokenIdentification, userChoice, tokenAmount } = contractParticipants[participant]
-			// 	if(userChoice)
-			// 	frag.append(render.contractChoiceCard(participantFloAddress, tokenIdentification, userChoice, tokenAmount))
-			// }
-			// document.getElementById('participant_container').append(frag)
+			console.log(contractParticipants)
+			let winners = []	
+			for (const participant in contractParticipants) {
+				if (contractParticipants[participant].winningAmount)
+					winners.push(contractParticipants[participant])
+			}
+			renderElem(document.getElementById('participant_container'), html`${
+				Object.keys(contractParticipants).map(participant => render.contractChoiceCard(contractParticipants[participant]))
+			}`)
 
-			// winners.forEach(winner => {
-			// 	let { participantFloAddress, tokenIdentification, userChoice, tokenAmount, winningAmount } = winner;
-			// 	frag.append(render.contractChoiceCard(participantFloAddress, tokenIdentification, userChoice, tokenAmount, winningAmount))
-			// })
-			// document.getElementById('winners_container').append(frag)
+			if(winners.length){
+				renderElem(document.getElementById('winners_container'), html`${winners.map(winner => render.contractChoiceCard(winner))}`)
+			}
 		})
 
 		router.addRoute('block', async state => {
@@ -802,7 +796,7 @@
 						${userChoices ? html`
 							<h3 class="heading">User Choices</h3>
 							<ul type="circle" class="card">
-								${object.keys(userChoices).map(choice => html`
+								${Object.keys(userChoices).map(choice => html`
 									<li>${userChoices[choice]}</li>
 								`)}
 							</ul>
@@ -913,31 +907,32 @@
 							<sm-chip value="0" selected>Transactions</sm-chip>
 							<sm-chip value="1">Participants</sm-chip>
 							${contractType === 'one-time-event' && contractSubtype === 'external-trigger' ? html`<sm-chip value="2">Winners</sm-chip>` : ''}
+							${contractType === 'continuos-event' && contractSubtype === 'token-swap' ? html`<sm-chip value="2">Deposits</sm-chip>` : ''}
 						</sm-chips>
 						<div id="contract_views" class="view-wrapper">
 							<div id="contract_transaction_container" class="transaction-container"></div>
 							<ul id="participant_container" class="card"></ul>
-							${contractType === 'one-time-event' && contractSubtype === 'external-trigger' ? html`<ul id="winners_container" class="card hidden"></ul>` : ''}
+							${contractType === 'one-time-event' && contractSubtype === 'external-trigger' ? html`<ul id="winners_container" class="card"></ul>` : ''}
+							${contractType === 'continuos-event' && contractSubtype === 'token-swap' ? html`<ul id="deposits_container" class="card"></ul>` : ''}
 						</div>
 					</div>
 				`;
 			},
-			contractChoiceCard(address, token, choice, amount, winningAmount) {
-				let card = document.createElement('li'),
-					action;
-				card.classList.add('contract-choice')
+			contractChoiceCard(details) {
+				const { participantFloAddress, userChoice, tokenAmount, transactionHash, winningAmount}  = details;
+				let action;
 				if (winningAmount) {
 					action = 'Won'
 					amount = winningAmount
-				}
-				else
+				}else
 					action = 'Invested'
-				card.innerHTML = `   
-					<a href=${`#/address/${address}`} class="address wrap-around">${address}</a>
-                    <h4>${choice}</h4>
-                    <h4>${formatAmount(amount, token.toLowerCase() === 'rupee' ? 'inr' : 'usd')} ${token} ${action}</h4>
-					`
-				return card;
+				return html`
+					<li class="contract-choice">
+						<a href=${`#/address/${participantFloAddress}`} class="address wrap-around">${participantFloAddress}</a>
+						<h4>${userChoice}</h4>
+						<h4>${formatAmount(tokenAmount, 'usd')} ${action}</h4>
+					</li>
+				`;
 			},
 			contractTransferCard(obj) {
 				const { hash, token, sender, receiver, amount, contractName, userChoice, time } = obj;
