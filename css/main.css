@@ -1083,6 +1083,9 @@ p {
     grid-template-columns: 2fr 1fr 1fr;
     align-items: center;
   }
+  .info-row h5 {
+    min-width: 8rem;
+  }
 }
 @media only screen and (min-width: 1280px) {
   .margin,
@@ -1102,3 +1105,4 @@ p {
     cursor: pointer;
   }
 }
+/*# sourceMappingURL=main.css.map */

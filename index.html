@@ -381,28 +381,32 @@
 			const contract = splitContractNameAddress(contractId);
 			let [contractInfo, contractTransactions, contractParticipants] = await Promise.all([getContractInfo(contract), getContractTransactions(contract), getContractParticipants(contract)])
 			// todo : check the type of contract & then further checks like fetching details of contractParticipant 
-			getRef("page_container").append(render.contractPage(contractInfo));
+			renderElem(getRef("page_container"), html`${render.contractPage(contractInfo)}`);
 			getRef("page_title").textContent = "Contract";
 
-			console.log(contractParticipants)
-			let winners = []
-			for (const participant in contractParticipants) {
-				if (contractParticipants[participant].winningAmount)
-					winners.push(contractParticipants[participant])
-			}
+			const {contractName,contractAddress,contractType,contractSubtype,participantInfo} = contractParticipants
+
 			// append latest transactions
 			renderTransactions('contract_transaction_container', contractTransactions)
-			for (participant in contractParticipants) {
-				let { participantFloAddress, tokenIdentification, userChoice, tokenAmount } = contractParticipants[participant]
-				frag.append(render.contractChoiceCard(participantFloAddress, tokenIdentification, userChoice, tokenAmount))
-			}
-			document.getElementById('participant_container').append(frag)
+			// console.log(contractParticipants)
+			// let winners = []	
+			// for (const participant in contractParticipants) {
+			// 	if (contractParticipants[participant].winningAmount)
+			// 		winners.push(contractParticipants[participant])
+			// }
+			// for (const participant in contractParticipants) {
+			// 	console.log(contractParticipants[participant])
+			// 	let { participantFloAddress, tokenIdentification, userChoice, tokenAmount } = contractParticipants[participant]
+			// 	if(userChoice)
+			// 	frag.append(render.contractChoiceCard(participantFloAddress, tokenIdentification, userChoice, tokenAmount))
+			// }
+			// document.getElementById('participant_container').append(frag)
 
-			winners.forEach(winner => {
-				let { participantFloAddress, tokenIdentification, userChoice, tokenAmount, winningAmount } = winner;
-				frag.append(render.contractChoiceCard(participantFloAddress, tokenIdentification, userChoice, tokenAmount, winningAmount))
-			})
-			document.getElementById('winners_container').append(frag)
+			// winners.forEach(winner => {
+			// 	let { participantFloAddress, tokenIdentification, userChoice, tokenAmount, winningAmount } = winner;
+			// 	frag.append(render.contractChoiceCard(participantFloAddress, tokenIdentification, userChoice, tokenAmount, winningAmount))
+			// })
+			// document.getElementById('winners_container').append(frag)
 		})
 
 		router.addRoute('block', async state => {
@@ -766,10 +770,34 @@
               `;
 			},
 			contractPage(obj) {
-				let { status, contract, contractType, contractAddress, expiration, token, participationFees, userChoices, payeeAddress, minAmount, maxAmount } = obj;
+				let { 
+					status, 
+					contract, 
+					contractType, 
+					contractSubtype, 
+					contractAddress, 
+					expiration, token, 
+					participationFees, 
+					userChoices,
+					payeeAddress, 
+					minAmount, 
+					maxAmount ,
+					accepting_token,
+					selling_token,
+					numberOfDeposits,
+					numberOfParticipants,
+					totalHonorAmount,
+					totalParticipationAmount,
+				 	priceType,
+					oracle_address,
+					price
+				} = obj;
+				console.log(obj)
 				return html`
 					<div id="contract_page" class="page">
-						<div class="status closed">${status}</div>
+						${status ? html`
+							<div class="status closed">${status}</div>
+						`:''}
                     	<h3 class="uppercase">${replaceDash(contract)}</h3>
 						${userChoices ? html`
 							<h3 class="heading">User Choices</h3>
@@ -780,43 +808,117 @@
 							</ul>
 						`: ''}
 						<div class="card">
-							<h5 class="label">Contract Type</h5>
-							<h4>${replaceDash(contractType)}</h4>
-							<h5 class="label">Contract Address</h5>
-							<a href=${`#/address/${contractAddress}`} class="address wrap-around">${contractAddress}</a>
+							<div class="flex align-center gap-0-5 info-row">
+								<h5 class="label">Contract Type</h5>
+								<h4>${replaceDash(contractType)}</h4>
+							</div>
+							${contractSubtype ? html`
+								<div class="flex align-center gap-0-5 info-row">
+									<h5 class="label">Contract Subtype</h5>
+									<h4>${replaceDash(contractSubtype)}</h4>
+								</div>
+							` : ''}
+							<div class="flex align-center gap-0-5 info-row">
+								<h5 class="label">Contract Address</h5>
+								<a href=${`#/address/${contractAddress}`} class="address wrap-around">${contractAddress}</a>
+							</div>
 							${expiration ? html`
-								<h5 class="label">Expiration</h5>
-								<h4>${expiration}</h4>
+								<div class="flex align-center gap-0-5 info-row">
+									<h5 class="label">Expiration</h5>
+									<h4>${expiration}</h4>
+								</div>
 							` : ''}
 							${payeeAddress ? html`
-								<h5 class="label">Payee Address</h5>
-                  				<h4>${payeeAddress}</h4>
+								<div class="flex align-center gap-0-5 info-row">
+									<h5 class="label">Payee Address</h5>
+									<h4>${payeeAddress}</h4>
+								</div>
 							`: ''}
 							${minAmount ? html`
-								<h5 class="label">Min. Subscription Amount</h5>
-                  				<h4>${formatAmount(minAmount, 'usd')}</h4>
+								<div class="flex align-center gap-0-5 info-row">
+									<h5 class="label">Min. Subscription Amount</h5>
+									<h4>${formatAmount(minAmount, 'usd')}</h4>
+								</div>
 							`: ''}
 							${maxAmount ? html`
-								<h5 class="label">Max. Subscription Amount</h5>
-				  				<h4>${formatAmount(maxAmount, 'usd')}</h4>
+								<div class="flex align-center gap-0-5 info-row">
+									<h5 class="label">Max. Subscription Amount</h5>
+									<h4>${formatAmount(maxAmount, 'usd')}</h4>
+								</div>
 							`: ''}
 							${participationFees ? html`
-								<h5 class="label">Participation Fees</h5>
-								<h4>${formatAmount(participationFees, 'usd')}</h4>
+								<div class="flex align-center gap-0-5 info-row">
+									<h5 class="label">Participation Fees</h5>
+									<h4>${formatAmount(participationFees, 'usd')}</h4>
+								</div>
 							`: ''}
-							<h5 class="label">Token Used</h5>
-                        	<h4>${token}</h4>
+							${contractType === 'one-time-event' ? html`
+								<div class="flex align-center gap-0-5 info-row">
+									<h5 class="label">Token Used</h5>
+									<h4>${token}</h4>
+								</div>
+							`: ''}
+							${contractType === 'continuos-event' && contractSubtype === 'tokenswap' ? html`
+								<div class="flex align-center gap-0-5 info-row">
+									<h5 class="label">Input token</h5>
+									<h4>${accepting_token}</h4>
+								</div>
+								<div class="flex align-center gap-0-5 info-row">
+									<h5 class="label">Output token</h5>
+									<h4>${selling_token}</h4>	
+								</div>
+								<div class="flex align-center gap-0-5 info-row">
+									<h5 class="label">exchange rate</h5>
+									<h4>1 ${selling_token} = ${price} ${accepting_token}</h4>
+								</div>
+							`: ''}
+							${numberOfDeposits ? html`
+								<div class="flex align-center gap-0-5 info-row">
+									<h5 class="label">Number of deposits</h5>
+									<h4>${numberOfDeposits}</h4>
+								</div>
+							`: ''}
+							${numberOfParticipants ? html`
+								<div class="flex align-center gap-0-5 info-row">
+									<h5 class="label">Number of participants</h5>
+									<h4>${numberOfParticipants}</h4>
+								</div>
+							`: ''}
+							${priceType ? html`
+								<div class="flex align-center gap-0-5 info-row">
+									<h5 class="label">Price type</h5>
+									<h4>${priceType}</h4>
+								</div>
+							`: ''}
+							${oracle_address ? html`
+								<div class="flex align-center gap-0-5 info-row">
+									<h5 class="label">Oracle address</h5>
+									<a href=${`#/address/${oracle_address}`} class="address wrap-around">${oracle_address}</a>
+								</div>
+							`: ''}
+							${totalParticipationAmount ? html`
+								<div class="flex align-center gap-0-5 info-row">
+									<h5 class="label">Total participation amount</h5>
+									<h4>${formatAmount(totalParticipationAmount, 'usd')} ${accepting_token}</h4>
+								</div>
+							`: ''}
+							${totalHonorAmount ? html`
+								<div class="flex align-center gap-0-5 info-row">
+									<h5 class="label">Total output amount</h5>
+									<h4>${formatAmount(totalHonorAmount, 'usd')} ${selling_token}</h4>
+								</div>
+							`: ''}
 						</div>
 					</div>
 					<sm-chips data-target="contract_views" onchange="changeView(event)">
 						<sm-chip value="0" selected>Transactions</sm-chip>
 						<sm-chip value="1">Participants</sm-chip>
-						<sm-chip value="2">Winners</sm-chip>
+						${contractType === 'one-time-event' && contractSubtype === 'external-trigger' ? html`<sm-chip value="2">Winners</sm-chip>`: ''}
 					</sm-chips>
 					<div id="contract_views" class="view-wrapper">
-						<ul id="participant_container" class="card"></ul>
-						<ul id="winners_container" class="card hidden"></ul>
 						<div id="contract_transaction_container" class="transaction-container"></div>
+						<ul id="participant_container" class="card"></ul>
+						${contractType === 'one-time-event' && contractSubtype === 'external-trigger' ? html`<ul id="winners_container" class="card hidden"></ul>`: ''}
 					</div>
 				`;
 			},
@@ -838,7 +940,7 @@
 				return card;
 			},
 			contractTransferCard(obj) {
-				const { hash, blockHeight, token, sender, receiver, amount, contractName, userChoice, time } = obj;
+				const { hash, token, sender, receiver, amount, contractName, userChoice, time } = obj;
 				return html`
 					<div id=${hash} class="transaction token-transfer">
 						<svg class="icon" viewBox="0 0 64 64"> <title>contract</title> <path d="M4.75,49.27A8,8,0,0,0,4.2,61.14a7.82,7.82,0,0,0,4.34,2.24,7.42,7.42,0,0,0,1.34.12H47.41a8.06,8.06,0,0,0,8.05-8V7.87"/> <path d="M8.54,56.13V8.54a8.06,8.06,0,0,1,8.05-8H54.12a7.42,7.42,0,0,1,1.34.12A7.82,7.82,0,0,1,59.8,2.86a8,8,0,0,1-.55,11.87"/> <line x1="17.93" y1="22.62" x2="46.07" y2="22.62"/> <line x1="17.93" y1="32" x2="46.07" y2="32"/> <line x1="17.93" y1="41.38" x2="38.03" y2="41.38"/> </svg>
@@ -1053,6 +1155,7 @@
 
 		async function renderTransactions(container, transactions = []) {
 			let txFrag = parseTransactions(transactions);
+			console.log(txFrag)
 			const renderedTransactions = txFrag.map(tx => {
 				switch (tx.type) {
 					case 'tokentransfer':
@@ -1178,19 +1281,52 @@
 		async function getContractInfo(contract) {
 			const info = await fetchJson(`${tokenApiUrl}/api/v2/smartContractInfo?contractName=${contract.name}&contractAddress=${contract.address}`);
 			console.log(info, contract)
-			const { contractInfo: { contractType, status, expiryTime, payeeAddress, userChoice, tokenIdentification, contractAmount, minimumsubscriptionamount, maximumsubscriptionamount }, contractAddress, contractName } = info
+			const { 
+				contractInfo: {
+					contractType,
+					numberOfDeposits,
+					numberOfParticipants,
+					priceType,
+					oracle_address, 
+					contractSubtype,
+					status,
+					expiryTime,
+					payeeAddress,
+					userChoice, 
+					tokenIdentification,
+					accepting_token, 
+					selling_token,
+					contractAmount, 
+					minimumsubscriptionamount, 
+					maximumsubscriptionamount,
+					totalHonorAmount,
+					totalParticipationAmount,
+					price
+				}, contractAddress,
+				 contractName 
+			} = info
 			return {
 				contract: contractName,
 				contractAddress,
 				contractType,
+				contractSubtype,
 				status,
 				expiration: expiryTime,
 				payeeAddress,
 				userChoices: userChoice,
 				token: tokenIdentification,
+				accepting_token,
+				selling_token,
 				participationFees: contractAmount,
 				minAmount: minimumsubscriptionamount,
-				maxAmount: maximumsubscriptionamount
+				maxAmount: maximumsubscriptionamount,
+				numberOfDeposits,
+				numberOfParticipants,
+				priceType,
+				oracle_address,
+				totalHonorAmount,
+				totalParticipationAmount,
+				price
 			}
 		}
 
