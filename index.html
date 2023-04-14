@@ -389,16 +389,15 @@
 			// append latest transactions
 			renderTransactions('contract_transaction_container', contractTransactions)
 			console.log(contractParticipants)
-			let winners = []	
+			let winners = []
 			for (const participant in contractParticipants) {
 				if (contractParticipants[participant].winningAmount)
 					winners.push(contractParticipants[participant])
 			}
-			renderElem(document.getElementById('participant_container'), html`${
-				Object.keys(contractParticipants).map(participant => render.contractChoiceCard(contractParticipants[participant]))
-			}`)
+			renderElem(document.getElementById('participant_container'), html`${Object.keys(contractParticipants).map(participant => render.contractChoiceCard(contractParticipants[participant]))
+				}`)
 
-			if(winners.length){
+			if (winners.length) {
 				renderElem(document.getElementById('winners_container'), html`${winners.map(winner => render.contractChoiceCard(winner))}`)
 			}
 		})
@@ -911,20 +910,20 @@
 						</sm-chips>
 						<div id="contract_views" class="view-wrapper">
 							<div id="contract_transaction_container" class="transaction-container"></div>
-							<ul id="participant_container" class="card"></ul>
-							${contractType === 'one-time-event' && contractSubtype === 'external-trigger' ? html`<ul id="winners_container" class="card"></ul>` : ''}
-							${contractType === 'continuos-event' && contractSubtype === 'token-swap' ? html`<ul id="deposits_container" class="card"></ul>` : ''}
+							<ul id="participant_container" class="card hidden"></ul>
+							${contractType === 'one-time-event' && contractSubtype === 'external-trigger' ? html`<ul id="winners_container" class="card hidden"></ul>` : ''}
+							${contractType === 'continuos-event' && contractSubtype === 'token-swap' ? html`<ul id="deposits_container" class="card hidden"></ul>` : ''}
 						</div>
 					</div>
 				`;
 			},
 			contractChoiceCard(details) {
-				const { participantFloAddress, userChoice, tokenAmount, transactionHash, winningAmount}  = details;
+				const { participantFloAddress, userChoice, tokenAmount, transactionHash, winningAmount } = details;
 				let action;
 				if (winningAmount) {
 					action = 'Won'
 					amount = winningAmount
-				}else
+				} else
 					action = 'Invested'
 				return html`
 					<li class="contract-choice">
