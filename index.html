@@ -832,19 +832,19 @@
 							${minAmount ? html`
 								<div class="flex gap-0-5 info-row">
 									<h5 class="label">Min. Subscription Amount</h5>
-									<h4>${formatAmount(minAmount, 'usd')}</h4>
+									<h4>${formatAmount(minAmount, 'usd')} ${token}</h4>
 								</div>
 							`: ''}
 							${maxAmount ? html`
 								<div class="flex gap-0-5 info-row">
 									<h5 class="label">Max. Subscription Amount</h5>
-									<h4>${formatAmount(maxAmount, 'usd')}</h4>
+									<h4>${formatAmount(maxAmount, 'usd')} ${token}</h4>
 								</div>
 							`: ''}
 							${participationFees ? html`
 								<div class="flex gap-0-5 info-row">
 									<h5 class="label">Participation Fees</h5>
-									<h4>${formatAmount(participationFees, 'usd')}</h4>
+									<h4>${formatAmount(participationFees, 'usd')} ${token}</h4>
 								</div>
 							`: ''}
 							${contractType === 'one-time-event' ? html`
