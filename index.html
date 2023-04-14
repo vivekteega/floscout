@@ -389,18 +389,26 @@
 			// append latest transactions
 			renderTransactions('contract_transaction_container', contractTransactions)
 			console.log(contractParticipants)
-			let winners = []
-			for (const participant in contractParticipants) {
-				if (contractParticipants[participant].winningAmount)
-					winners.push(contractParticipants[participant])
-			}
-			renderElem(document.getElementById('participant_container'), html`${Object.keys(contractParticipants).map(participant => render.contractChoiceCard(contractParticipants[participant]))
-				}`)
-
-			if (winners.length) {
-				renderElem(document.getElementById('winners_container'), html`${winners.map(winner => render.contractChoiceCard(winner))}`)
-			} else {
-				renderElem(document.getElementById('winners_container'), html`<div>No winners found</div>`)
+			renderElem(
+				document.getElementById('participant_container'),
+				html`${Object.keys(contractParticipants).map(participant => render.contractChoiceCard(contractParticipants[participant]))}`
+			)
+			switch (contractInfo.contractType) {
+				case 'one-time-event':
+					let winners = []
+					for (const participant in contractParticipants) {
+						if (contractParticipants[participant].winningAmount)
+							winners.push(contractParticipants[participant])
+					}
+					if (winners.length) {
+						renderElem(document.getElementById('winners_container'), html`${winners.map(winner => render.contractChoiceCard(winner))}`)
+					} else {
+						renderElem(document.getElementById('winners_container'), html`<div>No winners found</div>`)
+					}
+					break;
+				case 'continuos-event':
+					console.log('should render continuos-event')
+					break;
 			}
 		})
 
