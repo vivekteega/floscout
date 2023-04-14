@@ -831,6 +831,7 @@ p {
   align-items: center;
   margin-bottom: 0.5rem;
   text-transform: capitalize;
+  margin-right: auto;
 }
 .choice-container {
   display: flex;
@@ -844,6 +845,10 @@ p {
 }
 .status {
   font-size: 0.8rem;
+  &.active {
+    background: rgba(var(--text-color), 0.1);
+    color: var(--accent-color);
+  }
   &.closed {
     background: rgba(var(--foreground-color), 1);
     border: solid 1px rgba(var(--text-color), 0.2);

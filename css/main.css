@@ -910,6 +910,7 @@ p {
   align-items: center;
   margin-bottom: 0.5rem;
   text-transform: capitalize;
+  margin-right: auto;
 }
 
 .choice-container {
@@ -926,6 +927,10 @@ p {
 
 .status {
   font-size: 0.8rem;
+}
+.status.active {
+  background: rgba(var(--text-color), 0.1);
+  color: var(--accent-color);
 }
 .status.closed {
   background: rgba(var(--foreground-color), 1);

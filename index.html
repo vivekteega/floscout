@@ -399,6 +399,8 @@
 
 			if (winners.length) {
 				renderElem(document.getElementById('winners_container'), html`${winners.map(winner => render.contractChoiceCard(winner))}`)
+			} else {
+				renderElem(document.getElementById('winners_container'), html`<div>No winners found</div>`)
 			}
 		})
 
@@ -789,7 +791,7 @@
 				return html`
 					<div id="contract_page" class="page">
 						${status ? html`
-							<div class="status closed">${status}</div>
+							<div class=${`status ${status}`}>${status}</div>
 						`: ''}
                     	<h3 class="uppercase">${replaceDash(contract)}</h3>
 						${userChoices ? html`
