@@ -909,16 +909,16 @@
 								</div>
 							`: ''}
 						</div>
-					</div>
-					<sm-chips data-target="contract_views" onchange="changeView(event)">
-						<sm-chip value="0" selected>Transactions</sm-chip>
-						<sm-chip value="1">Participants</sm-chip>
-						${contractType === 'one-time-event' && contractSubtype === 'external-trigger' ? html`<sm-chip value="2">Winners</sm-chip>` : ''}
-					</sm-chips>
-					<div id="contract_views" class="view-wrapper">
-						<div id="contract_transaction_container" class="transaction-container"></div>
-						<ul id="participant_container" class="card"></ul>
-						${contractType === 'one-time-event' && contractSubtype === 'external-trigger' ? html`<ul id="winners_container" class="card hidden"></ul>` : ''}
+						<sm-chips data-target="contract_views" onchange="changeView(event)">
+							<sm-chip value="0" selected>Transactions</sm-chip>
+							<sm-chip value="1">Participants</sm-chip>
+							${contractType === 'one-time-event' && contractSubtype === 'external-trigger' ? html`<sm-chip value="2">Winners</sm-chip>` : ''}
+						</sm-chips>
+						<div id="contract_views" class="view-wrapper">
+							<div id="contract_transaction_container" class="transaction-container"></div>
+							<ul id="participant_container" class="card"></ul>
+							${contractType === 'one-time-event' && contractSubtype === 'external-trigger' ? html`<ul id="winners_container" class="card hidden"></ul>` : ''}
+						</div>
 					</div>
 				`;
 			},
