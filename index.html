@@ -381,35 +381,36 @@
 			try {
 				const [contractId] = state.wildcards
 				if (!contractId) return;
-				// todo: load contract variable dynamically
 				const contract = splitContractNameAddress(contractId);
 				const contractInfo = await getContractInfo(contract)
+				const { contractType, contractSubtype, accepting_token, selling_token } = contractInfo
 				const detailsToFetch = [getContractTransactions(contract), getContractParticipants(contract)]
-				console.log(contractInfo)
-				if (contractInfo.contractType === 'continuos-event' && contractInfo.contractSubtype === 'tokenswap')
+				if (contractType === 'continuos-event' && contractSubtype === 'tokenswap')
 					detailsToFetch.push(getContractDeposits(contract))
-				console.log(detailsToFetch)
 				let [contractTransactions, contractParticipants, contractDeposits] = await Promise.all(detailsToFetch)
-				// todo : check the type of contract & then further checks like fetching details of contractParticipant 
 				renderElem(getRef("page_container"), html`${render.contractPage(contractInfo)}`);
 				getRef("page_title").textContent = "Contract";
-
-				const { contractName, contractAddress, contractType, contractSubtype, participantInfo } = contractParticipants
 
 				// append latest transactions
 				renderTransactions('contract_transaction_container', contractTransactions)
 				console.log(contractParticipants)
-				switch (contractInfo.contractType) {
+				switch (contractType) {
 					case 'one-time-event':
-						let winners = []
-						for (const participant in contractParticipants) {
-							if (contractParticipants[participant].winningAmount)
-								winners.push(contractParticipants[participant])
-						}
-						if (winners.length) {
-							renderElem(document.getElementById('winners_container'), html`${winners.map(winner => render.contractChoiceCard(winner))}`)
-						} else {
-							renderElem(document.getElementById('winners_container'), html`<div>No winners found</div>`)
+						switch (contractSubtype) {
+							case 'external-trigger':
+								let winners = []
+								for (const participant in contractParticipants) {
+									if (contractParticipants[participant].winningAmount)
+										winners.push(contractParticipants[participant])
+								}
+								if (winners.length) {
+									renderElem(document.getElementById('winners_container'), html`${winners.map(winner => render.contractChoiceCard(winner))}`)
+								} else {
+									renderElem(document.getElementById('winners_container'), html`<div>No winners found</div>`)
+								}
+								break;
+							default:
+								break
 						}
 						renderElem(
 							document.getElementById('participant_container'),
@@ -417,14 +418,14 @@
 						)
 						break;
 					case 'continuos-event':
-						switch (contractInfo.contractSubtype) {
+						switch (contractSubtype) {
 							case 'tokenswap':
 								renderElem(
 									document.getElementById('participant_container'),
 									html`${Object.keys(contractParticipants)
 										.map(participant => render.participantCard({
-											accepting_token: contractInfo.accepting_token,
-											selling_token: contractInfo.selling_token,
+											accepting_token: accepting_token,
+											selling_token: selling_token,
 											...contractParticipants[participant]
 										}))
 										}`
@@ -433,7 +434,7 @@
 									document.getElementById('deposits_container'),
 									html`${contractDeposits.map(deposit => render.depositCard({
 										...deposit,
-										accepting_token: contractInfo.accepting_token,
+										accepting_token: accepting_token,
 									}))}`
 								)
 								break;
