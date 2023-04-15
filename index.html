@@ -412,31 +412,49 @@
 							default:
 								break
 						}
-						renderElem(
-							document.getElementById('participant_container'),
-							html`${Object.keys(contractParticipants).map(participant => render.contractChoiceCard(contractParticipants[participant]))}`
-						)
+						if (Object.keys(contractParticipants).length)
+							renderElem(
+								document.getElementById('participant_container'),
+								html`${Object.keys(contractParticipants).map(participant => render.contractChoiceCard(contractParticipants[participant]))}`
+							)
+						else
+							renderElem(
+								document.getElementById('participant_container'),
+								html`<div>No participants found</div>`
+							)
 						break;
 					case 'continuos-event':
 						switch (contractSubtype) {
 							case 'tokenswap':
-								renderElem(
-									document.getElementById('participant_container'),
-									html`${Object.keys(contractParticipants)
-										.map(participant => render.participantCard({
+								if (Object.keys(contractParticipants).length)
+									renderElem(
+										document.getElementById('participant_container'),
+										html`${Object.keys(contractParticipants)
+											.map(participant => render.participantCard({
+												accepting_token: accepting_token,
+												selling_token: selling_token,
+												...contractParticipants[participant]
+											}))
+											}`
+									)
+								else
+									renderElem(
+										document.getElementById('participant_container'),
+										html`<div>No participants found</div>`
+									)
+								if (contractDeposits.length)
+									renderElem(
+										document.getElementById('deposits_container'),
+										html`${contractDeposits.map(deposit => render.depositCard({
+											...deposit,
 											accepting_token: accepting_token,
-											selling_token: selling_token,
-											...contractParticipants[participant]
-										}))
-										}`
-								)
-								renderElem(
-									document.getElementById('deposits_container'),
-									html`${contractDeposits.map(deposit => render.depositCard({
-										...deposit,
-										accepting_token: accepting_token,
-									}))}`
-								)
+										}))}`
+									)
+								else
+									renderElem(
+										document.getElementById('deposits_container'),
+										html`<div>No deposits found</div>`
+									)
 								break;
 							default:
 								break;
