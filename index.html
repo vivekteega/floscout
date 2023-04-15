@@ -994,12 +994,9 @@
 			depositCard(details) {
 				const { currentBalance, depositorAddress, originalBalance, status, time, transactionHash, accepting_token } = details
 				return html`
-				<li class="flex participant">
+				<li class="flex deposit-card">
 					<div class="grid gap-0-5 flex-1">
-						<div class="flex align-center gap-0-5">
-							<svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/></svg>
-							<h5>Deposit</h5>
-						</div>	
+						<h5>Deposit</h5>
 						<a href=${`#/address/${depositorAddress}`} class="address wrap-around">${depositorAddress}</a> 
 					</div>
 					<div class="grid align-center gap-1 flex-1" style="grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr))">
@@ -1437,8 +1434,8 @@
 		}
 
 		async function getContractDeposits(contract) {
-			const deposits = await fetchJson(`${tokenApiUrl}/api/v2/smartContractDeposits?contractName=${contract.name}&contractAddress=${contract.address}`)
 			console.log(`${tokenApiUrl}/api/v2/smartContractDeposits?contractName=${contract.name}&contractAddress=${contract.address}`)
+			const deposits = await fetchJson(`${tokenApiUrl}/api/v2/smartContractDeposits?contractName=${contract.name}&contractAddress=${contract.address}`)
 			return deposits.depositInfo
 		}
 

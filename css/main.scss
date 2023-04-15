@@ -951,11 +951,13 @@ theme-toggle {
   flex-direction: column;
   margin-bottom: 1rem;
 }
-#participant_container {
+#participant_container,
+#deposits_container {
   display: grid;
   gap: 2.5rem;
 }
-.participant {
+.participant,
+.deposit-card {
   flex-wrap: wrap;
   gap: 2rem;
 }
