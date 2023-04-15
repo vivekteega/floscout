@@ -1005,10 +1005,9 @@ p {
     align-items: center;
   }
   .info-row {
-    flex-wrap: wrap;
     flex-direction: row;
     h5 {
-      min-width: 12rem;
+      min-width: 11rem;
     }
   }
 }

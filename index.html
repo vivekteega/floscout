@@ -833,7 +833,7 @@
 								`)}
 							</ul>
 						`: ''}
-						<div class="card grid gap-1-5">
+						<div class="card grid gap-1-5" style="grid-template-columns: repeat(auto-fill, minmax(24rem,1fr)); gap: 1rem 3rem">
 							<div class="flex gap-0-5 info-row">
 								<h5 class="label">Contract Type</h5>
 								<h4>${replaceDash(contractType)}</h4>
@@ -955,9 +955,9 @@
 				return html`
 					<li class="flex align-center flex-wrap participant">
 						<a href=${`#/address/${participantFloAddress}`} class="address wrap-around">${participantFloAddress}</a> swapped 
-						<h4>${formatAmount(participationAmount, 'usd')} ${accepting_token}</h4> to
+						<h4>${formatAmount(participationAmount, 'usd')} ${accepting_token}</h4> with
 						<h4>${formatAmount(swapAmount, 'usd')} ${selling_token}</h4> @
-						<h4>${formatAmount(swapPrice, 'usd')} ${accepting_token}</h4>/token
+						<h4>${formatAmount(swapPrice, 'usd')} ${accepting_token}</h4>
 					</li>
 				`;
 			},
