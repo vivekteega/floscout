@@ -615,9 +615,6 @@ ul {
   border-radius: 0.5rem;
   background: rgba(var(--text-color), 0.06);
   margin: 1.5rem 0;
-  h4 {
-    margin-bottom: 0.4rem;
-  }
   h2 {
     margin-bottom: 1.5rem;
   }
@@ -780,7 +777,6 @@ theme-toggle {
   padding: 1rem 0;
   align-items: center;
   h3 {
-    font-weight: 500;
     text-transform: capitalize;
   }
 }
@@ -864,7 +860,6 @@ theme-toggle {
 .contract-choice {
   display: grid;
   gap: 0.5rem 1rem;
-  margin-bottom: 2rem;
   &:last-of-type {
     margin-bottom: 0;
   }
@@ -954,6 +949,7 @@ theme-toggle {
 }
 .info-row {
   flex-direction: column;
+  margin-bottom: 1rem;
 }
 #participant_container {
   display: grid;
@@ -1008,14 +1004,16 @@ theme-toggle {
     align-items: center;
   }
   #contract_info {
-    gap: 1rem 4rem;
-    grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr));
+    columns: 24rem auto;
+    column-gap: 4rem;
   }
   .info-row {
     flex-direction: row;
     align-items: center;
+    gap: 0.5rem;
     h5 {
       min-width: 11rem;
+      margin-bottom: 0;
     }
   }
 }

@@ -53,7 +53,7 @@
 				<path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
 			</svg>
 		</button>
-		<h3 id="page_title"></h3>
+		<h4 id="page_title"></h4>
 	</div>
 	<main id="page_container" class="flex flex-direction-column"></main>
 
@@ -378,57 +378,73 @@
 			}
 		})
 		router.addRoute('contract', async state => {
-			const [contractId] = state.wildcards
-			if (!contractId) return;
-			// todo: load contract variable dynamically
-			const contract = splitContractNameAddress(contractId);
-			let [contractInfo, contractTransactions, contractParticipants] = await Promise.all([getContractInfo(contract), getContractTransactions(contract), getContractParticipants(contract)])
-			// todo : check the type of contract & then further checks like fetching details of contractParticipant 
-			renderElem(getRef("page_container"), html`${render.contractPage(contractInfo)}`);
-			getRef("page_title").textContent = "Contract";
+			try {
+				const [contractId] = state.wildcards
+				if (!contractId) return;
+				// todo: load contract variable dynamically
+				const contract = splitContractNameAddress(contractId);
+				const contractInfo = await getContractInfo(contract)
+				const detailsToFetch = [getContractTransactions(contract), getContractParticipants(contract)]
+				console.log(contractInfo)
+				if (contractInfo.contractType === 'continuos-event' && contractInfo.contractSubtype === 'tokenswap')
+					detailsToFetch.push(getContractDeposits(contract))
+				console.log(detailsToFetch)
+				let [contractTransactions, contractParticipants, contractDeposits] = await Promise.all(detailsToFetch)
+				// todo : check the type of contract & then further checks like fetching details of contractParticipant 
+				renderElem(getRef("page_container"), html`${render.contractPage(contractInfo)}`);
+				getRef("page_title").textContent = "Contract";
 
-			const { contractName, contractAddress, contractType, contractSubtype, participantInfo } = contractParticipants
+				const { contractName, contractAddress, contractType, contractSubtype, participantInfo } = contractParticipants
 
-			// append latest transactions
-			renderTransactions('contract_transaction_container', contractTransactions)
-			console.log(contractParticipants)
-			switch (contractInfo.contractType) {
-				case 'one-time-event':
-					let winners = []
-					for (const participant in contractParticipants) {
-						if (contractParticipants[participant].winningAmount)
-							winners.push(contractParticipants[participant])
-					}
-					if (winners.length) {
-						renderElem(document.getElementById('winners_container'), html`${winners.map(winner => render.contractChoiceCard(winner))}`)
-					} else {
-						renderElem(document.getElementById('winners_container'), html`<div>No winners found</div>`)
-					}
-					renderElem(
-						document.getElementById('participant_container'),
-						html`${Object.keys(contractParticipants).map(participant => render.contractChoiceCard(contractParticipants[participant]))}`
-					)
-					break;
-				case 'continuos-event':
-					console.log('should render continuos-event')
-					switch (contractInfo.contractSubtype) {
-						case 'tokenswap':
-							renderElem(
-								document.getElementById('participant_container'),
-								html`${Object.keys(contractParticipants)
-									.map(participant => render.participantCard({
+				// append latest transactions
+				renderTransactions('contract_transaction_container', contractTransactions)
+				console.log(contractParticipants)
+				switch (contractInfo.contractType) {
+					case 'one-time-event':
+						let winners = []
+						for (const participant in contractParticipants) {
+							if (contractParticipants[participant].winningAmount)
+								winners.push(contractParticipants[participant])
+						}
+						if (winners.length) {
+							renderElem(document.getElementById('winners_container'), html`${winners.map(winner => render.contractChoiceCard(winner))}`)
+						} else {
+							renderElem(document.getElementById('winners_container'), html`<div>No winners found</div>`)
+						}
+						renderElem(
+							document.getElementById('participant_container'),
+							html`${Object.keys(contractParticipants).map(participant => render.contractChoiceCard(contractParticipants[participant]))}`
+						)
+						break;
+					case 'continuos-event':
+						switch (contractInfo.contractSubtype) {
+							case 'tokenswap':
+								renderElem(
+									document.getElementById('participant_container'),
+									html`${Object.keys(contractParticipants)
+										.map(participant => render.participantCard({
+											accepting_token: contractInfo.accepting_token,
+											selling_token: contractInfo.selling_token,
+											...contractParticipants[participant]
+										}))
+										}`
+								)
+								renderElem(
+									document.getElementById('deposits_container'),
+									html`${contractDeposits.map(deposit => render.depositCard({
+										...deposit,
 										accepting_token: contractInfo.accepting_token,
-										selling_token: contractInfo.selling_token,
-										...contractParticipants[participant]
-									}
-									))
-									}`
-							)
-							break;
-						default:
-							break;
-					}
-					break;
+									}))}`
+								)
+								break;
+							default:
+								break;
+						}
+						break;
+				}
+			} catch (e) {
+				console.log(e)
+				renderElem(getRef("page_container"), html`${render.errorPage(e)}`);
 			}
 		})
 
@@ -827,112 +843,106 @@
 						${status ? html`
 							<div class=${`status ${status}`}>${status}</div>
 						`: ''}
-                    	<h3 class="uppercase">${replaceDash(contract)}</h3>
+                    	<h2 class="uppercase">${replaceDash(contract)}</h2>
 						${userChoices ? html`
-							<h3 class="heading">User Choices</h3>
+							<h3 class="heading">Available Choices</h3>
 							<ul type="circle" class="card">
 								${Object.keys(userChoices).map(choice => html`
 									<li>${userChoices[choice]}</li>
 								`)}
 							</ul>
 						`: ''}
-						<div id="contract_info" class="card grid gap-1-5">
-							<div class="flex gap-0-5 info-row">
+						<div id="contract_info" class="card">
+							<div class="flex info-row">
 								<h5 class="label">Contract Type</h5>
 								<h4>${replaceDash(contractType)}</h4>
 							</div>
 							${contractSubtype ? html`
-								<div class="flex gap-0-5 info-row">
+								<div class="flex info-row">
 									<h5 class="label">Contract Subtype</h5>
 									<h4>${replaceDash(contractSubtype)}</h4>
 								</div>
 							` : ''}
-							<div class="flex gap-0-5 info-row">
+							<div class="flex info-row">
 								<h5 class="label">Contract Address</h5>
 								<a href=${`#/address/${contractAddress}`} class="address wrap-around">${contractAddress}</a>
 							</div>
 							${expiration ? html`
-								<div class="flex gap-0-5 info-row">
+								<div class="flex info-row">
 									<h5 class="label">Expiration</h5>
 									<h4>${expiration}</h4>
 								</div>
 							` : ''}
 							${payeeAddress ? html`
-								<div class="flex gap-0-5 info-row">
+								<div class="flex info-row">
 									<h5 class="label">Payee Address</h5>
 									<h4>${payeeAddress}</h4>
 								</div>
 							`: ''}
 							${minAmount ? html`
-								<div class="flex gap-0-5 info-row">
+								<div class="flex info-row">
 									<h5 class="label">Min. Subscription Amount</h5>
 									<h4>${formatAmount(minAmount, 'usd')} ${token}</h4>
 								</div>
 							`: ''}
 							${maxAmount ? html`
-								<div class="flex gap-0-5 info-row">
+								<div class="flex info-row">
 									<h5 class="label">Max. Subscription Amount</h5>
 									<h4>${formatAmount(maxAmount, 'usd')} ${token}</h4>
 								</div>
 							`: ''}
 							${participationFees ? html`
-								<div class="flex gap-0-5 info-row">
+								<div class="flex info-row">
 									<h5 class="label">Participation Fees</h5>
 									<h4>${formatAmount(participationFees, 'usd')} ${token}</h4>
 								</div>
 							`: ''}
 							${contractType === 'one-time-event' ? html`
-								<div class="flex gap-0-5 info-row">
+								<div class="flex info-row">
 									<h5 class="label">Token Used</h5>
 									<h4>${token}</h4>
 								</div>
 							`: ''}
 							${contractType === 'continuos-event' && contractSubtype === 'tokenswap' ? html`
-								<div class="flex gap-0-5 info-row">
+								<div class="flex info-row">
 									<h5 class="label">Input token</h5>
 									<h4>${accepting_token}</h4>
 								</div>
-								<div class="flex gap-0-5 info-row">
+								<div class="flex info-row">
 									<h5 class="label">Output token</h5>
 									<h4>${selling_token}</h4>	
 								</div>
-								<div class="flex gap-0-5 info-row">
-									<h5 class="label">exchange rate</h5>
+								<div class="flex info-row">
+									<h5 class="label">Exchange rate (${priceType === 'dynamic' ? 'Dynamic' : 'Fixed'})</h5>
 									<h4>1 ${selling_token} = ${price} ${accepting_token}</h4>
 								</div>
 							`: ''}
 							${numberOfDeposits ? html`
-								<div class="flex gap-0-5 info-row">
+								<div class="flex info-row">
 									<h5 class="label">Number of deposits</h5>
 									<h4>${numberOfDeposits}</h4>
 								</div>
 							`: ''}
 							${numberOfParticipants ? html`
-								<div class="flex gap-0-5 info-row">
+								<div class="flex info-row">
 									<h5 class="label">Number of participants</h5>
 									<h4>${numberOfParticipants}</h4>
 								</div>
 							`: ''}
-							${priceType ? html`
-								<div class="flex gap-0-5 info-row">
-									<h5 class="label">Price type</h5>
-									<h4>${priceType}</h4>
-								</div>
-							`: ''}
 							${oracle_address ? html`
-								<div class="flex gap-0-5 info-row">
+								<div class="flex info-row">
 									<h5 class="label">Oracle address</h5>
 									<a href=${`#/address/${oracle_address}`} class="address wrap-around">${oracle_address}</a>
 								</div>
 							`: ''}
 							${totalParticipationAmount ? html`
-								<div class="flex gap-0-5 info-row">
+								<div class="flex info-row">
 									<h5 class="label">Total participation amount</h5>
 									<h4>${formatAmount(totalParticipationAmount, 'usd')} ${accepting_token}</h4>
 								</div>
 							`: ''}
 							${totalHonorAmount ? html`
-								<div class="flex gap-0-5 info-row">
+								<div class="flex info-row">
 									<h5 class="label">Total output amount</h5>
 									<h4>${formatAmount(totalHonorAmount, 'usd')} ${selling_token}</h4>
 								</div>
@@ -942,13 +952,13 @@
 							<sm-chip value="0" selected>Transactions</sm-chip>
 							<sm-chip value="1">Participants</sm-chip>
 							${contractType === 'one-time-event' && contractSubtype === 'external-trigger' ? html`<sm-chip value="2">Winners</sm-chip>` : ''}
-							${contractType === 'continuos-event' && contractSubtype === 'token-swap' ? html`<sm-chip value="2">Deposits</sm-chip>` : ''}
+							${contractType === 'continuos-event' && contractSubtype === 'tokenswap' ? html`<sm-chip value="2">Deposits</sm-chip>` : ''}
 						</sm-chips>
 						<div id="contract_views" class="view-wrapper">
 							<div id="contract_transaction_container" class="transaction-container"></div>
 							<ul id="participant_container" class="card hidden"></ul>
 							${contractType === 'one-time-event' && contractSubtype === 'external-trigger' ? html`<ul id="winners_container" class="card hidden"></ul>` : ''}
-							${contractType === 'continuos-event' && contractSubtype === 'token-swap' ? html`<ul id="deposits_container" class="card hidden"></ul>` : ''}
+							${contractType === 'continuos-event' && contractSubtype === 'tokenswap' ? html`<ul id="deposits_container" class="card hidden"></ul>` : ''}
 						</div>
 					</div>
 				`;
@@ -974,12 +984,40 @@
 								<b>${formatAmount(swapAmount, 'usd')} ${selling_token}</b>
 							</div>
 							<div>
-								<h5 class="label">Swap rate</h5>
+								<h5 class="label">Exchange rate</h5>
 								<b>${formatAmount(swapPrice, 'usd')} ${accepting_token}</b>
 							</div>
 						</div>
 					</li>
 				`;
+			},
+			depositCard(details) {
+				const { currentBalance, depositorAddress, originalBalance, status, time, transactionHash, accepting_token } = details
+				return html`
+				<li class="flex participant">
+					<div class="grid gap-0-5 flex-1">
+						<div class="flex align-center gap-0-5">
+							<svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/></svg>
+							<h5>Deposit</h5>
+						</div>	
+						<a href=${`#/address/${depositorAddress}`} class="address wrap-around">${depositorAddress}</a> 
+					</div>
+					<div class="grid align-center gap-1 flex-1" style="grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr))">
+						<div>
+							<h5 class="label">Deposited</h5>
+							<b>${formatAmount(originalBalance, 'usd')} ${accepting_token}</b>
+						</div>
+						<div>
+							<h5 class="label">Current balance</h5>
+							<b>${formatAmount(currentBalance, 'usd')} ${accepting_token}</b>
+						</div>
+						<div>
+							<h5 class="label">Status</h5>
+							<b>${status}</b>
+						</div>
+					</div>
+				</li>
+				`
 			},
 			contractChoiceCard(details) {
 				const { participantFloAddress, userChoice, tokenAmount, transactionHash, winningAmount } = details;
@@ -1396,6 +1434,12 @@
 		async function getContractTransactions(contract) {
 			const transactions = await fetchJson(`${tokenApiUrl}/api/v2/smartContractTransactions?contractName=${contract.name}&contractAddress=${contract.address}`)
 			return transactions.contractTransactions
+		}
+
+		async function getContractDeposits(contract) {
+			const deposits = await fetchJson(`${tokenApiUrl}/api/v2/smartContractDeposits?contractName=${contract.name}&contractAddress=${contract.address}`)
+			console.log(`${tokenApiUrl}/api/v2/smartContractDeposits?contractName=${contract.name}&contractAddress=${contract.address}`)
+			return deposits.depositInfo
 		}
 
 		function parseTransactions(txList) {
