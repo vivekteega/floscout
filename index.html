@@ -833,7 +833,7 @@
 								`)}
 							</ul>
 						`: ''}
-						<div class="card grid gap-1-5" style="grid-template-columns: repeat(auto-fill, minmax(24rem,1fr)); gap: 1rem 3rem">
+						<div id="contract_info" class="card grid gap-1-5">
 							<div class="flex gap-0-5 info-row">
 								<h5 class="label">Contract Type</h5>
 								<h4>${replaceDash(contractType)}</h4>
@@ -953,11 +953,28 @@
 			participantCard(details) {
 				const { participantFloAddress, participationAmount, swapAmount, swapPrice, transactionHash, accepting_token, selling_token } = details;
 				return html`
-					<li class="flex align-center flex-wrap participant">
-						<a href=${`#/address/${participantFloAddress}`} class="address wrap-around">${participantFloAddress}</a> swapped 
-						<h4>${formatAmount(participationAmount, 'usd')} ${accepting_token}</h4> with
-						<h4>${formatAmount(swapAmount, 'usd')} ${selling_token}</h4> @
-						<h4>${formatAmount(swapPrice, 'usd')} ${accepting_token}</h4>
+					<li class="flex participant">
+						<div class="grid gap-0-5 flex-1">
+							<div class="flex align-center gap-0-5">
+								<svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/></svg>
+								<h5>Token swap</h5>
+							</div>	
+							<a href=${`#/address/${participantFloAddress}`} class="address wrap-around">${participantFloAddress}</a> 
+						</div>
+						<div class="grid align-center gap-1 flex-1" style="grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr))">
+							<div>
+								<h5 class="label">Input amount</h5>
+								<b>${formatAmount(participationAmount, 'usd')} ${accepting_token}</b>
+							</div>
+							<div>
+								<h5 class="label">Output amount</h5>
+								<b>${formatAmount(swapAmount, 'usd')} ${selling_token}</b>
+							</div>
+							<div>
+								<h5 class="label">Exchange rate</h5>
+								<b>${formatAmount(swapPrice, 'usd')} ${accepting_token}</b>
+							</div>
+						</div>
 					</li>
 				`;
 			},

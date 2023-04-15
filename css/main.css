@@ -1054,6 +1054,16 @@ p {
   flex-direction: column;
 }
 
+#participant_container {
+  display: grid;
+  gap: 2.5rem;
+}
+
+.participant {
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
 @media only screen and (min-width: 640px) {
   .margin,
 .page {
@@ -1092,8 +1102,13 @@ p {
     grid-template-columns: 2fr 1fr 1fr;
     align-items: center;
   }
+  #contract_info {
+    gap: 1rem 4rem;
+    grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr));
+  }
   .info-row {
     flex-direction: row;
+    align-items: center;
   }
   .info-row h5 {
     min-width: 11rem;
