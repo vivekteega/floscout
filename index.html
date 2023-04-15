@@ -877,7 +877,9 @@
 							${payeeAddress ? html`
 								<div class="flex info-row">
 									<h5 class="label">Payee Address</h5>
-									<h4>${payeeAddress}</h4>
+									${Object.keys(payeeAddress).map(address => html`
+										<a href=${`#/address/${address}`} class="address wrap-around">${address}</a>
+									`)}
 								</div>
 							`: ''}
 							${minAmount ? html`

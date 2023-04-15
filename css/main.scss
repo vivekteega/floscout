@@ -1011,11 +1011,11 @@ theme-toggle {
   }
   .info-row {
     flex-direction: row;
-    align-items: center;
     gap: 0.5rem;
     h5 {
       min-width: 11rem;
       margin-bottom: 0;
+      margin-top: 0.2rem !important;
     }
   }
 }
