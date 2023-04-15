@@ -413,12 +413,12 @@
 							renderElem(
 								document.getElementById('participant_container'),
 								html`${Object.keys(contractParticipants)
-										.map(participant => render.participantCard({
-											accepting_token: contractInfo.accepting_token,
-											selling_token: contractInfo.selling_token,
-											...contractParticipants[participant]
-										}
-										))
+									.map(participant => render.participantCard({
+										accepting_token: contractInfo.accepting_token,
+										selling_token: contractInfo.selling_token,
+										...contractParticipants[participant]
+									}
+									))
 									}`
 							)
 							break;
@@ -713,7 +713,7 @@
 							<h5 class="label">Transaction ID</h5>
 							<sm-copy value=${hash} clip-text></sm-copy>
 						</div>
-						<div class="card grid gap-1-5">
+						<div class="card grid gap-1-5 align-start">
 							<div class="flex flex-direction-column">
 								<h5 class="label">Block</h5>
 								<a href=${`#/block/${blockHeight}`} class="block-height">${blockHeight}</a>
