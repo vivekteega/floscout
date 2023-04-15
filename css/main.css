@@ -872,12 +872,6 @@ theme-toggle {
   margin-top: 2rem;
 }
 
-p {
-  overflow-wrap: break-word;
-  line-height: 1.6em;
-  text-transform: capitalize;
-}
-
 .balance-card {
   display: flex;
   flex-direction: column;
