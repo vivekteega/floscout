@@ -412,14 +412,14 @@
 						case 'tokenswap':
 							renderElem(
 								document.getElementById('participant_container'),
-								html`${
-									Object.keys(contractParticipants)
-									.map(participant => render.participantCard({
-										accepting_token: contractInfo.accepting_token,
-										selling_token: contractInfo.selling_token,
-										...contractParticipants[participant]}
-									))
-								}`
+								html`${Object.keys(contractParticipants)
+										.map(participant => render.participantCard({
+											accepting_token: contractInfo.accepting_token,
+											selling_token: contractInfo.selling_token,
+											...contractParticipants[participant]
+										}
+										))
+									}`
 							)
 							break;
 						default:
@@ -722,14 +722,20 @@
 								<h5 class="label">Sender</h5>
 								<a href=${`#/address/${sender}`} class="address wrap-around">${sender}</a>
 							</div>
-							<div class="flex flex-direction-column">
-								<h5 class="label">Receiver</h5>
-								<a href=${`#/address/${receiver}`} class="address wrap-around">${receiver}</a>
-							</div>
-							<div class="flex flex-direction-column">
-								<h5 class="label">Amount</h5>
-								<h4>${formatAmount(amount, 'usd')}</h4>
-							</div>
+							${receiver ? html`
+									<div class="flex flex-direction-column">
+										<h5 class="label">Receiver</h5>
+										<a href=${`#/address/${receiver}`} class="address wrap-around">${receiver}</a>
+									</div>
+								`: ''
+					}
+							${amount ? html`
+								<div class="flex flex-direction-column">
+									<h5 class="label">Amount</h5>
+									<h4>${formatAmount(amount, 'usd')}</h4>
+								</div>
+								`: ''
+					}
 						</div>
 						<div class="card">
 							<h5 class="label">FLO Data</h5>
@@ -944,8 +950,8 @@
 					</div>
 				`;
 			},
-			participantCard(details){
-				const {participantFloAddress, participationAmount,swapAmount,swapPrice,transactionHash,accepting_token, selling_token} = details;
+			participantCard(details) {
+				const { participantFloAddress, participationAmount, swapAmount, swapPrice, transactionHash, accepting_token, selling_token } = details;
 				return html`
 					<li class="flex align-center flex-wrap participant">
 						<a href=${`#/address/${participantFloAddress}`} class="address wrap-around">${participantFloAddress}</a> swapped 
@@ -1532,8 +1538,8 @@
 					let transactionHash = transaction.transactionHash,
 						{ flodata, tokenAmount, tokenIdentification, type, nftHash } = transaction.parsedFloData,
 						{ blockheight, vin, vout, confirmations } = transaction.transactionDetails;
-					let receiver = "",
-						sender = vin[0].addr;
+					let sender = vin[0].addr;
+					let receiver = sender
 					for (let i = 0; i < vout.length; i++) {
 						if (vout[i]["scriptPubKey"]["addresses"][0] !== vin[0]["addr"]) {
 							receiver = vout[i]["scriptPubKey"]["addresses"][0];
