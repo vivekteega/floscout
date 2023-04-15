@@ -356,7 +356,7 @@
 				renderElem(document.getElementById('token_balance_container'), html`${tokenHolders.length ? tokenHolders : html`<div>No tokens found</div>`}`)
 			} catch (e) {
 				console.error(e)
-				renderElem(getRef("page_container"), html`${render.errorPage('There is no information available for this address.')}`);
+				renderElem(getRef("page_container"), html`${render.errorPage(e)}`);
 			}
 		})
 		router.addRoute('token', async state => {
