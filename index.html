@@ -1230,10 +1230,11 @@
 								<h5 class="label">contract type</h5>
 								<h4>${replaceDash(contractType)}</h4>
 							</div>
-							<div class="flex flex-direction-column">
-								<h5 class="label">expiration</h5>
-								<h4 class="capitalise">${getFormattedTime(new Date(expiration).getTime())}</h4>
-							</div>
+							${expiration ? html`
+								<div class="flex flex-direction-column">
+									<h5 class="label">expiration</h5>
+									<h4 class="capitalise">${getFormattedTime(new Date(expiration).getTime())}</h4>
+								</div>`: ''}
 							<div class="flex flex-direction-column">
 								<h5 class="label">participation amount</h5>
 								<h4>${participationFees} ${token}</h4>
@@ -1271,7 +1272,6 @@
 
 		async function renderTransactions(container, transactions = []) {
 			let txFrag = parseTransactions(transactions);
-			console.log(txFrag)
 			const renderedTransactions = txFrag.map(tx => {
 				switch (tx.type) {
 					case 'tokentransfer':
