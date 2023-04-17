@@ -871,6 +871,7 @@ theme-toggle {
 .page > h3.heading {
   margin-top: 2rem;
 }
+
 .balance-card {
   display: flex;
   flex-direction: column;
@@ -1059,7 +1060,7 @@ theme-toggle {
 
 .info-row {
   flex-direction: column;
-  margin-bottom: 1rem;
+  margin-bottom: 1.3rem;
 }
 
 #participant_container,
