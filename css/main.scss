@@ -350,7 +350,9 @@ ul {
 .justify-right {
   margin-left: auto;
 }
-
+.align-self-start {
+  align-self: start;
+}
 .align-self-center {
   align-self: center;
 }
@@ -615,9 +617,6 @@ ul {
   border-radius: 0.5rem;
   background: rgba(var(--text-color), 0.06);
   margin: 1.5rem 0;
-  h4 {
-    margin-bottom: 0.4rem;
-  }
   h2 {
     margin-bottom: 1.5rem;
   }
@@ -793,10 +792,6 @@ theme-toggle {
     margin-top: 2rem;
   }
 }
-p {
-  overflow-wrap: break-word;
-  line-height: 1.6em;
-}
 .balance-card {
   display: flex;
   flex-direction: column;
@@ -829,6 +824,7 @@ p {
   align-items: center;
   margin-bottom: 0.5rem;
   text-transform: capitalize;
+  margin-right: auto;
 }
 .choice-container {
   display: flex;
@@ -842,6 +838,10 @@ p {
 }
 .status {
   font-size: 0.8rem;
+  &.active {
+    background: rgba(var(--text-color), 0.1);
+    color: var(--accent-color);
+  }
   &.closed {
     background: rgba(var(--foreground-color), 1);
     border: solid 1px rgba(var(--text-color), 0.2);
@@ -862,7 +862,6 @@ p {
 .contract-choice {
   display: grid;
   gap: 0.5rem 1rem;
-  margin-bottom: 2rem;
   &:last-of-type {
     margin-bottom: 0;
   }
@@ -956,12 +955,26 @@ p {
 #error_page {
   padding: 1.5rem 0;
 }
-.view-wrapper {
+#view-wrappe .view-wrapper {
   display: grid;
   align-items: flex-start;
   & > * {
     grid-area: 1/1;
   }
+}
+.info-row {
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+#participant_container,
+#deposits_container {
+  display: grid;
+  gap: 2.5rem;
+}
+.participant,
+.deposit-card {
+  flex-wrap: wrap;
+  gap: 2rem;
 }
 @media only screen and (min-width: 640px) {
   .margin,
@@ -1006,6 +1019,19 @@ p {
   .contract-choice {
     grid-template-columns: 2fr 1fr 1fr;
     align-items: center;
+  }
+  #contract_info {
+    columns: 24rem auto;
+    column-gap: 4rem;
+  }
+  .info-row {
+    flex-direction: row;
+    gap: 0.5rem;
+    h5 {
+      min-width: 11rem;
+      margin-bottom: 0;
+      margin-top: 0.2rem !important;
+    }
   }
 }
 @media only screen and (min-width: 1280px) {
