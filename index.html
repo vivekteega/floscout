@@ -189,7 +189,6 @@
 				return timestamp;
 			}
 		}
-		// window.addEventListener('hashchange', e => routeTo(window.location.hash))
 		window.addEventListener("load", () => {
 			document.body.classList.remove('hidden')
 			document.addEventListener("pointerdown", (e) => {
@@ -378,7 +377,7 @@
 				if (!contractId) return;
 				const contract = splitContractNameAddress(contractId);
 				const contractInfo = await getContractInfo(contract)
-				const { contractType, contractSubtype, accepting_token, selling_token } = contractInfo
+				const { contractType, contractSubtype, acceptingToken, sellingToken } = contractInfo
 				const detailsToFetch = [getContractTransactions(contract), getContractParticipants(contract)]
 				if (contractType === 'continuos-event' && contractSubtype === 'tokenswap')
 					detailsToFetch.push(getContractDeposits(contract))
@@ -426,8 +425,8 @@
 										document.getElementById('participant_container'),
 										html`${Object.keys(contractParticipants)
 											.map(participant => render.participantCard({
-												accepting_token: accepting_token,
-												selling_token: selling_token,
+												acceptingToken: acceptingToken,
+												sellingToken: sellingToken,
 												...contractParticipants[participant]
 											}))
 											}`
@@ -442,7 +441,7 @@
 										document.getElementById('deposits_container'),
 										html`${contractDeposits.map(deposit => render.depositCard({
 											...deposit,
-											accepting_token: accepting_token,
+											acceptingToken: acceptingToken,
 										}))}`
 									)
 								else
@@ -845,8 +844,8 @@
 					payeeAddress,
 					minAmount,
 					maxAmount,
-					accepting_token,
-					selling_token,
+					acceptingToken,
+					sellingToken,
 					numberOfDeposits,
 					numberOfParticipants,
 					totalHonorAmount,
@@ -918,15 +917,15 @@
 							${contractType === 'continuos-event' && contractSubtype === 'tokenswap' ? html`
 								<div class="flex info-row">
 									<h5 class="label">Input token</h5>
-									<h4>${accepting_token}</h4>
+									<h4>${acceptingToken}</h4>
 								</div>
 								<div class="flex info-row">
 									<h5 class="label">Output token</h5>
-									<h4>${selling_token}</h4>	
+									<h4>${sellingToken}</h4>	
 								</div>
 								<div class="flex info-row">
 									<h5 class="label">Exchange rate (${priceType === 'dynamic' ? 'Dynamic' : 'Fixed'})</h5>
-									<h4>1 ${selling_token} = ${price} ${accepting_token}</h4>
+									<h4>1 ${sellingToken} = ${price} ${acceptingToken}</h4>
 								</div>
 							`: ''}
 							${numberOfDeposits ? html`
@@ -950,13 +949,13 @@
 							${totalParticipationAmount ? html`
 								<div class="flex info-row">
 									<h5 class="label">Total participation amount</h5>
-									<h4>${formatAmount(totalParticipationAmount, 'usd')} ${accepting_token}</h4>
+									<h4>${formatAmount(totalParticipationAmount, 'usd')} ${acceptingToken}</h4>
 								</div>
 							`: ''}
 							${totalHonorAmount ? html`
 								<div class="flex info-row">
 									<h5 class="label">Total output amount</h5>
-									<h4>${formatAmount(totalHonorAmount, 'usd')} ${selling_token}</h4>
+									<h4>${formatAmount(totalHonorAmount, 'usd')} ${sellingToken}</h4>
 								</div>
 							`: ''}
 						</div>
@@ -984,7 +983,7 @@
 				`;
 			},
 			participantCard(details) {
-				const { participantFloAddress, participationAmount, swapAmount, swapPrice, transactionHash, accepting_token, selling_token } = details;
+				const { participantFloAddress, participationAmount, swapAmount, swapPrice, transactionHash, acceptingToken, sellingToken } = details;
 				return html`
 					<li class="flex participant">
 						<div class="grid gap-0-5 flex-1">
@@ -997,22 +996,22 @@
 						<div class="grid align-center gap-1 flex-1" style="grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr))">
 							<div>
 								<h5 class="label">Input amount</h5>
-								<b>${formatAmount(participationAmount, 'usd')} ${accepting_token}</b>
+								<b>${formatAmount(participationAmount, 'usd')} ${acceptingToken}</b>
 							</div>
 							<div>
 								<h5 class="label">Output amount</h5>
-								<b>${formatAmount(swapAmount, 'usd')} ${selling_token}</b>
+								<b>${formatAmount(swapAmount, 'usd')} ${sellingToken}</b>
 							</div>
 							<div>
 								<h5 class="label">Exchange rate</h5>
-								<b>${formatAmount(swapPrice, 'usd')} ${accepting_token}</b>
+								<b>${formatAmount(swapPrice, 'usd')} ${acceptingToken}</b>
 							</div>
 						</div>
 					</li>
 				`;
 			},
 			depositCard(details) {
-				const { currentBalance, depositorAddress, originalBalance, status, time, transactionHash, accepting_token } = details
+				const { currentBalance, depositorAddress, originalBalance, status, time, transactionHash, acceptingToken } = details
 				return html`
 				<li class="flex deposit-card">
 					<div class="grid gap-0-5 flex-1">
@@ -1022,11 +1021,11 @@
 					<div class="grid align-center gap-1 flex-1" style="grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr))">
 						<div>
 							<h5 class="label">Deposited</h5>
-							<b>${formatAmount(originalBalance, 'usd')} ${accepting_token}</b>
+							<b>${formatAmount(originalBalance, 'usd')} ${acceptingToken}</b>
 						</div>
 						<div>
 							<h5 class="label">Current balance</h5>
-							<b>${formatAmount(currentBalance, 'usd')} ${accepting_token}</b>
+							<b>${formatAmount(currentBalance, 'usd')} ${acceptingToken}</b>
 						</div>
 						<div>
 							<h5 class="label">Status</h5>
@@ -1408,8 +1407,8 @@
 					payeeAddress,
 					userChoice,
 					tokenIdentification,
-					accepting_token,
-					selling_token,
+					acceptingToken,
+					sellingToken,
 					contractAmount,
 					minimumsubscriptionamount,
 					maximumsubscriptionamount,
@@ -1429,8 +1428,8 @@
 				payeeAddress,
 				userChoices: userChoice,
 				token: tokenIdentification,
-				accepting_token,
-				selling_token,
+				acceptingToken,
+				sellingToken,
 				participationFees: contractAmount,
 				minAmount: minimumsubscriptionamount,
 				maxAmount: maximumsubscriptionamount,
