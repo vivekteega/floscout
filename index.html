@@ -703,6 +703,8 @@
 					if (!ownedTokens[token].balance)
 						ownedTokens[token].balance = 0
 				}
+				if (!ownedTokens)
+					ownedTokens = {}
 				return html`
 					<div id="address_page" class="page">
 						<div class="balance-card">
