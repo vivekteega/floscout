@@ -10,11 +10,13 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 	<script src="https://unpkg.com/uhtml@3.0.1/es.js"></script>
-	<script src="components.min.js"></script>
+	<script src="scripts/components.min.js"></script>
+	<script src="scripts/lib.js" defer></script>
+	<script src="scripts/floCrypto.js" defer></script>
 	<link rel="shortcut icon" href="floscout.svg" type="image/x-icon">
 </head>
 
-<body data-theme="light" class="hidden">
+<body class="hidden">
 	<sm-notifications id="notification_drawer"></sm-notifications>
 	<div id="loading">
 		<sm-spinner></sm-spinner>
@@ -696,21 +698,25 @@
 				`;
 			},
 			addressPage(obj) {
-				const { floBalance, floAddress, ownedTokens = {} } = obj;
+				let { floBalance, floAddress, ownedTokens = {} } = obj;
+				for (const token in ownedTokens) {
+					if (!ownedTokens[token].balance)
+						ownedTokens[token].balance = 0
+				}
 				return html`
-				<div id="address_page" class="page">
-					<div class="balance-card">
+					<div id="address_page" class="page">
+						<div class="balance-card">
 							<h2 class="wrap-around margin-bottom-2">${floAddress}</h2>
 							<h5 class="label">FLO Balance</h5>
 							<h3 class="margin-bottom-2">${floBalance} FLO</h3>
-							<div class="grid gap-0-5">
-								<h5>Tokens</h5>
-								<ul id="token_balance_list">
-									${Object.keys(ownedTokens || {})
-						.filter(token => ownedTokens[token].balance > 0)
-						.map(token => render.tokenBalanceCard(token, ownedTokens[token].balance))}
-								</ul>
-							</div>
+							${Object.keys(ownedTokens).length ? html`
+								<div class="grid gap-0-5">
+									<h5>Tokens</h5>
+									<ul id="token_balance_list">
+										${Object.keys(ownedTokens).map(token => render.tokenBalanceCard(token, ownedTokens[token].balance))}
+									</ul>
+								</div>
+							`: ''}
 						</div>
 						<h4>Transactions</h4>
 						<ul id="address_transaction_container" class="transaction-container"></ul>
@@ -1082,7 +1088,6 @@
 			tokenTransferCard(obj) {
 				const { hash, blockHeight, token, sender, receiver, amount, type, time } = obj;
 				let title = 'Token transfer';
-				console.log(type)
 				if (type === 'nfttransfer')
 					title = 'NFT transfer';
 				return html`
@@ -1463,11 +1468,6 @@
 				txList = Object.values(txList)
 			let latestTxArray = [];
 			txList.forEach(tx => {
-				// console.log(transactionKey)
-				// if(transactionKey == '11571ce7e5eed0bce30e24de89bb1ba6cc432df7b5b40bbc9f0225b98968cb47'){
-				// 	//debugger
-				// }
-				console.log(tx)
 				const {
 					transactionDetails: {
 						txid, blockHeight, vin, vout, time },
@@ -1698,7 +1698,7 @@
 					//console.log('this is a block number');
 					location.href = `#/block/${text}`
 					resolve('block')
-				} else if (text.length == 34 && text[0] == 'F') {
+				} else if (text.length == 34 && floCrypto.validateFloID(text)) {
 					//console.log('data entered is a FLO address');
 					location.href = `#/address/${text}`
 					resolve('address')
