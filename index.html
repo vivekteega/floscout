@@ -10,11 +10,13 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 	<script src="https://unpkg.com/uhtml@3.0.1/es.js"></script>
-	<script src="components.min.js"></script>
+	<script src="scripts/components.min.js"></script>
+	<script src="scripts/lib.js" defer></script>
+	<script src="scripts/floCrypto.js" defer></script>
 	<link rel="shortcut icon" href="floscout.svg" type="image/x-icon">
 </head>
 
-<body data-theme="light" class="hidden">
+<body class="hidden">
 	<sm-notifications id="notification_drawer"></sm-notifications>
 	<div id="loading">
 		<sm-spinner></sm-spinner>
@@ -189,7 +191,6 @@
 				return timestamp;
 			}
 		}
-		// window.addEventListener('hashchange', e => routeTo(window.location.hash))
 		window.addEventListener("load", () => {
 			document.body.classList.remove('hidden')
 			document.addEventListener("pointerdown", (e) => {
@@ -336,9 +337,9 @@
 			const renderedBlocks = latestBlocks.map(block => render.blockCard(block))
 			renderElem(document.getElementById('top_blocks_container'), html`${renderedBlocks}`)
 		}
-		router.addRoute('', (state) => {
+		router.addRoute('', async (state) => {
 			history.replaceState({}, '', '#/home')
-			renderHome(state)
+			await renderHome(state)
 		})
 		router.addRoute('home', renderHome)
 		router.addRoute('address', async state => {
@@ -378,7 +379,7 @@
 				if (!contractId) return;
 				const contract = splitContractNameAddress(contractId);
 				const contractInfo = await getContractInfo(contract)
-				const { contractType, contractSubtype, accepting_token, selling_token } = contractInfo
+				const { contractType, contractSubtype, acceptingToken, sellingToken } = contractInfo
 				const detailsToFetch = [getContractTransactions(contract), getContractParticipants(contract)]
 				if (contractType === 'continuos-event' && contractSubtype === 'tokenswap')
 					detailsToFetch.push(getContractDeposits(contract))
@@ -426,8 +427,8 @@
 										document.getElementById('participant_container'),
 										html`${Object.keys(contractParticipants)
 											.map(participant => render.participantCard({
-												accepting_token: accepting_token,
-												selling_token: selling_token,
+												acceptingToken: acceptingToken,
+												sellingToken: sellingToken,
 												...contractParticipants[participant]
 											}))
 											}`
@@ -442,7 +443,7 @@
 										document.getElementById('deposits_container'),
 										html`${contractDeposits.map(deposit => render.depositCard({
 											...deposit,
-											accepting_token: accepting_token,
+											acceptingToken: acceptingToken,
 										}))}`
 									)
 								else
@@ -697,22 +698,27 @@
 				`;
 			},
 			addressPage(obj) {
-				const { floBalance, floAddress, ownedTokens = {} } = obj;
-				console.log(obj)
+				let { floBalance, floAddress, ownedTokens = {} } = obj;
+				for (const token in ownedTokens) {
+					if (!ownedTokens[token].balance)
+						ownedTokens[token].balance = 0
+				}
+				if (!ownedTokens)
+					ownedTokens = {}
 				return html`
-				<div id="address_page" class="page">
-					<div class="balance-card">
+					<div id="address_page" class="page">
+						<div class="balance-card">
 							<h2 class="wrap-around margin-bottom-2">${floAddress}</h2>
 							<h5 class="label">FLO Balance</h5>
 							<h3 class="margin-bottom-2">${floBalance} FLO</h3>
-							<div class="grid gap-0-5">
-								<h5>Tokens</h5>
-								<ul id="token_balance_list">
-									${Object.keys(ownedTokens)
-						.filter(token => ownedTokens[token].balance > 0)
-						.map(token => render.tokenBalanceCard(token, ownedTokens[token].balance))}
-								</ul>
-							</div>
+							${Object.keys(ownedTokens).length ? html`
+								<div class="grid gap-0-5">
+									<h5>Tokens</h5>
+									<ul id="token_balance_list">
+										${Object.keys(ownedTokens).map(token => render.tokenBalanceCard(token, ownedTokens[token].balance))}
+									</ul>
+								</div>
+							`: ''}
 						</div>
 						<h4>Transactions</h4>
 						<ul id="address_transaction_container" class="transaction-container"></ul>
@@ -845,8 +851,8 @@
 					payeeAddress,
 					minAmount,
 					maxAmount,
-					accepting_token,
-					selling_token,
+					acceptingToken,
+					sellingToken,
 					numberOfDeposits,
 					numberOfParticipants,
 					totalHonorAmount,
@@ -918,15 +924,15 @@
 							${contractType === 'continuos-event' && contractSubtype === 'tokenswap' ? html`
 								<div class="flex info-row">
 									<h5 class="label">Input token</h5>
-									<h4>${accepting_token}</h4>
+									<h4>${acceptingToken}</h4>
 								</div>
 								<div class="flex info-row">
 									<h5 class="label">Output token</h5>
-									<h4>${selling_token}</h4>	
+									<h4>${sellingToken}</h4>	
 								</div>
 								<div class="flex info-row">
 									<h5 class="label">Exchange rate (${priceType === 'dynamic' ? 'Dynamic' : 'Fixed'})</h5>
-									<h4>1 ${selling_token} = ${price} ${accepting_token}</h4>
+									<h4>1 ${sellingToken} = ${price} ${acceptingToken}</h4>
 								</div>
 							`: ''}
 							${numberOfDeposits ? html`
@@ -950,13 +956,13 @@
 							${totalParticipationAmount ? html`
 								<div class="flex info-row">
 									<h5 class="label">Total participation amount</h5>
-									<h4>${formatAmount(totalParticipationAmount, 'usd')} ${accepting_token}</h4>
+									<h4>${formatAmount(totalParticipationAmount, 'usd')} ${acceptingToken}</h4>
 								</div>
 							`: ''}
 							${totalHonorAmount ? html`
 								<div class="flex info-row">
 									<h5 class="label">Total output amount</h5>
-									<h4>${formatAmount(totalHonorAmount, 'usd')} ${selling_token}</h4>
+									<h4>${formatAmount(totalHonorAmount, 'usd')} ${sellingToken}</h4>
 								</div>
 							`: ''}
 						</div>
@@ -984,7 +990,7 @@
 				`;
 			},
 			participantCard(details) {
-				const { participantFloAddress, participationAmount, swapAmount, swapPrice, transactionHash, accepting_token, selling_token } = details;
+				const { participantFloAddress, participationAmount, swapAmount, swapPrice, transactionHash, acceptingToken, sellingToken } = details;
 				return html`
 					<li class="flex participant">
 						<div class="grid gap-0-5 flex-1">
@@ -997,22 +1003,22 @@
 						<div class="grid align-center gap-1 flex-1" style="grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr))">
 							<div>
 								<h5 class="label">Input amount</h5>
-								<b>${formatAmount(participationAmount, 'usd')} ${accepting_token}</b>
+								<b>${formatAmount(participationAmount, 'usd')} ${acceptingToken}</b>
 							</div>
 							<div>
 								<h5 class="label">Output amount</h5>
-								<b>${formatAmount(swapAmount, 'usd')} ${selling_token}</b>
+								<b>${formatAmount(swapAmount, 'usd')} ${sellingToken}</b>
 							</div>
 							<div>
 								<h5 class="label">Exchange rate</h5>
-								<b>${formatAmount(swapPrice, 'usd')} ${accepting_token}</b>
+								<b>${formatAmount(swapPrice, 'usd')} ${acceptingToken}</b>
 							</div>
 						</div>
 					</li>
 				`;
 			},
 			depositCard(details) {
-				const { currentBalance, depositorAddress, originalBalance, status, time, transactionHash, accepting_token } = details
+				const { currentBalance, depositorAddress, originalBalance, status, time, transactionHash, acceptingToken } = details
 				return html`
 				<li class="flex deposit-card">
 					<div class="grid gap-0-5 flex-1">
@@ -1022,11 +1028,11 @@
 					<div class="grid align-center gap-1 flex-1" style="grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr))">
 						<div>
 							<h5 class="label">Deposited</h5>
-							<b>${formatAmount(originalBalance, 'usd')} ${accepting_token}</b>
+							<b>${formatAmount(originalBalance, 'usd')} ${acceptingToken}</b>
 						</div>
 						<div>
 							<h5 class="label">Current balance</h5>
-							<b>${formatAmount(currentBalance, 'usd')} ${accepting_token}</b>
+							<b>${formatAmount(currentBalance, 'usd')} ${acceptingToken}</b>
 						</div>
 						<div>
 							<h5 class="label">Status</h5>
@@ -1084,7 +1090,6 @@
 			tokenTransferCard(obj) {
 				const { hash, blockHeight, token, sender, receiver, amount, type, time } = obj;
 				let title = 'Token transfer';
-				console.log(type)
 				if (type === 'nfttransfer')
 					title = 'NFT transfer';
 				return html`
@@ -1406,10 +1411,10 @@
 					status,
 					expiryTime,
 					payeeAddress,
-					userChoice,
+					userChoices,
 					tokenIdentification,
-					accepting_token,
-					selling_token,
+					acceptingToken,
+					sellingToken,
 					contractAmount,
 					minimumsubscriptionamount,
 					maximumsubscriptionamount,
@@ -1427,10 +1432,10 @@
 				status,
 				expiration: expiryTime,
 				payeeAddress,
-				userChoices: userChoice,
+				userChoices,
 				token: tokenIdentification,
-				accepting_token,
-				selling_token,
+				acceptingToken,
+				sellingToken,
 				participationFees: contractAmount,
 				minAmount: minimumsubscriptionamount,
 				maxAmount: maximumsubscriptionamount,
@@ -1465,11 +1470,6 @@
 				txList = Object.values(txList)
 			let latestTxArray = [];
 			txList.forEach(tx => {
-				// console.log(transactionKey)
-				// if(transactionKey == '11571ce7e5eed0bce30e24de89bb1ba6cc432df7b5b40bbc9f0225b98968cb47'){
-				// 	//debugger
-				// }
-				console.log(tx)
 				const {
 					transactionDetails: {
 						txid, blockHeight, vin, vout, time },
@@ -1700,7 +1700,7 @@
 					//console.log('this is a block number');
 					location.href = `#/block/${text}`
 					resolve('block')
-				} else if (text.length == 34 && text[0] == 'F') {
+				} else if (text.length == 34 && floCrypto.validateFloID(text)) {
 					//console.log('data entered is a FLO address');
 					location.href = `#/address/${text}`
 					resolve('address')
