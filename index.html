@@ -332,7 +332,7 @@
 		async function renderHome(state) {
 			getRef("page_header").classList.add("hidden");
 			let [data, latestTxs, latestBlocks] = await Promise.all([getBannerData(), getLatestTxs(), getAllBlocks(6)])
-			renderElem(getRef("page_container"), html`${render.homepage(data)}`);
+			renderElem(getRef("page_container"), html`${render.homepage({ ...data, latestBlock: latestBlocks[0] })}`);
 			renderTransactions('top_transaction_container', latestTxs)
 			const renderedBlocks = latestBlocks.map(block => render.blockCard(block))
 			renderElem(document.getElementById('top_blocks_container'), html`${renderedBlocks}`)
@@ -636,7 +636,8 @@
 		let frag = document.createDocumentFragment();
 		const render = {
 			homepage(obj) {
-				let { topToken, totalTransactions, walletAddresses } = obj;
+				let { topToken, totalTransactions, walletAddresses, latestBlock } = obj;
+				const { height, time } = latestBlock
 				return html`
 					<div id="homepage" class="page">
 						<section id="first_section">
@@ -652,6 +653,10 @@
 								<div class="highlight-item">
 									<h4 class="label">Wallet addresses</h4>
 									<h2>${walletAddresses}</h2>
+								</div>
+								<div class="highlight-item">
+									<h4 class="label">Latest block (${getFormattedTime(time, 'relative')})</h4>
+									<h2><a class="block-height" href=${`#/block/${height}`}>${height}</a></h2>
 								</div>
 							</div>
 						</section>
