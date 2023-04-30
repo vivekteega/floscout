@@ -61,9 +61,14 @@
 
 	<!-- Set urls for token and flo Apis -->
 	<script>
-		let floGlobals = {}
-		tokenApiUrl = 'https://ranchimallflo-test.ranchimall.net'
-		floApiUrl = 'https://flosight.ranchimall.net'
+		const floGlobals = {
+            blockchain: "FLO_TEST",
+            tokenApiUrl: 'https://ranchimallflo-testing.duckdns.org',
+            tokenURL: 'https://ranchimallflo-testing.duckdns.org/',
+            expirationDays: 60,
+        }
+		tokenApiUrl = 'https://ranchimallflo-testing.duckdns.org'
+		floApiUrl = 'https://flosight-testnet.ranchimall.net'
 	</script>
 	<script>
 		/*jshint esversion: 8 */
@@ -1701,6 +1706,7 @@
 		function categorizeText(text) {
 			return new Promise((resolve, reject) => {
 				// check if text have only numbers
+				debugger
 				if (/^\d+$/.test(text)) {
 					//console.log('this is a block number');
 					location.href = `#/block/${text}`
