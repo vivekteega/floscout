@@ -144,7 +144,7 @@
 		function formatAmount(amount = 0, currency = 'inr') {
 			if (!amount)
 				return '0';
-			return amount.toLocaleString(currency === 'inr' ? `en-IN` : 'en-US', { currency, maximumFractionDigits: currency === 'inr' ? 2 : 8 })
+			return amount.toLocaleString(currency === 'inr' ? `en-IN` : 'en-US', { currency, maximumFractionDigits: 8 })
 		}
 		// fetch data and return json
 		async function fetchJson(url, options = {}) {
@@ -1682,7 +1682,6 @@
 		}
 
 
-		// THIS TAG CONTAINS CODE REQUIRED FOR THE NAVBAR TO FUNCTION
 		function returnHexNumber(s) {
 			var regExp = /^[-+]?[0-9A-Fa-f]+\.?[0-9A-Fa-f]*?$/;
 			return (typeof s === 'string' && regExp.test(s));
