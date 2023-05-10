@@ -771,12 +771,16 @@
 							</div>
 							<div class="flex flex-direction-column">
 								<h5 class="label">Sender</h5>
-								<a href=${`#/address/${sender}`} class="address wrap-around">${sender}</a>
+								<sm-copy value=${sender}>
+									<a href=${`#/address/${sender}`} class="address wrap-around">${sender}</a>
+								</sm-copy>
 							</div>
 							${receiver ? html`
 									<div class="flex flex-direction-column">
 										<h5 class="label">Receiver</h5>
-										<a href=${`#/address/${receiver}`} class="address wrap-around">${receiver}</a>
+										<sm-copy value=${receiver}>
+											<a href=${`#/address/${receiver}`} class="address wrap-around">${receiver}</a>
+										</sm-copy>
 									</div>
 								`: ''
 					}
@@ -1115,11 +1119,15 @@
 							<div class="flex flex-wrap gap-1">	
 								<div class="flex flex-direction-column">
 									<h5 class="label">Sender</h5>
-									<a href=${`#/address/${sender}`} class="address wrap-around">${sender}</a> 
+									<sm-copy value=${sender}>
+										<a href=${`#/address/${sender}`} class="address wrap-around">${sender}</a> 
+									</sm-copy>
 								</div>
 								<div class="flex flex-direction-column">
 									<h5 class="label">Receiver</h5>
-									<a href=${`#/address/${receiver}`} class="address wrap-around">${receiver}</a> 
+									<sm-copy value=${receiver}>
+										<a href=${`#/address/${receiver}`} class="address wrap-around">${receiver}</a> 
+									</sm-copy>
 								</div>
 							</div>
 							<div class="flex flex-direction-column">
@@ -1153,7 +1161,9 @@
 							<time>${getFormattedTime(time)}</time>
 							<div class="flex flex-direction-column">
 								<h5 class="label">Incorporation address</h5>
-								<a href=${`#/address/${incAddress}`} class="address wrap-around">${incAddress}</a>
+								<sm-copy value=${incAddress}>
+									<a href=${`#/address/${incAddress}`} class="address wrap-around">${incAddress}</a>
+								</sm-copy>
 							</div>
 							<div class="flex flex-direction-column">
 								<h5 class="label">token name</h5>
@@ -1234,7 +1244,9 @@
 							</div>
 							<div class="flex flex-direction-column">
 								<h5 class="label">Contract address</h5>
-								<a href=${`#/address/${incAddress}`} class="address wrap-around">${incAddress}</a>
+								<sm-copy value=${incAddress}>
+									<a href=${`#/address/${incAddress}`} class="address wrap-around">${incAddress}</a>
+								</sm-copy>
 							</div>
 							<div class="flex flex-direction-column">
 								<h5 class="label">token used</h5>
@@ -1475,6 +1487,9 @@
 			const deposits = await fetchJson(`${floGlobals.tokenApiUrl}/api/v2/smartContractDeposits?contractName=${contract.name}&contractAddress=${contract.address}`)
 			return deposits.depositInfo
 		}
+		function getReceiver(vin, vout) {
+			return vout.find(output => output.scriptPubKey.addresses.find(address => address !== vin[0].addr))?.scriptPubKey.addresses[0] || vin[0].addr
+		}
 
 		function parseTransactions(txList) {
 			if (!Array.isArray(txList))
@@ -1510,17 +1525,9 @@
 					switch (type) {
 						case 'transfer':
 							if (transferType == "token" || transferType == 'nft') {
-								let receiverAddress = "";
-								for (const output of vout) {
-									if (output["scriptPubKey"]["addresses"][0] !== vin[0]["addr"]) {
-										receiverAddress = output["scriptPubKey"]["addresses"][0];
-										break;
-									}
-								}
-
 								obj = Object.assign({}, obj, {
 									sender: vin[0]["addr"],
-									receiver: receiverAddress,
+									receiver: getReceiver(vin, vout),
 									amount: tokenAmount,
 									type: transferType == "token" ? "tokentransfer" : "nfttransfer",
 								});
@@ -1528,17 +1535,9 @@
 								break;
 							} else if (transferType == 'smartContract') {
 								// smart contract transfer
-								let receiverAddress = "";
-								for (const output of vout) {
-									if (output["scriptPubKey"]["addresses"][0] !== vin[0]["addr"]) {
-										receiverAddress = output["scriptPubKey"]["addresses"][0];
-										break;
-									}
-								}
-
 								obj = Object.assign({}, obj, {
 									sender: vin[0]["addr"],
-									receiver: receiverAddress,
+									receiver: getReceiver(vin, vout),
 									amount: tokenAmount,
 									contractName,
 									userChoice,
