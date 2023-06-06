@@ -1037,7 +1037,9 @@
 				`;
 			},
 			depositCard(details) {
-				const { currentBalance, depositorAddress, originalBalance, status, time, transactionHash, acceptingToken } = details
+				const { currentBalance, depositorAddress, originalBalance, status, time, transactionHash, acceptingToken, sellingToken } = details
+				console.log("I'm at the debug point")
+				debugger
 				return html`
 				<li class="flex deposit-card">
 					<div class="grid gap-0-5 flex-1">
@@ -1047,11 +1049,11 @@
 					<div class="grid align-center gap-1 flex-1" style="grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr))">
 						<div>
 							<h5 class="label">Deposited</h5>
-							<b>${formatAmount(originalBalance, 'usd')} ${acceptingToken}</b>
+							<b>${originalBalance} ${sellingToken}</b>
 						</div>
 						<div>
 							<h5 class="label">Current balance</h5>
-							<b>${formatAmount(currentBalance, 'usd')} ${acceptingToken}</b>
+							<b>${currentBalance} ${sellingToken}</b>
 						</div>
 						<div>
 							<h5 class="label">Status</h5>
