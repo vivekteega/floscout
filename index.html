@@ -1049,11 +1049,11 @@
 					<div class="grid align-center gap-1 flex-1" style="grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr))">
 						<div>
 							<h5 class="label">Deposited</h5>
-							<b>${originalBalance} ${sellingToken}</b>
+							<b>${formatAmount(originalBalance, 'usd')} ${sellingToken}</b>
 						</div>
 						<div>
 							<h5 class="label">Current balance</h5>
-							<b>${currentBalance} ${sellingToken}</b>
+							<b>${formatAmount(currentBalance, 'usd')} ${sellingToken}</b>
 						</div>
 						<div>
 							<h5 class="label">Status</h5>
