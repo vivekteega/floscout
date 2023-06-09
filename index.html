@@ -1079,6 +1079,51 @@
 					</li>
 				`;
 			},
+			contractDepositCard(obj) {
+				const { hash, blockHeight, token, sender, receiver, amount, type, time, contractAddress, contractName } = obj;
+				let title = 'Contract deposit';
+				return html`
+					<li id=${hash} class="transaction token-transfer">
+						<svg class="icon" viewBox="0 0 64 64"> <title>transfer</title> <polyline points="17.04 35.97 14.57 33.5 40.15 7.9 32.75 0.5 55.52 0.5 55.52 23.28 48.12 15.87 23.86 40.14 15.88 48.13 8.48 40.72 8.48 63.5 31.25 63.5 23.85 56.1 49.43 30.5 46.96 28.03"/> </svg>
+						<div class="contract-type">
+							<h5 class="label">${title}</h5>
+							<a href=${`#/token/${token}`} class="">${token}</a>
+						</div>
+						<div class="contract-info">						
+							<time>${getFormattedTime(time)}</time>
+							<div class="flex flex-wrap gap-1">	
+								<div class="flex flex-direction-column">
+									<h5 class="label">Sender</h5>
+									<sm-copy value=${sender}>
+										<a href=${`#/address/${sender}`} class="address wrap-around">${sender}</a> 
+									</sm-copy>
+								</div>
+								<div class="flex flex-direction-column">
+									<h5 class="label">Receiver</h5>
+									<sm-copy value=${receiver}>
+										<a href=${`#/address/${receiver}`} class="address wrap-around">${receiver}</a> 
+									</sm-copy>
+								</div>
+							</div>
+							<div class="flex flex-direction-column">
+								<h5 class="label">Contract name</h5>
+								<h4>${contractName}</h4>
+							</div>
+							<div class="flex flex-direction-column">
+								<h5 class="label">Amount</h5>
+								<h4>${formatAmount(amount, token.toLowerCase() === 'rupee' ? 'inr' : 'usd')} ${token}</h4>
+							</div>
+							<div class="flex align-center space-between flex-wrap gap-1">
+								<div class="flex flex-direction-column">
+									<h5 class="label">Transaction ID</h5>
+									<sm-copy value=${hash} clip-text></sm-copy>
+								</div>
+								<a href=${`#/transaction/${hash}`} class="button button--small button--colored">View details</a>
+							</div>
+						</div>
+					</li>
+				`;
+			},
 			contractTransferCard(obj) {
 				const { hash, token, sender, receiver, amount, contractName, userChoice, time } = obj;
 				return html`
@@ -1334,6 +1379,9 @@
 					case 'nfttransfer':
 						return render.tokenTransferCard(tx)
 						break;
+					case 'contractdeposit':
+						return render.contractDepositCard(tx)
+						break;
 					case 'contracttransfer':
 						return render.contractTransferCard(tx);
 						break;
@@ -1528,7 +1576,10 @@
 			txList.forEach(tx => {
 				const {
 					transactionDetails: {
-						txid, blockHeight, vin, vout, time },
+						txid, blockHeight, vin, vout, time,
+						receiverAddress,
+						senderAddress,
+					},
 					parsedFloData: {
 						contractAddress,
 						contractType,
@@ -1541,7 +1592,8 @@
 						contractName,
 						triggerCondition,
 						userChoice,
-						nftHash
+						nftHash,
+						depositAmount,
 					}
 				} = tx;
 				let obj = {
@@ -1556,8 +1608,8 @@
 						case 'transfer':
 							if (transferType == "token" || transferType == 'nft') {
 								obj = Object.assign({}, obj, {
-									sender: vin[0]["addr"],
-									receiver: getReceiver(vin, vout),
+									sender: senderAddress,
+									receiver: receiverAddress,
 									amount: tokenAmount,
 									type: transferType == "token" ? "tokentransfer" : "nfttransfer",
 								});
@@ -1566,8 +1618,8 @@
 							} else if (transferType == 'smartContract') {
 								// smart contract transfer
 								obj = Object.assign({}, obj, {
-									sender: vin[0]["addr"],
-									receiver: getReceiver(vin, vout),
+									sender: senderAddress,
+									receiver: receiverAddress,
 									amount: tokenAmount,
 									contractName,
 									userChoice,
@@ -1580,7 +1632,7 @@
 							// token incorporation
 							// smart contract incorporation
 							obj = Object.assign({}, obj, {
-								incAddress: vin[0]["addr"],
+								incAddress: senderAddress,
 								supply: tokenAmount,
 								type: "tokenincorp",
 							});
@@ -1619,10 +1671,23 @@
 						case 'nftIncorporation':
 							// nft incorporation
 							obj = Object.assign({}, obj, {
-								incAddress: vin[0]["addr"],
+								incAddress: senderAddress,
 								supply: tokenAmount,
 								type: "nftincorp",
 								nftHash
+							});
+							latestTxArray.push(obj);
+							break;
+						case 'smartContractDeposit':
+							// smart contract deposit
+							obj = Object.assign({}, obj, {
+								contractName,
+								contractAddress,
+								contractType,
+								amount: depositAmount,
+								type: "contractdeposit",
+								sender: senderAddress,
+								receiver: receiverAddress,
 							});
 							latestTxArray.push(obj);
 							break;
@@ -1631,21 +1696,13 @@
 				} else {
 					// transaction is a FLO Smart Contract Committee trigger
 
-					let receiver = "", sender = vin[0]['addr'];
-					for (const output of vout) {
-						if (output["scriptPubKey"]["addresses"][0] !== vin[0]["addr"]) {
-							receiverAddress = output["scriptPubKey"]["addresses"][0];
-							break;
-						}
-					}
-
 					obj = Object.assign({}, obj, {
 						hash: txid,
 						blockHeight,
 						contractName,
-						contractAddress: receiver,
+						contractAddress: receiverAddress,
 						winningChoice: triggerCondition,
-						committeeAddress: sender,
+						committeeAddress: senderAddress,
 						type: 'contracttrigger'
 					});
 					latestTxArray.push(obj);
