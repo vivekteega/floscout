@@ -475,7 +475,7 @@
 		})
 		router.addRoute('blocks', async state => {
 			let allBlocks = await getAllBlocks(100);
-			getRef("page_title").textContent = "All Blocks";
+			getRef("page_title").textContent = "All blocks with token transactions";
 			const renderedBlocks = allBlocks.map(block => render.blockCard(block))
 			renderElem(getRef("page_container"), html`
 						<div id="all_blocks_page" class="page">
@@ -485,7 +485,7 @@
 		})
 		router.addRoute('transactions', async state => {
 			let allTxs = await getAllTxs();
-			getRef("page_title").textContent = "All Transactions";
+			getRef("page_title").textContent = "All token transactions";
 			renderElem(getRef("page_container"), html`
 						<div id="all_transactions_page" class="page"> 
 							<ul id="all_transaction_list" class="transaction-container"></ul>	
@@ -659,21 +659,21 @@
 									<h2>${walletAddresses}</h2>
 								</div>
 								<div class="highlight-item">
-									<h4 class="label">Latest block (${getFormattedTime(time, 'relative')})</h4>
+									<h4 class="label">Last token transaction block (${getFormattedTime(time, 'relative')})</h4>
 									<h2><a class="block-height" href=${`#/block/${height}`}>${height}</a></h2>
 								</div>
 							</div>
 						</section>
 						<section id="latest_transaction_section" class="margin-bottom-2">
 							<header class="flex align-center space-between">
-								<h3>Recent transactions</h3>
+								<h3>Recent token transactions</h3>
 								<a id='all_trans_btn' href=${`#/transactions`} class="button button--small button--colored">View all</a>
 							</header>
 							<ul id="top_transaction_container" class="transaction-container"> </ul>
 						</section>
 						<section id="latest_blocks_section">
 							<header class="flex align-center space-between">
-								<h3>Recent blocks</h3>
+								<h3>Recent token transaction blocks</h3>
 								<a id='all_blocks_btn' href=${`#/blocks`} class="button button--small button--colored">View all</a>
 							</header>
 							<div id="top_blocks_container"> </div>
