@@ -446,6 +446,7 @@
 										html`${contractDeposits.map(deposit => render.depositCard({
 											...deposit,
 											acceptingToken,
+											sellingToken
 										}))}`
 									)
 								else
@@ -1038,8 +1039,7 @@
 			},
 			depositCard(details) {
 				const { currentBalance, depositorAddress, originalBalance, status, time, transactionHash, acceptingToken, sellingToken } = details
-				console.log("I'm at the debug point")
-				debugger
+				console.log(details)
 				return html`
 				<li class="flex deposit-card">
 					<div class="grid gap-0-5 flex-1">
