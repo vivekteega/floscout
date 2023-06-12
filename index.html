@@ -877,7 +877,8 @@
 					totalParticipationAmount,
 					priceType,
 					oracle_address,
-					price
+					price,
+					currentDepositBalance
 				} = obj;
 				console.log(obj)
 				return html`
@@ -983,6 +984,12 @@
 								<div class="flex info-row">
 									<h5 class="label">Total output amount</h5>
 									<h4>${formatAmount(totalHonorAmount, 'usd')} ${sellingToken}</h4>
+								</div>
+							`: ''}
+							${currentDepositBalance ? html`
+								<div class="flex info-row">
+									<h5 class="label">Total deposit balance </h5>
+									<h4>${formatAmount(currentDepositBalance, 'usd')} ${sellingToken}</h4>
 								</div>
 							`: ''}
 						</div>
@@ -1521,7 +1528,8 @@
 					maximumsubscriptionamount,
 					totalHonorAmount,
 					totalParticipationAmount,
-					price
+					price,
+					currentDepositBalance
 				}, contractAddress,
 				contractName
 			} = info
@@ -1546,7 +1554,8 @@
 				oracle_address,
 				totalHonorAmount,
 				totalParticipationAmount,
-				price
+				price,
+				currentDepositBalance
 			}
 		}
 
