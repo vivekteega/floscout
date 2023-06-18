@@ -1147,8 +1147,14 @@
 								<h4>${formatAmount(amount, token.toLowerCase() === 'rupee' ? 'inr' : 'usd')} ${token}</h4>
 							</div>
 							<div class="flex flex-direction-column">
-								<h5 class="label">Contract name</h5>
-								<h4>${contractName}</h4>
+								<h5 class="label">Sender (Smart contract)</h5>
+								<h4><a class="address wrap-around" href=${`#/contract/${contractName}-${sender}`}>${contractName}-${sender}</a></h4>
+							</div>
+							<div class="flex flex-direction-column">
+									<h5 class="label">Receiver</h5>
+									<sm-copy value=${receiver}>
+										<a href=${`#/address/${receiver}`} class="address wrap-around">${receiver}</a> 
+									</sm-copy>
 							</div>
 							<div class="flex align-center space-between flex-wrap gap-1">
 								<div class="flex flex-direction-column">
