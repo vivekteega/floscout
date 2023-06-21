@@ -743,12 +743,11 @@
 				`;
 			},
 			transactionPage(obj) {
+				console.log(obj)
 				let { type, name, blockHeight, amount, sender, receiver, floData, hash, confirmations, nftHash } = obj;
-				// todo : This is a temporary fix. Fix this on the Database and API level
 				if (type == 'smartContractPays' || type == ' smartContractPays') {
 					name = ''
 				}
-
 				if (type.trim() === 'nftIncorporation')
 					type = 'NFT Incorporation'
 				else if (type.trim() === 'nft transfer')
@@ -798,10 +797,9 @@
 							<h5 class="label">Block Confirmations</h5>
 							<h4>${confirmations}</h4>
 							${nftHash ? html`
-									<h5 class="label">NFT hash</h5>
-									<sm-copy value=${nftHash} clip-text></sm-copy>
-								`: ''
-					}
+								<h5 class="label">NFT hash</h5>
+								<sm-copy value=${nftHash} clip-text></sm-copy>
+							`: ''}
 						</div>
 					</div>
               `;
@@ -1428,7 +1426,6 @@
 		}
 
 		async function renderTransactions(container, transactions = []) {
-			console.log(transactions)
 			let txFrag = parseTransactions(transactions);
 			const renderedTransactions = txFrag.map(tx => {
 				switch (tx.type) {
@@ -1457,7 +1454,6 @@
 						break;
 				}
 			})
-			console.log(renderedTransactions)
 			renderElem(document.getElementById(container), html`${renderedTransactions.length ? renderedTransactions : html`<div class="no-results">No transactions found</div>`}`)
 		}
 
@@ -1820,32 +1816,38 @@
 		async function getTxInfo(thisTx) {
 			try {
 				const transaction = await fetchJson(`${floGlobals.tokenApiUrl}/api/v2/transactionDetails/${thisTx}`)
+				console.log(transaction)
 				if (transaction.result === 'error') {
 					return [false, transaction.description]
 				} else {
-					let { transactionHash, floData, tokenAmount, tokenIdentification, type, nftHash, blockheight, vin, vout, confirmations } = transaction;
-					let sender = vin[0].addr;
-					let receiver = sender
-					for (let i = 0; i < vout.length; i++) {
-						if (vout[i]["scriptPubKey"]["addresses"][0] !== vin[0]["addr"]) {
-							receiver = vout[i]["scriptPubKey"]["addresses"][0];
-						}
-					}
-					// todo - temporary fixes below. Fix these on the Database and API level
-					let transactionType = transferType || ''
+					let {
+						floData,
+						tokenAmount,
+						tokenIdentification,
+						type,
+						nftHash,
+						blockheight,
+						vin,
+						vout,
+						confirmations,
+						transferType,
+						senderAddress,
+						receiverAddress,
+						txid
+					} = transaction;
 					if (type == 'smartContractPays') {
 						tokenAmount = '-'
 					}
 					return [
 						true, {
-							type: `${transactionType} ${type}`,
+							type: `${transferType || ''} ${type}`,
 							name: tokenIdentification,
 							blockHeight: blockheight,
 							amount: tokenAmount,
-							sender,
-							receiver,
+							sender: senderAddress,
+							receiver: receiverAddress,
 							floData,
-							hash: transactionHash,
+							hash: txid,
 							confirmations,
 							nftHash
 						}
