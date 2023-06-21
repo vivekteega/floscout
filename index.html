@@ -641,8 +641,7 @@
 		let frag = document.createDocumentFragment();
 		const render = {
 			homepage(obj) {
-				let { topToken, totalTransactions, walletAddresses, latestBlock } = obj;
-				const { height, time } = latestBlock
+				let { topToken, totalTransactions, walletAddresses, latestBlock: { height, time } } = obj;
 				return html`
 					<div id="homepage" class="page">
 						<section id="first_section">
@@ -1385,6 +1384,7 @@
 		}
 
 		async function renderTransactions(container, transactions = []) {
+			console.log(transactions)
 			let txFrag = parseTransactions(transactions);
 			const renderedTransactions = txFrag.map(tx => {
 				switch (tx.type) {
@@ -1590,26 +1590,28 @@
 			let latestTxArray = [];
 			txList.forEach(tx => {
 				const {
-					transactionDetails: {
-						txid, blockHeight, vin, vout, time,
-						receiverAddress,
-						senderAddress,
-					},
-					parsedFloData: {
-						contractAddress,
-						contractType,
-						contractConditions: { expiryTime, accepting_token, selling_token, subtype, price } = {},
-						contractAmount,
-						type,
-						tokenAmount,
-						tokenIdentification,
-						transferType,
-						contractName,
-						triggerCondition,
-						userChoice,
-						nftHash,
-						depositAmount,
-					}
+					txid,
+					blockHeight,
+					vin,
+					vout,
+					time,
+					receiverAddress,
+					senderAddress,
+					contractAddress,
+					contractType,
+					contractConditions: { expiryTime, accepting_token, selling_token, subtype, price } = {},
+					contractAmount,
+					type,
+					tokenAmount,
+					transferType,
+					triggerCondition,
+					userChoice,
+					nftHash,
+					depositAmount,
+					amount,
+					contractName,
+					tokenIdentification,
+					transactionTrigger,
 				} = tx;
 				let obj = {
 					hash: txid,
@@ -1757,9 +1759,7 @@
 				if (transaction.result === 'error') {
 					return [false, transaction.description]
 				} else {
-					let transactionHash = transaction.transactionHash,
-						{ flodata, tokenAmount, tokenIdentification, type, nftHash } = transaction.parsedFloData,
-						{ blockheight, vin, vout, confirmations } = transaction.transactionDetails;
+					let { transactionHash, floData, tokenAmount, tokenIdentification, type, nftHash, blockheight, vin, vout, confirmations } = transaction;
 					let sender = vin[0].addr;
 					let receiver = sender
 					for (let i = 0; i < vout.length; i++) {
@@ -1768,13 +1768,9 @@
 						}
 					}
 					// todo - temporary fixes below. Fix these on the Database and API level
-					let transactionType = ''
-					if (type == 'transfer') {
-						transactionType = transaction.parsedFloData?.transferType
-					}
+					let transactionType = transferType || ''
 					if (type == 'smartContractPays') {
 						tokenAmount = '-'
-						flodata = transaction.transactionDetails.floData
 					}
 					return [
 						true, {
@@ -1784,7 +1780,7 @@
 							amount: tokenAmount,
 							sender,
 							receiver,
-							floData: flodata,
+							floData,
 							hash: transactionHash,
 							confirmations,
 							nftHash
