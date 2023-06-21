@@ -446,6 +446,7 @@
 										html`${contractDeposits.map(deposit => render.depositCard({
 											...deposit,
 											acceptingToken,
+											sellingToken
 										}))}`
 									)
 								else
@@ -475,7 +476,7 @@
 		})
 		router.addRoute('blocks', async state => {
 			let allBlocks = await getAllBlocks(100);
-			getRef("page_title").textContent = "All Blocks";
+			getRef("page_title").textContent = "All blocks with token transactions";
 			const renderedBlocks = allBlocks.map(block => render.blockCard(block))
 			renderElem(getRef("page_container"), html`
 						<div id="all_blocks_page" class="page">
@@ -485,7 +486,7 @@
 		})
 		router.addRoute('transactions', async state => {
 			let allTxs = await getAllTxs();
-			getRef("page_title").textContent = "All Transactions";
+			getRef("page_title").textContent = "All token transactions";
 			renderElem(getRef("page_container"), html`
 						<div id="all_transactions_page" class="page"> 
 							<ul id="all_transaction_list" class="transaction-container"></ul>	
@@ -659,21 +660,21 @@
 									<h2>${walletAddresses}</h2>
 								</div>
 								<div class="highlight-item">
-									<h4 class="label">Latest block (${getFormattedTime(time, 'relative')})</h4>
+									<h4 class="label">Last token transaction block (${getFormattedTime(time, 'relative')})</h4>
 									<h2><a class="block-height" href=${`#/block/${height}`}>${height}</a></h2>
 								</div>
 							</div>
 						</section>
 						<section id="latest_transaction_section" class="margin-bottom-2">
 							<header class="flex align-center space-between">
-								<h3>Recent transactions</h3>
+								<h3>Recent token transactions</h3>
 								<a id='all_trans_btn' href=${`#/transactions`} class="button button--small button--colored">View all</a>
 							</header>
 							<ul id="top_transaction_container" class="transaction-container"> </ul>
 						</section>
 						<section id="latest_blocks_section">
 							<header class="flex align-center space-between">
-								<h3>Recent blocks</h3>
+								<h3>Recent token transaction blocks</h3>
 								<a id='all_blocks_btn' href=${`#/blocks`} class="button button--small button--colored">View all</a>
 							</header>
 							<div id="top_blocks_container"> </div>
@@ -876,7 +877,8 @@
 					totalParticipationAmount,
 					priceType,
 					oracle_address,
-					price
+					price,
+					currentDepositBalance
 				} = obj;
 				console.log(obj)
 				return html`
@@ -943,11 +945,11 @@
 							${contractType === 'continuos-event' && contractSubtype === 'tokenswap' ? html`
 								<div class="flex info-row">
 									<h5 class="label">deposit token</h5>
-									<h4>${acceptingToken}</h4>
+									<h4>${sellingToken}</h4>
 								</div>
 								<div class="flex info-row">
 									<h5 class="label">participation token</h5>
-									<h4>${sellingToken}</h4>	
+									<h4>${acceptingToken}</h4>	
 								</div>
 								<div class="flex info-row">
 									<h5 class="label">Exchange rate (${priceType === 'dynamic' ? 'Dynamic' : 'Fixed'})</h5>
@@ -982,6 +984,12 @@
 								<div class="flex info-row">
 									<h5 class="label">Total output amount</h5>
 									<h4>${formatAmount(totalHonorAmount, 'usd')} ${sellingToken}</h4>
+								</div>
+							`: ''}
+							${currentDepositBalance ? html`
+								<div class="flex info-row">
+									<h5 class="label">Total deposit balance </h5>
+									<h4>${formatAmount(currentDepositBalance, 'usd')} ${sellingToken}</h4>
 								</div>
 							`: ''}
 						</div>
@@ -1021,11 +1029,11 @@
 						</div>
 						<div class="grid align-center gap-1 flex-1" style="grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr))">
 							<div>
-								<h5 class="label">Input amount</h5>
+								<h5 class="label">Sent</h5>
 								<b>${formatAmount(participationAmount, 'usd')} ${acceptingToken}</b>
 							</div>
 							<div>
-								<h5 class="label">Output amount</h5>
+								<h5 class="label">Received</h5>
 								<b>${formatAmount(swapAmount, 'usd')} ${sellingToken}</b>
 							</div>
 							<div>
@@ -1038,8 +1046,7 @@
 			},
 			depositCard(details) {
 				const { currentBalance, depositorAddress, originalBalance, status, time, transactionHash, acceptingToken, sellingToken } = details
-				console.log("I'm at the debug point")
-				debugger
+				console.log(details)
 				return html`
 				<li class="flex deposit-card">
 					<div class="grid gap-0-5 flex-1">
@@ -1140,8 +1147,14 @@
 								<h4>${formatAmount(amount, token.toLowerCase() === 'rupee' ? 'inr' : 'usd')} ${token}</h4>
 							</div>
 							<div class="flex flex-direction-column">
-								<h5 class="label">Contract name</h5>
-								<h4>${contractName}</h4>
+									<h5 class="label">Sender</h5>
+									<sm-copy value=${receiver}>
+										<a href=${`#/address/${sender}`} class="address wrap-around">${sender}</a> 
+									</sm-copy>
+							</div>
+							<div class="flex flex-direction-column">
+								<h5 class="label">Receiver (Smart contract)</h5>
+								<h4><a class="address wrap-around" href=${`#/contract/${contractName}-${receiver}`}>${contractName}-${receiver}</a></h4>
 							</div>
 							<div class="flex align-center space-between flex-wrap gap-1">
 								<div class="flex flex-direction-column">
@@ -1313,13 +1326,13 @@
 							`: ''}
 							${acceptingToken ? html`
 								<div class="flex flex-direction-column">
-									<h5 class="label">deposit token</h5>
+									<h5 class="label">Participation token</h5>
 									<h4>${acceptingToken}</h4>
 								</div>
 							`: ''}
 							${sellingToken ? html`
 								<div class="flex flex-direction-column">
-									<h5 class="label">participation token</h5>
+									<h5 class="label">Deposit token</h5>
 									<h4>${sellingToken}</h4>
 								</div>
 							`: ''}
@@ -1521,7 +1534,8 @@
 					maximumsubscriptionamount,
 					totalHonorAmount,
 					totalParticipationAmount,
-					price
+					price,
+					currentDepositBalance
 				}, contractAddress,
 				contractName
 			} = info
@@ -1546,7 +1560,8 @@
 				oracle_address,
 				totalHonorAmount,
 				totalParticipationAmount,
-				price
+				price,
+				currentDepositBalance
 			}
 		}
 
