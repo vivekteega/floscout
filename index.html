@@ -1372,6 +1372,47 @@
 						<time>${getFormattedTime(time, 'relative')}</time>
 					</div>
 				`;
+			},
+			offChainTransferCard(transferDetails) {
+				const { tokenAmount, transactionTrigger, tokenIdentification, contractName, senderAddress, receiverAddress, time, type } = transferDetails;
+				return html`
+					<li class="transaction">
+						<svg class="icon" viewBox="0 0 64 64"> <title>transfer</title> <polyline points="17.04 35.97 14.57 33.5 40.15 7.9 32.75 0.5 55.52 0.5 55.52 23.28 48.12 15.87 23.86 40.14 15.88 48.13 8.48 40.72 8.48 63.5 31.25 63.5 23.85 56.1 49.43 30.5 46.96 28.03"/> </svg>
+						<div class="contract-type">
+							<h5 class="label">Off-Chain transfer</h5>
+							<a href=${`#/token/${tokenIdentification}`} class="">${tokenIdentification}</a>
+						</div>
+						<div class="contract-info">
+							<time>${getFormattedTime(time)}</time>
+							<div class="flex flex-direction-column">
+								<h5 class="label">Contract name</h5>
+								<h4>${contractName}</h4>
+							</div>
+							<div class="flex flex-direction-column">
+								<h5 class="label">Sender address</h5>
+								<sm-copy value=${senderAddress}>
+									<a href=${`#/address/${senderAddress}`} class="address wrap-around">${senderAddress}</a>
+								</sm-copy>
+							</div>
+							<div class="flex flex-direction-column">
+								<h5 class="label">Receiver address</h5>
+								<sm-copy value=${receiverAddress}>
+									<a href=${`#/address/${receiverAddress}`} class="address wrap-around">${receiverAddress}</a>
+								</sm-copy>
+							</div>
+							<div class="flex flex-direction-column">
+								<h5 class="label">Amount</h5>
+								<h4>${tokenAmount} ${tokenIdentification}</h4>
+							</div>
+							<div class="flex align-center space-between flex-wrap gap-1">
+								<div class="flex flex-direction-column">
+									<h5 class="label">Transfer trigger ID</h5>
+									<sm-copy value=${transactionTrigger} clip-text></sm-copy>
+								</div>
+								<a href=${`#/transaction/${transactionTrigger}`} class="button button--small button--colored">View details</a>
+							</div>
+						</div>
+					</li>`;
 			}
 		};
 
@@ -1408,8 +1449,12 @@
 					case 'contracttrigger':
 						return render.contractTriggerCard(tx);
 						break;
+					case 'offChainTransfer':
+						return render.offChainTransferCard(tx);
+						break;
 				}
 			})
+			console.log(renderedTransactions)
 			renderElem(document.getElementById(container), html`${renderedTransactions.length ? renderedTransactions : html`<div class="no-results">No transactions found</div>`}`)
 		}
 
@@ -1608,119 +1653,135 @@
 					userChoice,
 					nftHash,
 					depositAmount,
-					amount,
 					contractName,
 					tokenIdentification,
 					transactionTrigger,
+					onChain
 				} = tx;
 				let obj = {
 					hash: txid,
 					blockHeight,
 					time
 				};
-				if (type != "smartContractPays") {
-					// determine token
-					obj["token"] = tokenIdentification;
-					switch (type) {
-						case 'transfer':
-							if (transferType == "token" || transferType == 'nft') {
+				if (onChain) {
+					if (type != "smartContractPays") {
+						// determine token
+						obj["token"] = tokenIdentification;
+						switch (type) {
+							case 'transfer':
+								if (transferType == "token" || transferType == 'nft') {
+									obj = Object.assign({}, obj, {
+										sender: senderAddress,
+										receiver: receiverAddress,
+										amount: tokenAmount,
+										type: transferType == "token" ? "tokentransfer" : "nfttransfer",
+									});
+									latestTxArray.push(obj);
+									break;
+								} else if (transferType == 'smartContract') {
+									// smart contract transfer
+									obj = Object.assign({}, obj, {
+										sender: senderAddress,
+										receiver: receiverAddress,
+										amount: tokenAmount,
+										contractName,
+										userChoice,
+										type: "contracttransfer",
+									});
+									latestTxArray.push(obj);
+									break;
+								}
+							case 'tokenIncorporation':
+								// token incorporation
+								// smart contract incorporation
 								obj = Object.assign({}, obj, {
-									sender: senderAddress,
-									receiver: receiverAddress,
-									amount: tokenAmount,
-									type: transferType == "token" ? "tokentransfer" : "nfttransfer",
+									incAddress: senderAddress,
+									supply: tokenAmount,
+									type: "tokenincorp",
 								});
 								latestTxArray.push(obj);
 								break;
-							} else if (transferType == 'smartContract') {
-								// smart contract transfer
+							case 'smartContractIncorporation':
+								// smart contract incorporation
+								// todo : add checks to determine obj for different types of smart contract incorporation
+								switch (subtype) {
+									case 'tokenswap':
+										obj = Object.assign({}, obj, {
+											contractName,
+											incAddress: contractAddress,
+											contractType,
+											type: "contractincorp",
+											sellingToken: selling_token,
+											acceptingToken: accepting_token,
+											price,
+										});
+										delete obj["token"];
+										break;
+									default:
+										obj = Object.assign({}, obj, {
+											contractName,
+											incAddress: contractAddress,
+											contractType,
+											expiration: expiryTime,
+											participationFees: contractAmount,
+											availableChoices: "",
+											type: "contractincorp",
+										});
+										break;
+								}
+								latestTxArray.push(obj);
+								break;
+							case 'nftIncorporation':
+								// nft incorporation
 								obj = Object.assign({}, obj, {
-									sender: senderAddress,
-									receiver: receiverAddress,
-									amount: tokenAmount,
+									incAddress: senderAddress,
+									supply: tokenAmount,
+									type: "nftincorp",
+									nftHash
+								});
+								latestTxArray.push(obj);
+								break;
+							case 'smartContractDeposit':
+								// smart contract deposit
+								obj = Object.assign({}, obj, {
 									contractName,
-									userChoice,
-									type: "contracttransfer",
+									contractAddress,
+									contractType,
+									amount: depositAmount,
+									type: "contractdeposit",
+									sender: senderAddress,
+									receiver: receiverAddress,
 								});
 								latestTxArray.push(obj);
 								break;
-							}
-						case 'tokenIncorporation':
-							// token incorporation
-							// smart contract incorporation
-							obj = Object.assign({}, obj, {
-								incAddress: senderAddress,
-								supply: tokenAmount,
-								type: "tokenincorp",
-							});
-							latestTxArray.push(obj);
-							break;
-						case 'smartContractIncorporation':
-							// smart contract incorporation
-							// todo : add checks to determine obj for different types of smart contract incorporation
-							switch (subtype) {
-								case 'tokenswap':
-									obj = Object.assign({}, obj, {
-										contractName,
-										incAddress: contractAddress,
-										contractType,
-										type: "contractincorp",
-										sellingToken: selling_token,
-										acceptingToken: accepting_token,
-										price,
-									});
-									delete obj["token"];
-									break;
-								default:
-									obj = Object.assign({}, obj, {
-										contractName,
-										incAddress: contractAddress,
-										contractType,
-										expiration: expiryTime,
-										participationFees: contractAmount,
-										availableChoices: "",
-										type: "contractincorp",
-									});
-									break;
-							}
-							latestTxArray.push(obj);
-							break;
-						case 'nftIncorporation':
-							// nft incorporation
-							obj = Object.assign({}, obj, {
-								incAddress: senderAddress,
-								supply: tokenAmount,
-								type: "nftincorp",
-								nftHash
-							});
-							latestTxArray.push(obj);
-							break;
-						case 'smartContractDeposit':
-							// smart contract deposit
-							obj = Object.assign({}, obj, {
-								contractName,
-								contractAddress,
-								contractType,
-								amount: depositAmount,
-								type: "contractdeposit",
-								sender: senderAddress,
-								receiver: receiverAddress,
-							});
-							latestTxArray.push(obj);
-							break;
+						}
+
+					} else {
+						// transaction is a FLO Smart Contract Committee trigger
+
+						obj = Object.assign({}, obj, {
+							hash: txid,
+							blockHeight,
+							contractName,
+							contractAddress: receiverAddress,
+							winningChoice: triggerCondition,
+							committeeAddress: senderAddress,
+							type: 'contracttrigger'
+						});
+						latestTxArray.push(obj);
 					}
-
 				} else {
-					// transaction is a FLO Smart Contract Committee trigger
-
 					obj = Object.assign({}, obj, {
-						hash: txid,
-						blockHeight,
+						transactionTrigger,
 						contractName,
-						contractAddress: receiverAddress,
-						winningChoice: triggerCondition,
-						committeeAddress: senderAddress,
-						type: 'contracttrigger'
+						contractAddress,
+						onChain: false,
+						type: 'offChainTransfer',
+						senderAddress,
+						receiverAddress,
+						tokenAmount,
+						tokenIdentification,
+						time
 					});
 					latestTxArray.push(obj);
 				}
