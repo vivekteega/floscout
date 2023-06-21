@@ -908,6 +908,13 @@ theme-toggle {
     font-size: 0.9rem;
   }
 }
+.badge {
+  font-size: 0.8rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.5rem;
+  background-color: rgba(var(--text-color), 0.1);
+  color: rgba(var(--text-color), 0.8);
+}
 #loading {
   position: fixed;
   display: grid;
