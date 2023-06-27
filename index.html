@@ -350,7 +350,7 @@
 				if (!floAddress) return;
 				let [ownedTokens, floBalance, addressTxs] = await Promise.all([getAddressInfo(floAddress), getAddressBalance(floAddress), getAddressTxs(floAddress)])
 				renderElem(getRef("page_container"), html`${render.addressPage({ floBalance, floAddress, ownedTokens })}`);
-				getRef("page_title").textContent = 'Address'
+				getRef("page_title").textContent = 'Address';
 				renderTransactions('address_transaction_container', addressTxs)
 			} catch (e) {
 				console.error(e)
@@ -1148,7 +1148,7 @@
 							</div>
 							<div class="flex flex-direction-column">
 									<h5 class="label">Sender</h5>
-									<sm-copy value=${receiver}>
+									<sm-copy value=${sender}>
 										<a href=${`#/address/${sender}`} class="address wrap-around">${sender}</a> 
 									</sm-copy>
 							</div>
