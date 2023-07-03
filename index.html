@@ -1097,14 +1097,14 @@
 							<time>${getFormattedTime(time)}</time>
 							<div class="flex flex-wrap gap-1">	
 								<div class="flex flex-direction-column">
-									<h5 class="label">Sender (Smart contract)</h5>
-									<a href=${`#/address/${sender}`} class="address wrap-around">${contractName}-${sender}</a> 
+									<h5 class="label">Sender</h5>
+									<sm-copy value=${sender}>
+										<a href=${`#/address/${sender}`} class="address wrap-around">${sender}</a> 
+									</sm-copy>
 								</div>
 								<div class="flex flex-direction-column">
-									<h5 class="label">Receiver</h5>
-									<sm-copy value=${receiver}>
-										<a href=${`#/address/${receiver}`} class="address wrap-around">${receiver}</a> 
-									</sm-copy>
+									<h5 class="label">Receiver (Smart contract)</h5>
+									<a href=${`#/contract/${contractName}-${receiver}`} class="address wrap-around">${contractName}-${receiver}</a> 
 								</div>
 							</div>
 							<div class="flex flex-direction-column">
@@ -1384,10 +1384,8 @@
 								<h4>${contractName}</h4>
 							</div>
 							<div class="flex flex-direction-column">
-								<h5 class="label">Sender address</h5>
-								<sm-copy value=${senderAddress}>
-									<a href=${`#/address/${senderAddress}`} class="address wrap-around">${senderAddress}</a>
-								</sm-copy>
+								<h5 class="label">Sender (Smart contract)</h5>
+								<a href=${`#/contract/${contractName}-${senderAddress}`} class="address wrap-around">${contractName}-${senderAddress}</a>
 							</div>
 							<div class="flex flex-direction-column">
 								<h5 class="label">Receiver address</h5>
