@@ -728,6 +728,19 @@ header.grid-2 {
   grid-area: logo;
   color: inherit;
 }
+.app-brand{
+  .icon{
+    height: 1.8rem;
+    width: 1.8rem;
+  }
+}
+.app-name{
+  &__company{
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgba(var(--text-color), 0.8);
+  }
+}
 theme-toggle {
   grid-area: theme;
   justify-self: end;
