@@ -1910,7 +1910,7 @@
 								// console.log('data entered is a block hash');
 								location.href = `#/block/${text}`
 							} else {
-								//console.log('data entered is noise');
+								renderElem(getRef("page_container"), html`${render.errorPage('The entered text is not a part of the token system')}`);
 							}
 							resolve()
 						}).catch(err => {
@@ -1919,7 +1919,7 @@
 						})
 
 				} else {
-					//console.log('data entered is noise')
+					renderElem(getRef("page_container"), html`${render.errorPage('Invalid search query')}`);
 				}
 			})
 		}
