@@ -472,10 +472,15 @@
 		router.addRoute('block', async state => {
 			const [blockId] = state.wildcards
 			if (!blockId) return;
-			let [blockInfo, blockTxs] = await Promise.all([getBlockInfo(blockId), getBlockTransactions(blockId)])
-			renderElem(getRef("page_container"), html`${render.blockPage(blockInfo)}`);
-			getRef("page_title").textContent = 'Block'
-			renderTransactions('block_transaction_container', blockTxs)
+			try{
+				let [blockInfo, blockTxs] = await Promise.all([getBlockInfo(blockId), getBlockTransactions(blockId)])
+				renderElem(getRef("page_container"), html`${render.blockPage(blockInfo)}`);
+				getRef("page_title").textContent = 'Block'
+				renderTransactions('block_transaction_container', blockTxs)
+			}catch(e){
+				console.error(e)
+				renderElem(getRef("page_container"), html`${render.errorPage(e)}`);
+			}
 		})
 		router.addRoute('blocks', async state => {
 			let allBlocks = await getAllBlocks(100);
