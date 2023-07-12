@@ -1108,6 +1108,15 @@ theme-toggle {
   min-width: 12rem;
 }
 
+#transaction_page {
+  display: grid;
+  gap: 3rem;
+}
+#transaction_page .card {
+  margin: 0;
+  min-width: 12rem;
+}
+
 @media only screen and (min-width: 640px) {
   .margin,
 .page {
@@ -1126,15 +1135,6 @@ theme-toggle {
   }
   #page_header {
     padding: 1.5rem 0;
-  }
-  #transaction_page {
-    display: grid;
-    gap: 0 1.5rem;
-    grid-template-columns: 40% 60%;
-    grid-template-areas: "header header" ". .";
-  }
-  #transaction_page .head {
-    grid-area: header;
   }
   .transaction {
     grid-template-columns: auto 1fr;

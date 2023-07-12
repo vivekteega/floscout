@@ -472,12 +472,12 @@
 		router.addRoute('block', async state => {
 			const [blockId] = state.wildcards
 			if (!blockId) return;
-			try{
+			try {
 				let [blockInfo, blockTxs] = await Promise.all([getBlockInfo(blockId), getBlockTransactions(blockId)])
 				renderElem(getRef("page_container"), html`${render.blockPage(blockInfo)}`);
 				getRef("page_title").textContent = 'Block'
 				renderTransactions('block_transaction_container', blockTxs)
-			}catch(e){
+			} catch (e) {
 				console.error(e)
 				renderElem(getRef("page_container"), html`${render.errorPage(e)}`);
 			}
@@ -509,7 +509,7 @@
 				const [status, txInfo] = await getTxInfo(txId);
 				if (status) {
 					renderElem(getRef("page_container"), html`${render.transactionPage(txInfo)}`);
-					getRef("page_title").textContent = "transaction";
+					getRef("page_title").textContent = "Transaction";
 
 				} else {
 					renderElem(getRef("page_container"), html`${render.errorPage(txInfo)}`);
@@ -752,14 +752,20 @@
 			},
 			transactionPage(obj) {
 				console.log(obj)
-				let { type, name, blockHeight, amount, sender, receiver, floData, hash, confirmations, nftHash } = obj;
-				if (type == 'smartContractPays' || type == ' smartContractPays') {
-					name = ''
+				let { type, name, blockHeight, amount, sender, receiver, floData, hash, confirmations, nftHash, subTransactions, time } = obj;
+				switch (type.trim()) {
+					case 'smartContractPays':
+					case 'smartContractPays':
+						name = ''
+						break
+					case 'nftIncorporation':
+						type = 'NFT Incorporation'
+						break
+					case 'nft transfer':
+						type = 'NFT Transfer'
+						break
 				}
-				if (type.trim() === 'nftIncorporation')
-					type = 'NFT Incorporation'
-				else if (type.trim() === 'nft transfer')
-					type = 'NFT Transfer'
+				const renderedSubTransactions = subTransactions?.map(tx => render.offChainTransferCard({ ...tx, hideUnnecessary: true }))
 
 				return html`
 					<div id="transaction_page" class="page">
@@ -771,44 +777,52 @@
 							<h5 class="label">Transaction ID</h5>
 							<sm-copy value=${hash} clip-text></sm-copy>
 						</div>
-						<div class="card grid gap-1-5 align-start align-self-start">
-							<div class="flex flex-direction-column">
+						<div class="flex flex-wrap gap-1">
+							<div class="card grid gap-1-5">
+								<time class="label">${getFormattedTime(time)}</time>
+								<div class="flex flex-direction-column">
+									<h5 class="label">Sender</h5>
+									<sm-copy value=${sender}>
+										<a href=${`#/address/${sender}`} class="address wrap-around">${sender}</a>
+									</sm-copy>
+								</div>
+								${receiver ? html`
+										<div class="flex flex-direction-column">
+											<h5 class="label">Receiver</h5>
+											<sm-copy value=${receiver}>
+												<a href=${`#/address/${receiver}`} class="address wrap-around">${receiver}</a>
+											</sm-copy>
+										</div>
+								`: ''}
+								${amount ? html`
+									<div class="flex flex-direction-column">
+										<h5 class="label">Amount</h5>
+										<h4>${formatAmount(amount, 'usd')}</h4>
+									</div>
+								`: ''}
+							</div>
+							<div class="card flex-1">
+								<h5 class="label">FLO Data</h5>
+								<p class="wrap-around">${floData}</p>
 								<h5 class="label">Block</h5>
 								<a href=${`#/block/${blockHeight}`} class="block-height">${blockHeight}</a>
+								<h5 class="label">Block Confirmations</h5>
+								<h4>${confirmations}</h4>
+								${nftHash ? html`
+									<h5 class="label">NFT hash</h5>
+									<sm-copy value=${nftHash} clip-text></sm-copy>
+								`: ''}
 							</div>
-							<div class="flex flex-direction-column">
-								<h5 class="label">Sender</h5>
-								<sm-copy value=${sender}>
-									<a href=${`#/address/${sender}`} class="address wrap-around">${sender}</a>
-								</sm-copy>
-							</div>
-							${receiver ? html`
-									<div class="flex flex-direction-column">
-										<h5 class="label">Receiver</h5>
-										<sm-copy value=${receiver}>
-											<a href=${`#/address/${receiver}`} class="address wrap-around">${receiver}</a>
-										</sm-copy>
-									</div>
-								`: ''
-					}
-							${amount ? html`
-								<div class="flex flex-direction-column">
-									<h5 class="label">Amount</h5>
-									<h4>${formatAmount(amount, 'usd')}</h4>
+						</div>
+						${renderedSubTransactions ? html`
+							<div class="grid gap-1">
+								<div class="grid gap-0-3">
+									<h4>Sub Transactions</h4>
+									<p>These are Off-chain transactions that are triggered by above transaction</p>
 								</div>
-								`: ''
-					}
-						</div>
-						<div class="card">
-							<h5 class="label">FLO Data</h5>
-							<p class="wrap-around">${floData}</p>
-							<h5 class="label">Block Confirmations</h5>
-							<h4>${confirmations}</h4>
-							${nftHash ? html`
-								<h5 class="label">NFT hash</h5>
-								<sm-copy value=${nftHash} clip-text></sm-copy>
-							`: ''}
-						</div>
+								<ul class="grid gap-1">${renderedSubTransactions}</ul>
+							</div>	
+						`: ''}
 					</div>
               `;
 			},
@@ -1374,14 +1388,14 @@
 				`;
 			},
 			offChainTransferCard(transferDetails) {
-				const { tokenAmount, transactionTrigger, tokenIdentification, contractName, senderAddress, receiverAddress, time, type } = transferDetails;
+				const { tokenAmount, transactionTrigger, tokenIdentification, contractName, senderAddress, receiverAddress, time, type, hideUnnecessary } = transferDetails;
 				return html`
 					<li class="transaction">
 						<svg class="icon" viewBox="0 0 64 64"> <title>transfer</title> <polyline points="17.04 35.97 14.57 33.5 40.15 7.9 32.75 0.5 55.52 0.5 55.52 23.28 48.12 15.87 23.86 40.14 15.88 48.13 8.48 40.72 8.48 63.5 31.25 63.5 23.85 56.1 49.43 30.5 46.96 28.03"/> </svg>
 						<div class="contract-type">
 							<div class="flex align-center gap-1">
 								<h5 class="label">Token transfer</h5>
-								<div class="badge">Off-chain</div>
+								${hideUnnecessary ? html`` : html`<div class="badge">Off-chain</div>`}
 							</div>
 							<a href=${`#/token/${tokenIdentification}`} class=""><b>${tokenIdentification}</b></a>
 						</div>
@@ -1405,13 +1419,15 @@
 								<h5 class="label">Amount</h5>
 								<h4>${tokenAmount} ${tokenIdentification}</h4>
 							</div>
-							<div class="flex align-center space-between flex-wrap gap-1">
-								<div class="flex flex-direction-column">
-									<h5 class="label">Transfer trigger ID</h5>
-									<sm-copy value=${transactionTrigger} clip-text></sm-copy>
+							${hideUnnecessary ? html`` : html`
+								<div class="flex align-center space-between flex-wrap gap-1">
+									<div class="flex flex-direction-column">
+										<h5 class="label">Transfer trigger ID</h5>
+										<sm-copy value=${transactionTrigger} clip-text></sm-copy>
+									</div>
+									<a href=${`#/transaction/${transactionTrigger}`} class="button button--small button--colored">View details</a>
 								</div>
-								<a href=${`#/transaction/${transactionTrigger}`} class="button button--small button--colored">View details</a>
-							</div>
+							`}
 						</div>
 					</li>`;
 			}
@@ -1817,42 +1833,46 @@
 			try {
 				const transaction = await fetchJson(`${floGlobals.tokenApiUrl}/api/v2/transactionDetails/${thisTx}`)
 				console.log(transaction)
-				if (transaction.result === 'error') {
+				if (transaction.result === 'error')
 					return [false, transaction.description]
-				} else {
-					let {
-						floData,
-						tokenAmount,
-						tokenIdentification,
-						type,
-						nftHash,
-						blockheight,
-						vin,
-						vout,
-						confirmations,
-						transferType,
-						senderAddress,
-						receiverAddress,
-						txid
-					} = transaction;
-					if (type == 'smartContractPays') {
-						tokenAmount = '-'
-					}
-					return [
-						true, {
-							type: `${transferType || ''} ${type}`,
-							name: tokenIdentification,
-							blockHeight: blockheight,
-							amount: tokenAmount,
-							sender: senderAddress,
-							receiver: receiverAddress,
-							floData,
-							hash: txid,
-							confirmations,
-							nftHash
-						}
-					]
+				let {
+					floData,
+					tokenAmount,
+					tokenIdentification,
+					type,
+					nftHash,
+					blockheight,
+					vin,
+					vout,
+					confirmations,
+					transferType,
+					senderAddress,
+					receiverAddress,
+					txid,
+					onChain,
+					subTransactions,
+					time
+				} = transaction;
+				if (type == 'smartContractPays') {
+					tokenAmount = '-'
 				}
+				return [
+					true, {
+						type: `${transferType || ''} ${type}`,
+						name: tokenIdentification,
+						blockHeight: blockheight,
+						amount: tokenAmount,
+						sender: senderAddress,
+						receiver: receiverAddress,
+						floData,
+						hash: txid,
+						confirmations,
+						nftHash,
+						onChain,
+						subTransactions,
+						time
+					}
+				]
 			}
 			catch (err) {
 				console.error(err)

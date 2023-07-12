@@ -728,17 +728,17 @@ header.grid-2 {
   grid-area: logo;
   color: inherit;
 }
-.app-brand{
+.app-brand {
   display: flex;
   gap: 0.3rem;
   align-items: center;
-  .icon{
+  .icon {
     height: 1.7rem;
     width: 1.7rem;
   }
 }
-.app-name{
-  &__company{
+.app-name {
+  &__company {
     font-size: 0.8rem;
     font-weight: 500;
     color: rgba(var(--text-color), 0.8);
@@ -1007,6 +1007,14 @@ theme-toggle {
     min-width: 12rem;
   }
 }
+#transaction_page {
+  display: grid;
+  gap: 3rem;
+  .card {
+    margin: 0;
+    min-width: 12rem;
+  }
+}
 @media only screen and (min-width: 640px) {
   .margin,
   .page {
@@ -1031,15 +1039,6 @@ theme-toggle {
     padding: 1.5rem 0;
   }
   #transaction_page {
-    display: grid;
-    gap: 0 1.5rem;
-    grid-template-columns: 40% 60%;
-    grid-template-areas:
-      "header header"
-      ". .";
-    .head {
-      grid-area: header;
-    }
   }
   .transaction {
     grid-template-columns: auto 1fr;
