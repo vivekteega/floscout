@@ -794,6 +794,9 @@ theme-toggle {
 #page_header {
   padding: 1rem 0;
   align-items: center;
+  button {
+    margin-left: -0.7rem;
+  }
   h3 {
     text-transform: capitalize;
   }
@@ -902,6 +905,7 @@ theme-toggle {
   border-radius: 0.5rem;
   background-color: rgba(var(--foreground-color), 0.8);
   content-visibility: auto;
+  contain-intrinsic-height: 35rem;
   .contract-info {
     align-items: flex-start;
     display: grid;
@@ -1042,6 +1046,7 @@ theme-toggle {
   }
   .transaction {
     grid-template-columns: auto 1fr;
+    contain-intrinsic-height: 20rem;
     & > .icon:first-of-type {
       grid-area: 1/1/3/2;
     }
