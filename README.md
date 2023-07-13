@@ -23,6 +23,20 @@ ii) This will give the incorporation address of the token (an incorporation addr
 #### Search by smart contract
 i) Enter the smart contract name in the search box  
 ii) This will give the following details of the smart contract:  
-    a) Smart contract type (continuous, or one time event)  
-    b) Smart contract subtype 
+    a) Smart contract type (continuous, or one-time event)  
+    b) Smart contract subtype (tokenswap)  
+    c) Contract address (the FLO address that created the smart contract)  
+    d) Other statistics (no. of deposits, no. of participants, oracle address, total output, and total balance)  
+    e) Both off-chain and on-chain data  
+    f) Off-chain data is sub-transactions inside the smart contract  
+
+#### Search by block
+i) Enter the block number in the search box  
+ii) This will give the following details of the block:  
+    a) Relevant Transactions (no. of transactions inside the block)  
+    b) No. of confirmations  
+    c) Reward  
+    d) Block Hash  
+    e) Difficulty  
+    f) Transactions (token transfer details)
  
