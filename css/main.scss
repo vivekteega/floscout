@@ -805,7 +805,6 @@ theme-toggle {
   padding: 0 0 1rem 0;
   h3.heading {
     text-transform: capitalize;
-    font-weight: 500;
   }
   & > h3.heading {
     margin-top: 2rem;
@@ -946,6 +945,7 @@ theme-toggle {
   justify-items: center;
   background: rgba(var(--foreground-color), 1);
   z-index: 10;
+  height: 100dvh;
   h4 {
     margin-top: 1.5rem;
     font-weight: 500;

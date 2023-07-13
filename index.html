@@ -710,7 +710,7 @@
 							<h4>${nonce}</h4>
 						</div>
 						<h3 class="heading">Transactions</h3>
-						<div id="block_transaction_container" class="top-bottom-padding"></div>
+						<div id="block_transaction_container" class="grid gap-1 top-bottom-padding"></div>
 					</div>
 				`;
 			},
@@ -1646,7 +1646,7 @@
 
 		function parseTransactions(txList) {
 			if (!Array.isArray(txList))
-				txList = Object.values(txList)
+				txList = [txList]
 			let latestTxArray = [];
 			txList.forEach(tx => {
 				const {
