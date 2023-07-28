@@ -3,7 +3,7 @@
 FLO Scout is RanchiMall's token and smart contract explorer.
 All tokens, smart contracts, and their transactions (created on FLO blockchain) can be accessed on FLO Scout.  
 
-### Live URL for BTC Wallet:
+### Live URL for FLO Scout:
 *https://ranchimall.github.io/floscout/*
 
 ## How to use
