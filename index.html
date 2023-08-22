@@ -1944,13 +1944,17 @@
 			})
 		}
 
-		function processNavbarSearch() {
+		async function processNavbarSearch() {
 			const query = getRef('main_search_field').value.trim();
-			if (query === '') return
-			categorizeText(query).then(() => {
+			try {
+				await getAllSuggestions();
+				if (query === '') return
+				await categorizeText(query)
 				getRef('main_search_field').value = ''
 				renderElem(getRef('suggestions'), html``)
-			})
+			} catch (err) {
+				console.error(err)
+			}
 		}
 
 		async function getAllSuggestions() {
