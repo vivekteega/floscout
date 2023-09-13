@@ -1494,7 +1494,7 @@
 		async function getBannerData() {
 			const { systemTransactionCount, systemAddressCount } = await fetchJson(`${floGlobals.tokenApiUrl}/api/v2/info`)
 			return {
-				topToken: "RMT",
+				topToken: "RUPEE",
 				totalTransactions: systemTransactionCount,
 				walletAddresses: systemAddressCount,
 			}

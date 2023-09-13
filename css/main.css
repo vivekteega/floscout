@@ -6,7 +6,7 @@
 }
 
 :root {
-  font-size: clamp(1rem, 1.2vmax, 1.2rem);
+  font-size: clamp(1rem, 1.2vmax, 1.5rem);
 }
 
 html,
@@ -938,15 +938,28 @@ theme-toggle {
 }
 
 .status {
-  font-size: 0.8rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.01em;
+  padding: 0;
 }
-.status.active {
-  background: rgba(var(--text-color), 0.1);
-  color: var(--accent-color);
+.status::before {
+  content: "";
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  display: inline-block;
 }
-.status.closed {
-  background: rgba(var(--foreground-color), 1);
-  border: solid 1px rgba(var(--text-color), 0.2);
+.status.active::before {
+  background-color: var(--green);
+}
+.status.closed::before {
+  background-color: var(--danger-color);
 }
 
 .address,
