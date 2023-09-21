@@ -20,7 +20,7 @@
 	<sm-notifications id="notification_drawer"></sm-notifications>
 	<div id="loading">
 		<sm-spinner></sm-spinner>
-		<h4>Loading</h4>
+		<h4>Loading RanchiMall FLO Scout</h4>
 	</div>
 	<header id="main_header" class="margin">
 		<a href="#/home" id="logo" class="app-brand">
@@ -278,257 +278,79 @@
 		}
 
 		class Router {
+			/**
+			 * @constructor {object} options - options for the router
+			 * @param {object} options.routes - routes for the router
+			 * @param {object} options.state - initial state for the router
+			 * @param {function} options.routingStart - function to be called before routing
+			 * @param {function} options.routingEnd - function to be called after routing
+			 */
 			constructor(options = {}) {
 				const { routes = {}, state = {}, routingStart, routingEnd } = options
 				this.routes = routes
 				this.state = state
 				this.routingStart = routingStart
 				this.routingEnd = routingEnd
+				this.lastPage = null
 				window.addEventListener('hashchange', e => this.routeTo(window.location.hash))
 			}
+			/**
+			 * @param {string} route - route to be added
+			 * @param {function} callback - function to be called when route is matched
+			 */
 			addRoute(route, callback) {
 				this.routes[route] = callback
 			}
+			/**
+			 * @param {string} route
+			 */
 			async routeTo(path) {
-				let page
-				let wildcards = []
-				let queryString
-				let params
-				[path, queryString] = path.split('?');
-				if (path.includes('#'))
-					path = path.split('#')[1];
-				if (path.includes('/'))
-					[, page, ...wildcards] = path.split('/')
-				else
-					page = path
-				this.state = { page, wildcards }
-				if (queryString) {
-					params = new URLSearchParams(queryString)
-					this.state.params = Object.fromEntries(params)
-				}
-				if (this.routingStart) {
-					this.routingStart(this.state)
-				}
-				if (this.routes[page]) {
-					await this.routes[page](this.state)
-					this.state.lastPage = page
-				} else {
-					this.routes['404'](this.state)
-				}
-				if (this.routingEnd) {
-					this.routingEnd(this.state)
-				}
-			}
-		}
-		const router = new Router({
-			routingStart(state) {
-				loading()
-				if ("scrollRestoration" in history) {
-					history.scrollRestoration = "manual";
-				}
-				window.scrollTo(0, 0);
-				if (state.page !== 'home')
-					getRef("page_header").classList.remove("hidden");
-			},
-			routingEnd() {
-				loading(false)
-			}
-		})
-		async function renderHome(state) {
-			getRef("page_header").classList.add("hidden");
-			let [data, latestTxs, latestBlocks] = await Promise.all([getBannerData(), getLatestTxs(), getAllBlocks(6)])
-			renderElem(getRef("page_container"), html`${render.homepage({ ...data, latestBlock: latestBlocks[0] })}`);
-			renderTransactions('top_transaction_container', latestTxs)
-			const renderedBlocks = latestBlocks.map(block => render.blockCard(block))
-			renderElem(document.getElementById('top_blocks_container'), html`${renderedBlocks}`)
-		}
-		router.addRoute('', async (state) => {
-			history.replaceState({}, '', '#/home')
-			await renderHome(state)
-		})
-		router.addRoute('home', renderHome)
-		router.addRoute('address', async state => {
-			try {
-				const [floAddress] = state.wildcards
-				if (!floAddress) return;
-				let [ownedTokens, floBalance, addressTxs] = await Promise.all([getAddressInfo(floAddress), getAddressBalance(floAddress), getAddressTxs(floAddress)])
-				renderElem(getRef("page_container"), html`${render.addressPage({ floBalance, floAddress, ownedTokens })}`);
-				getRef("page_title").textContent = 'Address';
-				renderTransactions('address_transaction_container', addressTxs)
-			} catch (e) {
-				console.error(e)
-				renderElem(getRef("page_container"), html`${render.errorPage(e)}`);
-			}
-		})
-		router.addRoute('token', async state => {
-			const token = state.wildcards[0].toLowerCase()
-			if (!token) return;
-			try {
-				let [tokenInfo, tokenBalances, tokenTransactions] = await Promise.all([getTokenInfo(token), getTokenBalances(token), getTokenTransactions(token)])
-				const tokenHolders = []
-				for (const address in tokenBalances) {
-					tokenHolders.push(render.addrBalanceCard(address, tokenBalances[address], tokenInfo.token))
-				}
-				renderElem(getRef("page_container"), html`${render.tokenPage(tokenInfo)}`);
-				getRef("page_title").textContent = "Token";
-				renderElem(document.getElementById('token_balance_container'), html`${tokenHolders?.length ? tokenHolders : html`<div>No token holders found</div>`}`)
-				renderTransactions('token_transaction_container', tokenTransactions)
-			} catch (e) {
-				console.log(e)
-				renderElem(getRef("page_container"), html`${render.errorPage(e)}`);
-			}
-		})
-		router.addRoute('contract', async state => {
-			try {
-				const [contractId] = state.wildcards
-				if (!contractId) return;
-				const contract = splitContractNameAddress(contractId);
-				const contractInfo = await getContractInfo(contract)
-				const { contractType, contractSubtype, acceptingToken, sellingToken } = contractInfo
-				const detailsToFetch = [getContractTransactions(contract), getContractParticipants(contract)]
-				if (contractType === 'continuos-event' && contractSubtype === 'tokenswap')
-					detailsToFetch.push(getContractDeposits(contract))
-				let [contractTransactions, contractParticipants, contractDeposits] = await Promise.all(detailsToFetch)
-				renderElem(getRef("page_container"), html`${render.contractPage(contractInfo)}`);
-				getRef("page_title").textContent = "Contract";
-
-				// append latest transactions
-				renderTransactions('contract_transaction_container', contractTransactions)
-				console.log(contractParticipants)
-				switch (contractType) {
-					case 'one-time-event':
-						switch (contractSubtype) {
-							case 'external-trigger':
-								let winners = []
-								for (const participant in contractParticipants) {
-									if (contractParticipants[participant].winningAmount)
-										winners.push(contractParticipants[participant])
-								}
-								if (winners.length) {
-									renderElem(document.getElementById('winners_container'), html`${winners.map(winner => render.contractChoiceCard(winner))}`)
-								} else {
-									renderElem(document.getElementById('winners_container'), html`<div>No winners found</div>`)
-								}
-								break;
-							default:
-								break
+				try {
+					let page
+					let wildcards = []
+					let queryString
+					let params
+					[path, queryString] = path.split('?');
+					if (path.includes('#'))
+						path = path.split('#')[1];
+					if (path.includes('/'))
+						[, page, ...wildcards] = path.split('/')
+					else
+						page = path
+					this.state = { page, wildcards, lastPage: this.lastPage }
+					if (queryString) {
+						params = new URLSearchParams(queryString)
+						this.state.params = Object.fromEntries(params)
+					}
+					if (this.routingStart) {
+						this.routingStart(this.state)
+					}
+					if (this.routes[page]) {
+						await this.routes[page](this.state)
+						this.lastPage = page
+					} else {
+						if (this.routes['404']) {
+							this.routes['404'](this.state);
+						} else {
+							console.error(`No route found for '${page}' and no '404' route is defined.`);
 						}
-						if (Object.keys(contractParticipants).length)
-							renderElem(
-								document.getElementById('participant_container'),
-								html`${Object.keys(contractParticipants).map(participant => render.contractChoiceCard(contractParticipants[participant]))}`
-							)
-						else
-							renderElem(
-								document.getElementById('participant_container'),
-								html`<div>No participants found</div>`
-							)
-						break;
-					case 'continuos-event':
-						switch (contractSubtype) {
-							case 'tokenswap':
-								if (Object.keys(contractParticipants).length)
-									renderElem(
-										document.getElementById('participant_container'),
-										html`${Object.keys(contractParticipants)
-											.map(participant => render.participantCard({
-												acceptingToken,
-												sellingToken,
-												...contractParticipants[participant]
-											}))
-											}`
-									)
-								else
-									renderElem(
-										document.getElementById('participant_container'),
-										html`<div>No participants found</div>`
-									)
-								if (contractDeposits.length)
-									renderElem(
-										document.getElementById('deposits_container'),
-										html`${contractDeposits.map(deposit => render.depositCard({
-											...deposit,
-											acceptingToken,
-											sellingToken
-										}))}`
-									)
-								else
-									renderElem(
-										document.getElementById('deposits_container'),
-										html`<div>No deposits found</div>`
-									)
-								break;
-							default:
-								break;
-						}
-						break;
+					}
+					if (this.routingEnd) {
+						this.routingEnd(this.state)
+					}
+				} catch (e) {
+					console.error(e)
 				}
-			} catch (e) {
-				console.log(e)
-				renderElem(getRef("page_container"), html`${render.errorPage(e)}`);
-			}
-		})
-
-		router.addRoute('block', async state => {
-			const [blockId] = state.wildcards
-			if (!blockId) return;
-			try {
-				let [blockInfo, blockTxs] = await Promise.all([getBlockInfo(blockId), getBlockTransactions(blockId)])
-				renderElem(getRef("page_container"), html`${render.blockPage(blockInfo)}`);
-				getRef("page_title").textContent = 'Block'
-				renderTransactions('block_transaction_container', blockTxs)
-			} catch (e) {
-				console.error(e)
-				renderElem(getRef("page_container"), html`${render.errorPage(e)}`);
-			}
-		})
-		router.addRoute('blocks', async state => {
-			let allBlocks = await getAllBlocks(100);
-			getRef("page_title").textContent = "All blocks with token transactions";
-			const renderedBlocks = allBlocks.map(block => render.blockCard(block))
-			renderElem(getRef("page_container"), html`
-						<div id="all_blocks_page" class="page">
-							${renderedBlocks}
-						</div>
-					`)
-		})
-		router.addRoute('transactions', async state => {
-			let allTxs = await getAllTxs();
-			getRef("page_title").textContent = "All token transactions";
-			renderElem(getRef("page_container"), html`
-						<div id="all_transactions_page" class="page"> 
-							<ul id="all_transaction_list" class="transaction-container"></ul>	
-						</div>
-					`)
-			renderTransactions('all_transaction_list', allTxs)
-		})
-		router.addRoute('transaction', async state => {
-			try {
-				const [txId] = state.wildcards
-				if (!txId) return
-				const [status, txInfo] = await getTxInfo(txId);
-				if (status) {
-					renderElem(getRef("page_container"), html`${render.transactionPage(txInfo)}`);
-					getRef("page_title").textContent = "Transaction";
-
-				} else {
-					renderElem(getRef("page_container"), html`${render.errorPage(txInfo)}`);
-				}
-			} catch (e) {
-				console.error(e)
-				renderElem(getRef("page_container"), html`${render.errorPage(e)}`);
-			}
-		})
-		router.addRoute('404', state => {
-			renderElem(getRef("page_container"), html`${render.errorPage('404 Not Found')}`);
-		})
-		function loading(show = true) {
-			if (show) {
-				getRef('loading').classList.remove('hidden')
-			} else {
-				getRef('loading').classList.add('hidden')
 			}
 		}
+
+		function conditional(condition, value) {
+			if (condition)
+				return value
+			else
+				return ''
+		}
+
 		const slideInLeft = [
 			{
 				opacity: 0,
@@ -648,100 +470,6 @@
 	<script>
 		let frag = document.createDocumentFragment();
 		const render = {
-			homepage(obj) {
-				let { topToken, totalTransactions, walletAddresses, latestBlock: { height, time } } = obj;
-				return html`
-					<div id="homepage" class="page">
-						<section id="first_section">
-							<div id="highlights">
-								<div class="highlight-item">
-									<h4 class="label">top token</h4>
-									<h2 class="token"><a href=${`#/token/${topToken}`} class="">${topToken}</a> </h2>
-								</div>
-								<div class="highlight-item">
-									<h4 class="label">Total transactions</h4>
-									<h2>${totalTransactions}</h2>
-								</div>
-								<div class="highlight-item">
-									<h4 class="label">Wallet addresses</h4>
-									<h2>${walletAddresses}</h2>
-								</div>
-								<div class="highlight-item">
-									<h4 class="label">Last token transaction block (${getFormattedTime(time, 'relative')})</h4>
-									<h2><a class="block-height" href=${`#/block/${height}`}>${height}</a></h2>
-								</div>
-							</div>
-						</section>
-						<section id="latest_transaction_section" class="margin-bottom-2">
-							<header class="flex align-center space-between">
-								<h3>Recent token transactions</h3>
-								<a id='all_trans_btn' href=${`#/transactions`} class="button button--small button--colored">View all</a>
-							</header>
-							<ul id="top_transaction_container" class="transaction-container"> </ul>
-						</section>
-						<section id="latest_blocks_section">
-							<header class="flex align-center space-between">
-								<h3>Recent token transaction blocks</h3>
-								<a id='all_blocks_btn' href=${`#/blocks`} class="button button--small button--colored">View all</a>
-							</header>
-							<div id="top_blocks_container"> </div>
-						</section>
-					</div>
-				`;
-			},
-			blockPage(obj) {
-				let { blockHeight, size, transactions, reward, hash, difficulty, nonce } = obj;
-				return html`
-					<div id="block_page" class="page">
-						<h5 class="label">Block Height</h5>
-						<h2 class="block-height">${blockHeight}</h2>
-						<div class="card">
-							<h5 class="label">Relevant Transactions</h5>
-							<h4>${transactions.length}</h4>
-							<h5 class="label">Confirmations</h5>
-							<h4>${size}</h4>
-							<h5 class="label">Reward</h5>
-							<h4>${reward}</h4>
-							<h5 class="label">Block Hash</h5>
-							<sm-copy value=${hash} clip-text></sm-copy>
-							<h5 class="label">Difficulty</h5>
-							<h4>${difficulty}</h4>
-							<h5 class="label">Nonce</h5>
-							<h4>${nonce}</h4>
-						</div>
-						<h3 class="heading">Transactions</h3>
-						<div id="block_transaction_container" class="grid gap-1 top-bottom-padding"></div>
-					</div>
-				`;
-			},
-			addressPage(obj) {
-				let { floBalance, floAddress, ownedTokens = {} } = obj;
-				for (const token in ownedTokens) {
-					if (!ownedTokens[token].balance)
-						ownedTokens[token].balance = 0
-				}
-				if (!ownedTokens)
-					ownedTokens = {}
-				return html`
-					<div id="address_page" class="page">
-						<div class="balance-card">
-							<h2 class="wrap-around margin-bottom-2">${floAddress}</h2>
-							<h5 class="label">FLO Balance</h5>
-							<h3 class="margin-bottom-2">${floBalance} FLO</h3>
-							${Object.keys(ownedTokens).length ? html`
-								<div class="grid gap-0-5">
-									<h5>Tokens</h5>
-									<ul id="token_balance_list">
-										${Object.keys(ownedTokens).map(token => render.tokenBalanceCard(token, ownedTokens[token].balance))}
-									</ul>
-								</div>
-							`: ''}
-						</div>
-						<h4>Transactions</h4>
-						<ul id="address_transaction_container" class="transaction-container"></ul>
-					</div>
-				`;
-			},
 			tokenBalanceCard(token, balance) {
 				return html`
 				  <li class="token-balance">
@@ -749,82 +477,6 @@
 					<h4>${formatAmount(balance, token.toLowerCase() === 'rupee' ? 'inr' : 'usd')}</h4>
 				  </li>
 				`;
-			},
-			transactionPage(obj) {
-				console.log(obj)
-				let { type, name, blockHeight, amount, sender, receiver, floData, hash, confirmations, nftHash, subTransactions, time } = obj;
-				switch (type.trim()) {
-					case 'smartContractPays':
-					case 'smartContractPays':
-						name = ''
-						break
-					case 'nftIncorporation':
-						type = 'NFT Incorporation'
-						break
-					case 'nft transfer':
-						type = 'NFT Transfer'
-						break
-				}
-				const renderedSubTransactions = subTransactions?.map(tx => render.offChainTransferCard({ ...tx, hideUnnecessary: true }))
-
-				return html`
-					<div id="transaction_page" class="page">
-						<div class='head'>
-							<h5 class="label">${type}</h5>
-							<h2 class="token uppercase">
-								<a href=${`#/token/${name}`} style="text-decoration:none;">${name}</a>
-							</h2>
-							<h5 class="label">Transaction ID</h5>
-							<sm-copy value=${hash} clip-text></sm-copy>
-						</div>
-						<div class="flex flex-wrap gap-1">
-							<div class="card grid gap-1-5">
-								<time class="label">${getFormattedTime(time)}</time>
-								<div class="flex flex-direction-column">
-									<h5 class="label">Sender</h5>
-									<sm-copy value=${sender}>
-										<a href=${`#/address/${sender}`} class="address wrap-around">${sender}</a>
-									</sm-copy>
-								</div>
-								${receiver ? html`
-										<div class="flex flex-direction-column">
-											<h5 class="label">Receiver</h5>
-											<sm-copy value=${receiver}>
-												<a href=${`#/address/${receiver}`} class="address wrap-around">${receiver}</a>
-											</sm-copy>
-										</div>
-								`: ''}
-								${amount ? html`
-									<div class="flex flex-direction-column">
-										<h5 class="label">Amount</h5>
-										<h4>${formatAmount(amount, 'usd')}</h4>
-									</div>
-								`: ''}
-							</div>
-							<div class="card flex-1">
-								<h5 class="label">FLO Data</h5>
-								<p class="wrap-around">${floData}</p>
-								<h5 class="label">Block</h5>
-								<a href=${`#/block/${blockHeight}`} class="block-height">${blockHeight}</a>
-								<h5 class="label">Block Confirmations</h5>
-								<h4>${confirmations}</h4>
-								${nftHash ? html`
-									<h5 class="label">NFT hash</h5>
-									<sm-copy value=${nftHash} clip-text></sm-copy>
-								`: ''}
-							</div>
-						</div>
-						${renderedSubTransactions ? html`
-							<div class="grid gap-1">
-								<div class="grid gap-0-3">
-									<h4>Sub Transactions</h4>
-									<p>These are Off-chain transactions that are triggered by above transaction</p>
-								</div>
-								<ul class="grid gap-1">${renderedSubTransactions}</ul>
-							</div>	
-						`: ''}
-					</div>
-              `;
 			},
 			errorPage(reason) {
 				const page = document.createElement('section')
@@ -842,197 +494,6 @@
 					<a href=${`#/address/${address}`} class="address wrap-around">${address}</a>
                     <span>${formatAmount(balance, token.toLowerCase() === 'rupee' ? 'inr' : 'usd')} ${token}</span>
 				  </li>
-				`;
-			},
-			tokenPage(obj) {
-				let {
-					token,
-					supply,
-					incAddress
-				} = obj;
-				return html`
-				<div id="token_page" class="page">
-					<div class="card">
-					<h2 class="uppercase">${token}</h2>
-					<h5 class="label">Supply</h5>
-					<h4> ${supply ? formatAmount(supply, token.toLowerCase() === 'rupee' ? 'inr' : 'usd') : 'Infinite'} </h4>
-					<h5 class="label">Incorporation address</h5>
-					<sm-copy value=${incAddress}>
-						<h4 class="wrap-around">
-							<a href=${`#/address/${incAddress}`} class="address wrap-around">${incAddress}</a> 	
-						</h4>
-					</sm-copy>
-					</div>
-					<sm-chips data-target="token_views" onchange="changeView(event)">
-						<sm-chip value="0" selected>Transactions</sm-chip>
-						<sm-chip value="1">Token holders</sm-chip>
-					</sm-chips>
-					<div id="token_views" class="view-wrapper">
-						<ul id="token_transaction_container" class="transaction-container"></ul>
-						<ul id="token_balance_container" class="hidden"></ul>
-					</div>
-				</div>
-              `;
-			},
-			contractPage(obj) {
-				let {
-					status,
-					contract,
-					contractType,
-					contractSubtype,
-					contractAddress,
-					expiration,
-					token,
-					participationFees,
-					userChoices,
-					payeeAddress,
-					minAmount,
-					maxAmount,
-					acceptingToken,
-					sellingToken,
-					numberOfDeposits,
-					numberOfParticipants,
-					totalHonorAmount,
-					totalParticipationAmount,
-					priceType,
-					oracle_address,
-					price,
-					currentDepositBalance
-				} = obj;
-				console.log(obj)
-				return html`
-					<div id="contract_page" class="page">
-						${status ? html`
-							<div class=${`status ${status}`}>${status}</div>
-						`: ''}
-                    	<h2 class="uppercase">${replaceDash(contract)}</h2>
-						<div id="contract_info" class="card">
-							<div class="flex info-row">
-								<h5 class="label">Contract Type</h5>
-								<h4>${replaceDash(contractType) === 'continuos event' ? 'continuous event' : replaceDash(contractType)}</h4>
-							</div>
-							${contractSubtype ? html`
-								<div class="flex info-row">
-									<h5 class="label">Contract Subtype</h5>
-									<h4>${replaceDash(contractSubtype)}</h4>
-								</div>
-							` : ''}
-							<div class="flex info-row">
-								<h5 class="label">Contract Address</h5>
-								<a href=${`#/address/${contractAddress}`} class="address wrap-around">${contractAddress}</a>
-							</div>
-							${expiration ? html`
-								<div class="flex info-row">
-									<h5 class="label">Expiration</h5>
-									<h4>${getFormattedTime(new Date(expiration).getTime())}</h4>
-								</div>
-							` : ''}
-							${payeeAddress ? html`
-								<div class="flex info-row">
-									<h5 class="label">Payee Addresses</h5>
-									<div class="grid gap-0-5">
-										${Object.keys(payeeAddress).map(address => html`
-											<a href=${`#/address/${address}`} class="address wrap-around">${address}</a>
-										`)}
-									</div>
-								</div>
-							`: ''}
-							${minAmount ? html`
-								<div class="flex info-row">
-									<h5 class="label">Min. Subscription Amount</h5>
-									<h4>${formatAmount(minAmount, 'usd')} ${token}</h4>
-								</div>
-							`: ''}
-							${maxAmount ? html`
-								<div class="flex info-row">
-									<h5 class="label">Max. Subscription Amount</h5>
-									<h4>${formatAmount(maxAmount, 'usd')} ${token}</h4>
-								</div>
-							`: ''}
-							${participationFees ? html`
-								<div class="flex info-row">
-									<h5 class="label">Participation Fees</h5>
-									<h4>${formatAmount(participationFees, 'usd')} ${token}</h4>
-								</div>
-							`: ''}
-							${contractType === 'one-time-event' ? html`
-								<div class="flex info-row">
-									<h5 class="label">Token Used</h5>
-									<h4>${token}</h4>
-								</div>
-							`: ''}
-							${contractType === 'continuos-event' && contractSubtype === 'tokenswap' ? html`
-								<div class="flex info-row">
-									<h5 class="label">deposit token</h5>
-									<h4>${sellingToken}</h4>
-								</div>
-								<div class="flex info-row">
-									<h5 class="label">participation token</h5>
-									<h4>${acceptingToken}</h4>	
-								</div>
-								<div class="flex info-row">
-									<h5 class="label">Exchange rate (${priceType === 'dynamic' ? 'Dynamic' : 'Fixed'})</h5>
-									<h4>1 ${sellingToken} = ${price} ${acceptingToken}</h4>
-								</div>
-							`: ''}
-							${numberOfDeposits ? html`
-								<div class="flex info-row">
-									<h5 class="label">Number of deposits</h5>
-									<h4>${numberOfDeposits}</h4>
-								</div>
-							`: ''}
-							${numberOfParticipants ? html`
-								<div class="flex info-row">
-									<h5 class="label">Number of participants</h5>
-									<h4>${numberOfParticipants}</h4>
-								</div>
-							`: ''}
-							${oracle_address ? html`
-								<div class="flex info-row">
-									<h5 class="label">Oracle address</h5>
-									<a href=${`#/address/${oracle_address}`} class="address wrap-around">${oracle_address}</a>
-								</div>
-							`: ''}
-							${totalParticipationAmount ? html`
-								<div class="flex info-row">
-									<h5 class="label">Total participation amount</h5>
-									<h4>${formatAmount(totalParticipationAmount, 'usd')} ${acceptingToken}</h4>
-								</div>
-							`: ''}
-							${totalHonorAmount ? html`
-								<div class="flex info-row">
-									<h5 class="label">Total output amount</h5>
-									<h4>${formatAmount(totalHonorAmount, 'usd')} ${sellingToken}</h4>
-								</div>
-							`: ''}
-							${currentDepositBalance ? html`
-								<div class="flex info-row">
-									<h5 class="label">Total deposit balance </h5>
-									<h4>${formatAmount(currentDepositBalance, 'usd')} ${sellingToken}</h4>
-								</div>
-							`: ''}
-						</div>
-						${userChoices ? html`
-							<h3>Available Choices</h3>
-							<ul type="circle" class="card">
-								${Object.keys(userChoices).map(choice => html`
-									<li>${userChoices[choice]}</li>
-								`)}
-							</ul>
-						`: ''}
-						<sm-chips class="margin-top-1" data-target="contract_views" onchange="changeView(event)">
-							<sm-chip value="0" selected>Transactions</sm-chip>
-							<sm-chip value="1">Participants</sm-chip>
-							${contractType === 'one-time-event' && contractSubtype === 'external-trigger' ? html`<sm-chip value="2">Winners</sm-chip>` : ''}
-							${contractType === 'continuos-event' && contractSubtype === 'tokenswap' ? html`<sm-chip value="2">Deposits</sm-chip>` : ''}
-						</sm-chips>
-						<div id="contract_views" class="view-wrapper">
-							<div id="contract_transaction_container" class="transaction-container"></div>
-							<ul id="participant_container" class="card hidden"></ul>
-							${contractType === 'one-time-event' && contractSubtype === 'external-trigger' ? html`<ul id="winners_container" class="card hidden"></ul>` : ''}
-							${contractType === 'continuos-event' && contractSubtype === 'tokenswap' ? html`<ul id="deposits_container" class="card hidden"></ul>` : ''}
-						</div>
-					</div>
 				`;
 			},
 			participantCard(details) {
@@ -1248,13 +709,14 @@
 							</div>
 							<div class="flex flex-direction-column">
 								<h5 class="label">supply</h5>
-								<h4>${supply}</h4>
+								<h4>${supply ? formatAmount(supply, token.toLowerCase() === 'rupee' ? 'inr' : 'usd') : 'Infinite'} </h4>
 							</div>
-							${type === 'nftincorp' ? html`<div class="flex flex-direction-column">
+							${conditional(type === 'nftincorp', html`
+								<div class="flex flex-direction-column">
 									<h5 class="label">NFT hash</h5>
 									<sm-copy value="${nftHash}"></sm-copy>
-								</div>`: ''
-					}
+								</div>
+							`)}
 							<div class="flex align-center space-between flex-wrap gap-1">
 								<div class="flex flex-direction-column">
 									<h5 class="label">Transaction ID</h5>
@@ -1331,41 +793,42 @@
 									${replaceDash(contractType) === 'continuos event' ? 'continuous event' : replaceDash(contractType)}
 								</h4>
 							</div>
-							${token ? html`
+							${conditional(token, html`
 								<div class="flex flex-direction-column">
 									<h5 class="label">token used</h5>
 									<h4>${token}</h4>
 								</div>
-							`: ''}
-							${acceptingToken ? html`
+							`)}
+							${conditional(acceptingToken, html`
 								<div class="flex flex-direction-column">
 									<h5 class="label">Participation token</h5>
 									<h4>${acceptingToken}</h4>
 								</div>
-							`: ''}
-							${sellingToken ? html`
+							`)}
+							${conditional(sellingToken, html`
 								<div class="flex flex-direction-column">
 									<h5 class="label">Deposit token</h5>
 									<h4>${sellingToken}</h4>
 								</div>
-							`: ''}
-							${expiration ? html`
+							`)}
+							${conditional(expiration, html`
 								<div class="flex flex-direction-column">
 									<h5 class="label">expiration</h5>
 									<h4 class="capitalise">${getFormattedTime(new Date(expiration).getTime())}</h4>
-								</div>`: ''}
-							${participationFees ? html`
+								</div>
+							`)}
+							${conditional(participationFees, html`
 								<div class="flex flex-direction-column">
 									<h5 class="label">participation amount</h5>
 									<h4>${participationFees} ${token}</h4>
 								</div>
-							`: ''}
-							${price ? html`
+							`)}
+							${conditional(price, html`
 								<div class="flex flex-direction-column">
 									<h5 class="label">price</h5>
 									<h4>1 ${sellingToken} = ${formatAmount(price, 'usd')} ${acceptingToken}</h4>
 								</div>
-							`: ''}
+							`)}
 							<div class="flex align-center space-between flex-wrap gap-1">
 								<div class="flex flex-direction-column">
 									<h5 class="label">Transaction ID</h5>
@@ -1395,7 +858,7 @@
 						<div class="contract-type">
 							<div class="flex align-center gap-1">
 								<h5 class="label">Token transfer</h5>
-								${hideUnnecessary ? html`` : html`<div class="badge">Off-chain</div>`}
+								${conditional(!hideUnnecessary, html`<div class="badge">Off-chain</div>`)}
 							</div>
 							<a href=${`#/token/${tokenIdentification}`} class=""><b>${tokenIdentification}</b></a>
 						</div>
@@ -1419,7 +882,7 @@
 								<h5 class="label">Amount</h5>
 								<h4>${tokenAmount} ${tokenIdentification}</h4>
 							</div>
-							${hideUnnecessary ? html`` : html`
+							${conditional(!hideUnnecessary, html`
 								<div class="flex align-center space-between flex-wrap gap-1">
 									<div class="flex flex-direction-column">
 										<h5 class="label">Transfer trigger ID</h5>
@@ -1427,11 +890,474 @@
 									</div>
 									<a href=${`#/transaction/${transactionTrigger}`} class="button button--small button--colored">View details</a>
 								</div>
-							`}
+							`)}
 						</div>
 					</li>`;
 			}
 		};
+		const router = new Router({
+			routingStart(state) {
+				loading()
+				document.body.style.overflow = 'hidden'
+				if (state.page !== 'home')
+					getRef("page_header").classList.remove("hidden");
+			},
+			routingEnd() {
+				loading(false)
+				document.body.style.overflow = 'auto'
+				window.scrollTo(0, 0);
+			}
+		})
+		async function renderHome(state) {
+			getRef("page_header").classList.add("hidden");
+			let [data, latestTxs, latestBlocks] = await Promise.all([getBannerData(), getLatestTxs(), getAllBlocks(6)])
+			const { height, time } = latestBlocks[0]
+			const { topToken, totalTransactions, walletAddresses, blockHeight, size, transactions, reward, hash, difficulty, nonce } = data;
+			renderElem(getRef("page_container"), html`
+				<div id="homepage" class="page">
+					<section id="first_section">
+						<div id="highlights">
+							<div class="highlight-item">
+								<h4 class="label">top token</h4>
+								<h2 class="token"><a href=${`#/token/${topToken}`} class="">${topToken}</a> </h2>
+							</div>
+							<div class="highlight-item">
+								<h4 class="label">Total transactions</h4>
+								<h2>${totalTransactions}</h2>
+							</div>
+							<div class="highlight-item">
+								<h4 class="label">Wallet addresses</h4>
+								<h2>${walletAddresses}</h2>
+							</div>
+							<div class="highlight-item">
+								<h4 class="label">Last token transaction block (${getFormattedTime(time, 'relative')})</h4>
+								<h2><a class="block-height" href=${`#/block/${height}`}>${height}</a></h2>
+							</div>
+						</div>
+					</section>
+					<section id="latest_transaction_section" class="margin-bottom-2">
+						<header class="flex align-center space-between">
+							<h3>Recent token transactions</h3>
+							<a id='all_trans_btn' href=${`#/transactions`} class="button button--small button--colored">View all</a>
+						</header>
+						<ul id="top_transaction_container" class="transaction-container">
+							${renderTransactions(latestTxs)}
+						</ul>
+					</section>
+					<section id="latest_blocks_section">
+						<header class="flex align-center space-between">
+							<h3>Recent token transaction blocks</h3>
+							<a id='all_blocks_btn' href=${`#/blocks`} class="button button--small button--colored">View all</a>
+						</header>
+						<div id="top_blocks_container">
+							${latestBlocks.map(block => render.blockCard(block))}
+						</div>
+					</section>
+				</div>
+			`);
+		}
+		router.addRoute('', async (state) => {
+			history.replaceState({}, '', '#/home')
+			await renderHome(state)
+		})
+		router.addRoute('home', renderHome)
+		router.addRoute('address', async state => {
+			try {
+				const [floAddress] = state.wildcards
+				if (!floAddress) return;
+				let [ownedTokens = {}, floBalance, addressTxs] = await Promise.all([getAddressInfo(floAddress), getAddressBalance(floAddress), getAddressTxs(floAddress)])
+				const ownedTokensCards = []
+				for (const token in ownedTokens) {
+					render.tokenBalanceCard(token, ownedTokens[token].balance || 0)
+				}
+				renderElem(getRef("page_container"), html`
+					<div id="address_page" class="page">
+						<div class="balance-card">
+							<h2 class="wrap-around margin-bottom-2">${floAddress}</h2>
+							<h5 class="label">FLO Balance</h5>
+							<h3 class="margin-bottom-2">${floBalance} FLO</h3>
+							${conditional(ownedTokensCards.length, html`
+								<div class="grid gap-0-5">
+									<h5>Tokens</h5>
+									<ul id="token_balance_list">
+										${ownedTokensCards}
+									</ul>
+								</div>
+							`)}
+						</div>
+						<h4>Transactions</h4>
+						<ul id="address_transaction_container" class="transaction-container">
+							${renderTransactions(addressTxs)}
+						</ul>
+					</div>
+				`);
+				getRef("page_title").textContent = 'Address';
+
+			} catch (e) {
+				console.error(e)
+				renderElem(getRef("page_container"), html`${render.errorPage(e)}`);
+			}
+		})
+		router.addRoute('token', async state => {
+			const token = state.wildcards[0].toLowerCase()
+			if (!token) return;
+			try {
+				let [tokenInfo, tokenBalances, tokenTransactions] = await Promise.all([getTokenInfo(token), getTokenBalances(token), getTokenTransactions(token)])
+				let { supply, incAddress } = tokenInfo
+				const tokenHolders = []
+				for (const address in tokenBalances) {
+					tokenHolders.push(render.addrBalanceCard(address, tokenBalances[address], tokenInfo.token))
+				}
+				renderElem(getRef("page_container"), html`
+					<div id="token_page" class="page">
+						<div class="card">
+						<h2 class="uppercase">${token}</h2>
+						<h5 class="label">Supply</h5>
+						<h4> </h4>
+						<h5 class="label">Incorporation address</h5>
+						<sm-copy value=${incAddress}>
+							<h4 class="wrap-around">
+								<a href=${`#/address/${incAddress}`} class="address wrap-around">${incAddress}</a> 	
+							</h4>
+						</sm-copy>
+						</div>
+						<sm-chips data-target="token_views" onchange="changeView(event)">
+							<sm-chip value="0" selected>Transactions</sm-chip>
+							<sm-chip value="1">Token holders</sm-chip>
+						</sm-chips>
+						<div id="token_views" class="view-wrapper">
+							<ul id="token_transaction_container" class="transaction-container">
+								${renderTransactions(tokenTransactions)}
+							</ul>
+							<ul id="token_balance_container" class="hidden">
+								${tokenHolders?.length ? tokenHolders : html`<div>No token holders found</div>`}
+							</ul>
+						</div>
+					</div>
+				`);
+				getRef("page_title").textContent = "Token";
+			} catch (e) {
+				console.trace(e)
+				renderElem(getRef("page_container"), html`${render.errorPage(e)}`);
+			}
+		})
+		router.addRoute('contract', async state => {
+			try {
+				const [contractId] = state.wildcards
+				if (!contractId) return;
+				const contractIdObj = splitContractNameAddress(contractId)
+				const {
+					status, contract, contractType, contractSubtype, contractAddress, expiration, token,
+					participationFees, userChoices, payeeAddress, minAmount, maxAmount, acceptingToken,
+					sellingToken, numberOfDeposits, numberOfParticipants, totalHonorAmount, totalParticipationAmount,
+					priceType, oracle_address, price, currentDepositBalance
+				} = await getContractInfo(contractIdObj)
+				const detailsToFetch = [getContractTransactions(contractIdObj), getContractParticipants(contractIdObj)]
+				if (contractType === 'continuos-event' && contractSubtype === 'tokenswap')
+					detailsToFetch.push(getContractDeposits(contractIdObj))
+				let [contractTransactions, contractParticipants, contractDeposits] = await Promise.all(detailsToFetch)
+				let participants = [];
+				let winners = []
+				let deposits = contractDeposits.map(deposit => render.depositCard({ ...deposit, acceptingToken, sellingToken }))
+				for (const participant in contractParticipants) {
+					participants.push(render.participantCard(contractParticipants[participant]))
+					if (contractParticipants[participant].winningAmount)
+						winners.push(render.contractChoiceCard(contractParticipants[participant]))
+				}
+				renderElem(getRef("page_container"), html`
+					<div id="contract_page" class="page">
+						${conditional(status, html` <div class=${`status ${status}`}>${status}</div> `)}
+                    	<h2 class="uppercase">${replaceDash(contract)}</h2>
+						<div id="contract_info" class="card">
+							<div class="flex info-row">
+								<h5 class="label">Contract Type</h5>
+								<h4>${replaceDash(contractType) === 'continuos event' ? 'continuous event' : replaceDash(contractType)}</h4>
+							</div>
+							${conditional(contractSubtype, html`
+								<div class="flex info-row">
+									<h5 class="label">Contract Subtype</h5>
+									<h4>${replaceDash(contractSubtype)}</h4>
+								</div>
+							`)}
+							<div class="flex info-row">
+								<h5 class="label">Contract Address</h5>
+								<a href=${`#/address/${contractAddress}`} class="address wrap-around">${contractAddress}</a>
+							</div>
+							${conditional(expiration, html`
+								<div class="flex info-row">
+									<h5 class="label">Expiration</h5>
+									<h4>${getFormattedTime(new Date(expiration).getTime())}</h4>
+								</div>
+							`)}
+							${conditional(payeeAddress, html`
+								<div class="flex info-row">
+									<h5 class="label">Payee Addresses</h5>
+									<div class="grid gap-0-5">
+										${Object.keys(payeeAddress).map(address => html`
+											<a href=${`#/address/${address}`} class="address wrap-around">${address}</a>
+										`)}
+									</div>
+								</div>
+							`)}
+							${conditional(minAmount, html`
+								<div class="flex info-row">
+									<h5 class="label">Min. Subscription Amount</h5>
+									<h4>${formatAmount(minAmount, 'usd')} ${token}</h4>
+								</div>
+							`)}
+							${conditional(maxAmount, html`
+								<div class="flex info-row">
+									<h5 class="label">Max. Subscription Amount</h5>
+									<h4>${formatAmount(maxAmount, 'usd')} ${token}</h4>
+								</div>
+							`)}
+							${conditional(participationFees, html`
+								<div class="flex info-row">
+									<h5 class="label">Participation Fees</h5>
+									<h4>${formatAmount(participationFees, 'usd')} ${token}</h4>
+								</div>
+							`)}
+							${conditional(contractType === 'one-time-event', html`
+								<div class="flex info-row">
+									<h5 class="label">Token Used</h5>
+									<h4>${token}</h4>
+								</div>
+							`)}
+							${conditional(contractType === 'continuos-event' && contractSubtype === 'tokenswap', html`
+								<div class="flex info-row">
+									<h5 class="label">deposit token</h5>
+									<h4>${sellingToken}</h4>
+								</div>
+								<div class="flex info-row">
+									<h5 class="label">participation token</h5>
+									<h4>${acceptingToken}</h4>	
+								</div>
+								<div class="flex info-row">
+									<h5 class="label">Exchange rate (${priceType === 'dynamic' ? 'Dynamic' : 'Fixed'})</h5>
+									<h4>1 ${sellingToken} = ${price} ${acceptingToken}</h4>
+								</div>
+							`)}
+							${conditional(numberOfDeposits, html`
+								<div class="flex info-row">
+									<h5 class="label">Number of deposits</h5>
+									<h4>${numberOfDeposits}</h4>
+								</div>
+							`)}
+							${conditional(numberOfParticipants, html`
+								<div class="flex info-row">
+									<h5 class="label">Number of participants</h5>
+									<h4>${numberOfParticipants}</h4>
+								</div>
+							`)}
+							${conditional(oracle_address, html`
+								<div class="flex info-row">
+									<h5 class="label">Oracle address</h5>
+									<a href=${`#/address/${oracle_address}`} class="address wrap-around">${oracle_address}</a>
+								</div>
+							`)}
+							${conditional(totalParticipationAmount, html`
+								<div class="flex info-row">
+									<h5 class="label">Total participation amount</h5>
+									<h4>${formatAmount(totalParticipationAmount, 'usd')} ${acceptingToken}</h4>
+								</div>
+							`)}
+							${conditional(totalHonorAmount, html`
+								<div class="flex info-row">
+									<h5 class="label">Total output amount</h5>
+									<h4>${formatAmount(totalHonorAmount, 'usd')} ${sellingToken}</h4>
+								</div>
+							`)}
+							${conditional(currentDepositBalance, html`
+								<div class="flex info-row">
+									<h5 class="label">Total deposit balance </h5>
+									<h4>${formatAmount(currentDepositBalance, 'usd')} ${sellingToken}</h4>
+								</div>
+							`)}
+						</div>
+						${conditional(userChoices, html`
+							<h3>Available Choices</h3>
+							<ul type="circle" class="card">
+								${Object.keys(userChoices).map(choice => html`
+									<li>${userChoices[choice]}</li>
+								`)}
+							</ul>
+						`)}
+						<sm-chips class="margin-top-1" data-target="contract_views" onchange="changeView(event)">
+							<sm-chip value="0" selected>Transactions</sm-chip>
+							<sm-chip value="1">Participants</sm-chip>
+							${conditional(winners.length, html`<sm-chip value="2">Winners</sm-chip>`)}
+							${conditional(deposits.length, html`<sm-chip value="2">Deposits</sm-chip>`)}
+						</sm-chips>
+						<div id="contract_views" class="view-wrapper">
+							<ul id="contract_transaction_container" class="transaction-container">
+								${renderTransactions(contractTransactions)}	
+							</ul>
+							<ul id="participant_container" class="card hidden">
+								${participants.length ? participants : html`<div>No participants found</div>`}	
+							</ul>
+							${conditional(winners.length, html`<ul id="winners_container" class="card hidden">${winners}</ul>`)}
+							${conditional(deposits.length, html`<ul id="deposits_container" class="card hidden">${deposits}</ul>`)}
+						</div>
+					</div>
+				`);
+				getRef("page_title").textContent = "Contract";
+			} catch (e) {
+				console.trace(e)
+				renderElem(getRef("page_container"), html`${render.errorPage(e)}`);
+			}
+		})
+
+		router.addRoute('block', async state => {
+			const [blockId] = state.wildcards
+			if (!blockId) return;
+			try {
+				const [blockInfo, blockTxs] = await Promise.all([getBlockInfo(blockId), getBlockTransactions(blockId)])
+				const { blockHeight, size, transactions, reward, hash, difficulty, nonce } = blockInfo;
+				renderElem(getRef("page_container"), html`
+					<div id="block_page" class="page">
+						<h5 class="label">Block Height</h5>
+						<h2 class="block-height">${blockHeight}</h2>
+						<div class="card">
+							<h5 class="label">Relevant Transactions</h5>
+							<h4>${transactions.length}</h4>
+							<h5 class="label">Confirmations</h5>
+							<h4>${size}</h4>
+							<h5 class="label">Reward</h5>
+							<h4>${reward}</h4>
+							<h5 class="label">Block Hash</h5>
+							<sm-copy value=${hash} clip-text></sm-copy>
+							<h5 class="label">Difficulty</h5>
+							<h4>${difficulty}</h4>
+							<h5 class="label">Nonce</h5>
+							<h4>${nonce}</h4>
+						</div>
+						<h3 class="heading">Transactions</h3>
+						<ul id="block_transaction_container" class="grid gap-1 top-bottom-padding">
+							${renderTransactions(blockTxs)}	
+						</ul>
+					</div>
+				`);
+				getRef("page_title").textContent = 'Block'
+			} catch (e) {
+				console.error(e)
+				renderElem(getRef("page_container"), html`${render.errorPage(e)}`);
+			}
+		})
+		router.addRoute('blocks', async state => {
+			let allBlocks = await getAllBlocks(100);
+			getRef("page_title").textContent = "All blocks with token transactions";
+			renderElem(getRef("page_container"), html`
+				<div id="all_blocks_page" class="page">
+					${allBlocks.map(block => render.blockCard(block))}
+				</div>
+			`)
+		})
+		router.addRoute('transactions', async state => {
+			let allTxs = await getAllTxs();
+			getRef("page_title").textContent = "All token transactions";
+			renderElem(getRef("page_container"), html`
+				<div id="all_transactions_page" class="page"> 
+					<ul id="all_transaction_list" class="transaction-container">
+						${renderTransactions(allTxs)}
+					</ul>	
+				</div>
+			`)
+		})
+		router.addRoute('transaction', async state => {
+			try {
+				const [txId] = state.wildcards
+				if (!txId) return
+				const [status, txInfo] = await getTxInfo(txId);
+				if (!status)
+					return renderElem(getRef("page_container"), html`${render.errorPage(txInfo)}`);
+				const { type, name, blockHeight, amount, sender, receiver, floData, hash, confirmations, nftHash, subTransactions, time } = txInfo;
+				switch (type.trim()) {
+					case 'smartContractPays':
+					case 'smartContractPays':
+						name = ''
+						break
+					case 'nftIncorporation':
+						type = 'NFT Incorporation'
+						break
+					case 'nft transfer':
+						type = 'NFT Transfer'
+						break
+				}
+				const renderedSubTransactions = subTransactions?.map(tx => render.offChainTransferCard({ ...tx, hideUnnecessary: true }));
+				renderElem(getRef("page_container"), html`
+					<div id="transaction_page" class="page">
+						<div class='head'>
+							<h5 class="label">${type}</h5>
+							<h2 class="token uppercase">
+								<a href=${`#/token/${name}`} style="text-decoration:none;">${name}</a>
+							</h2>
+							<h5 class="label">Transaction ID</h5>
+							<sm-copy value=${hash} clip-text></sm-copy>
+						</div>
+						<div class="flex flex-wrap gap-1">
+							<div class="card grid gap-1-5">
+								<time class="label">${getFormattedTime(time)}</time>
+								<div class="flex flex-direction-column">
+									<h5 class="label">Sender</h5>
+									<sm-copy value=${sender}>
+										<a href=${`#/address/${sender}`} class="address wrap-around">${sender}</a>
+									</sm-copy>
+								</div>
+								${conditional(receiver, html`
+									<div class="flex flex-direction-column">
+										<h5 class="label">Receiver</h5>
+										<sm-copy value=${receiver}>
+											<a href=${`#/address/${receiver}`} class="address wrap-around">${receiver}</a>
+										</sm-copy>
+									</div>
+								`)}
+								${conditional(amount, html`
+									<div class="flex flex-direction-column">
+										<h5 class="label">Amount</h5>
+										<h4>${formatAmount(amount, 'usd')}</h4>
+									</div>
+								`)}
+							</div>
+							<div class="card flex-1">
+								<h5 class="label">FLO Data</h5>
+								<p class="wrap-around">${floData}</p>
+								<h5 class="label">Block</h5>
+								<a href=${`#/block/${blockHeight}`} class="block-height">${blockHeight}</a>
+								<h5 class="label">Block Confirmations</h5>
+								<h4>${confirmations}</h4>
+								${conditional(nftHash, html`
+									<h5 class="label">NFT hash</h5>
+									<sm-copy value=${nftHash} clip-text></sm-copy>
+								`)}
+							</div>
+						</div>
+						${conditional(subTransactions?.length, html`
+							<div class="grid gap-1">
+								<div class="grid gap-0-3">
+									<h4>Sub Transactions</h4>
+									<p>These are Off-chain transactions that are triggered by above transaction</p>
+								</div>
+								<ul class="grid gap-1">${renderedSubTransactions}</ul>
+							</div>	
+						`)}
+					</div>
+				`);
+				getRef("page_title").textContent = "Transaction";
+			} catch (e) {
+				console.error(e)
+				renderElem(getRef("page_container"), html`${render.errorPage(e)}`);
+			}
+		})
+		router.addRoute('404', state => {
+			renderElem(getRef("page_container"), html`${render.errorPage('404 Not Found')}`);
+		})
+		function loading(show = true) {
+			if (show) {
+				getRef('loading').classList.remove('hidden')
+			} else {
+				getRef('loading').classList.add('hidden')
+			}
+		}
 
 		function replaceDash(string) {
 			return string.replace(/-/g, " ");
@@ -1441,7 +1367,7 @@
 			return str.replace(/ /g, "-");
 		}
 
-		async function renderTransactions(container, transactions = []) {
+		function renderTransactions(transactions = []) {
 			let txFrag = parseTransactions(transactions);
 			const renderedTransactions = txFrag.map(tx => {
 				switch (tx.type) {
@@ -1470,7 +1396,7 @@
 						break;
 				}
 			})
-			renderElem(document.getElementById(container), html`${renderedTransactions.length ? renderedTransactions : html`<div class="no-results">No transactions found</div>`}`)
+			return html`${renderedTransactions.length ? renderedTransactions : html`<div class="no-results">No transactions found</div>`}`
 		}
 
 		getRef('suggestions').addEventListener('keyup', e => {
@@ -1573,7 +1499,6 @@
 
 		async function getContractInfo(contract) {
 			const info = await fetchJson(`${floGlobals.tokenApiUrl}/api/v2/smartContractInfo?contractName=${contract.name}&contractAddress=${contract.address}`);
-			console.log(info, contract)
 			const {
 				contractInfo: {
 					contractType,

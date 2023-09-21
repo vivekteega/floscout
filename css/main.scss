@@ -757,6 +757,7 @@ theme-toggle {
 #main_search_field {
   width: 100%;
   --min-height: 2.8rem;
+  font-weight: 500;
 }
 #suggestions {
   position: absolute;
@@ -965,7 +966,6 @@ theme-toggle {
   height: 100dvh;
   h4 {
     margin-top: 1.5rem;
-    font-weight: 500;
   }
 }
 #all_blocks_page,
