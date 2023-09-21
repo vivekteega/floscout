@@ -147,7 +147,7 @@
 		function formatAmount(amount = 0, currency = 'inr') {
 			if (!amount)
 				return '0';
-			return amount.toLocaleString(currency === 'inr' ? `en-IN` : 'en-US', { currency, maximumFractionDigits: 8 })
+			return amount.toLocaleString(undefined, { currency, maximumFractionDigits: 8 })
 		}
 		// fetch data and return json
 		async function fetchJson(url, options = {}) {
@@ -704,10 +704,6 @@
 								</sm-copy>
 							</div>
 							<div class="flex flex-direction-column">
-								<h5 class="label">token name</h5>
-								<h4 class="uppercase">${token}</h4>
-							</div>
-							<div class="flex flex-direction-column">
 								<h5 class="label">supply</h5>
 								<h4>${supply ? formatAmount(supply, token.toLowerCase() === 'rupee' ? 'inr' : 'usd') : 'Infinite'} </h4>
 							</div>
@@ -1013,7 +1009,7 @@
 						<div class="card">
 						<h2 class="uppercase">${token}</h2>
 						<h5 class="label">Supply</h5>
-						<h4> </h4>
+						<h4>${supply ? formatAmount(supply, token.toLowerCase() === 'rupee' ? 'inr' : 'usd') : 'Infinite'}</h4>
 						<h5 class="label">Incorporation address</h5>
 						<sm-copy value=${incAddress}>
 							<h4 class="wrap-around">
