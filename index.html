@@ -326,7 +326,7 @@
 			this.addEventListener("click", (e) => {
 				if (e.target.closest('.suggestion')) {
 					let searchBox = document.getElementById('main_search_field');
-					searchBox.value = e.target.textContent;
+					searchBox.value = e.target.textContent.trim();
 					processNavbarSearch()
 				}
 			});
