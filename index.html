@@ -799,6 +799,7 @@
 					</li>`;
 			},
 			contractTriggerCard(obj) {
+				// TODO: change committee address to actual committee address instead of contract address
 				const { hash, blockHeight, contractName, contractAddress, winningChoice, committeeAddress, time } = obj;
 				return html`
 					<li id=${hash} class="transaction contract-trigger">
@@ -852,14 +853,8 @@
 						<div class="contract-info">
 							<time>${getFormattedTime(time)}</time>
 							<div class="flex flex-direction-column">
-								<h5 class="label">Contract name</h5>
-								<h4>${contractName}</h4>
-							</div>
-							<div class="flex flex-direction-column">
-								<h5 class="label">Contract address</h5>
-								<sm-copy value=${incAddress}>
-									<a href=${`#/address/${incAddress}`} class="address wrap-around">${incAddress}</a>
-								</sm-copy>
+								<h5 class="label">Contract ID</h5>
+								<a href=${`#/contract/${contractName}-${incAddress}`} class="address wrap-around">${contractName}-${incAddress}</a>
 							</div>
 							<div class="flex flex-direction-column">
 								<h5 class="label">contract type</h5>
