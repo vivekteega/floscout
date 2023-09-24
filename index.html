@@ -837,7 +837,10 @@
 				`;
 			},
 			contractCreationCard(obj) {
-				const { hash, blockHeight, token, contractName, incAddress, contractType, expiration, participationFees, availableChoices, time, acceptingToken, sellingToken, price } = obj;
+				const {
+					hash, blockHeight, token, contractName, incAddress, contractType,
+					expiration, participationFees, availableChoices, time, acceptingToken, sellingToken, price,
+					minAmount, maxAmount } = obj;
 				console.log(obj)
 				return html`
 					<li id=${hash} class="transaction contract-creation">
@@ -864,42 +867,56 @@
 									${replaceDash(contractType) === 'continuos event' ? 'continuous event' : replaceDash(contractType)}
 								</h4>
 							</div>
-							${token ? html`
-								<div class="flex flex-direction-column">
-									<h5 class="label">token used</h5>
-									<h4>${token}</h4>
-								</div>
-							`: ''}
-							${acceptingToken ? html`
-								<div class="flex flex-direction-column">
-									<h5 class="label">Participation token</h5>
-									<h4>${acceptingToken}</h4>
-								</div>
-							`: ''}
-							${sellingToken ? html`
-								<div class="flex flex-direction-column">
-									<h5 class="label">Deposit token</h5>
-									<h4>${sellingToken}</h4>
-								</div>
-							`: ''}
-							${expiration ? html`
-								<div class="flex flex-direction-column">
-									<h5 class="label">expiration</h5>
-									<h4 class="capitalise">${getFormattedTime(new Date(expiration).getTime())}</h4>
-								</div>
-							`: ''}
-							${participationFees ? html`
-								<div class="flex flex-direction-column">
-									<h5 class="label">participation amount</h5>
-									<h4>${participationFees} ${token}</h4>
-								</div>
-							`: ''}
-							${price ? html`
-								<div class="flex flex-direction-column">
-									<h5 class="label">price</h5>
-									<h4>1 ${sellingToken} = ${formatAmount(price, 'usd')} ${acceptingToken}</h4>
-								</div>
-							`: ''}
+							<div class="flex flex-wrap gap-1-5">
+								${token ? html`
+									<div class="flex flex-direction-column">
+										<h5 class="label">token used</h5>
+										<h4>${token}</h4>
+									</div>
+								`: ''}
+								${acceptingToken ? html`
+									<div class="flex flex-direction-column">
+										<h5 class="label">Participation token</h5>
+										<h4>${acceptingToken}</h4>
+									</div>
+								`: ''}
+								${sellingToken ? html`
+									<div class="flex flex-direction-column">
+										<h5 class="label">Deposit token</h5>
+										<h4>${sellingToken}</h4>
+									</div>
+								`: ''}
+								${expiration ? html`
+									<div class="flex flex-direction-column">
+										<h5 class="label">expiration</h5>
+										<h4 class="capitalise">${getFormattedTime(new Date(expiration).getTime())}</h4>
+									</div>
+								`: ''}
+								${participationFees ? html`
+									<div class="flex flex-direction-column">
+										<h5 class="label">participation amount</h5>
+										<h4>${participationFees} ${token}</h4>
+									</div>
+								`: ''}
+								${price ? html`
+									<div class="flex flex-direction-column">
+										<h5 class="label">price</h5>
+										<h4>1 ${sellingToken} = ${formatAmount(price, 'usd')} ${acceptingToken}</h4>
+									</div>
+								`: ''}
+								${minAmount ? html`
+									<div class="flex flex-direction-column">
+										<h5 class="label">min amount</h5>
+										<h4>${minAmount} ${token}</h4>
+									</div>	
+								`: ''}
+								${maxAmount ? html`
+									<div class="flex flex-direction-column">
+										<h5 class="label">max amount</h5>
+										<h4>${maxAmount} ${token}</h4>
+									</div>	
+								`: ''}
+							</div>
 							<div class="flex align-center space-between flex-wrap gap-1">
 								<div class="flex flex-direction-column">
 									<h5 class="label">Transaction ID</h5>
@@ -1702,7 +1719,10 @@
 					senderAddress,
 					contractAddress,
 					contractType,
-					contractConditions: { expiryTime, accepting_token, selling_token, subtype, price } = {},
+					contractConditions: {
+						expiryTime, accepting_token, selling_token, subtype, price,
+						participationAmount, minimumsubscriptionamount, maximumsubscriptionamount
+					} = {},
 					contractAmount,
 					type,
 					tokenAmount,
@@ -1784,6 +1804,8 @@
 											participationFees: contractAmount,
 											availableChoices: "",
 											type: "contractincorp",
+											minAmount: minimumsubscriptionamount,
+											maxAmount: maximumsubscriptionamount,
 										});
 										break;
 								}
