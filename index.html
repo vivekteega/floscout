@@ -542,6 +542,26 @@
 				}
 			})
 		}
+		/**
+	 * Creates a signal and returns getter, setter and domNode
+	 * @param {string|number} initialState 
+	 * @param {function} callback 
+	 * @returns {[function, function, function]} [getter, setter, domNode]
+	 */
+		function $signal(initialState, callback) {
+			let state = initialState;
+			function changeState(newState) {
+				if (newState === state) return;
+				state = newState;
+				callback && callback(newState);
+			}
+			return [
+				() => state,
+				(state) => {
+					changeState(state);
+				}
+			]
+		}
 	</script>
 	<script>
 		const render = {
@@ -938,7 +958,7 @@
 							<div class="flex align-center gap-1">
 								<h5 class="label">Token transfer</h5>
 								${!hideUnnecessary ? html`<div class="badge">Off-chain</div>` : ''}
-								</div>
+							</div>
 							<a href=${`#/token/${tokenIdentification}`} class=""><b>${tokenIdentification}</b></a>
 						</div>
 						<div class="contract-info">
@@ -977,9 +997,12 @@
 					return html`
 						<li class="transfer-step">
 							<div class="flex flex-direction-column gap-0-5">
-								<div class="flex flex-direction-column">
-									<h5 class="label">Sender (Smart contract)</h5>
-									<a href=${`#/contract/${smartContract}`} class="address wrap-around">${smartContract}</a>
+								<div class="flex flex-direction-column gap-0-5">
+									<div class="flex align-center gap-0-5">
+										<h5 class="label" style="margin-bottom: 0">Sender (Smart contract)</h5>
+										<div class="badge">Off-chain</div>
+									</div>
+									<a href=${`#/contract/${smartContract}`} class="address wrap-around"><b>${smartContract}</b></a>
 								</div>
 								<p>Sent: <b>${tokenAmount} ${tokenIdentification}</b></p>
 							</div>
@@ -1020,6 +1043,13 @@
 								</li>
 								${renderedOffChainTransactions}
 							</ul>	
+							<div class="flex align-center space-between flex-wrap gap-1">
+								<div class="flex flex-direction-column">
+									<h5 class="label">Transaction ID</h5>
+									<sm-copy value=${hash} clip-text></sm-copy>
+								</div>
+								<a href=${`#/transaction/${hash}`} class="button button--small button--colored">View details</a>
+							</div>
 						</div>
 					</li>
 				`
@@ -1042,7 +1072,7 @@
 			getRef("page_header").classList.add("hidden");
 			let [data, latestTxs, latestBlocks] = await Promise.all([getBannerData(), getLatestTxs(), getAllBlocks(6)])
 			const { height, time } = latestBlocks[0]
-			const { topToken, totalTransactions, walletAddresses, blockHeight, size, transactions, reward, hash, difficulty, nonce } = data;
+			const { topToken, totalTransactions, walletAddresses } = data;
 			renderElem(getRef("page_container"), html`
 				<div id="homepage" class="page">
 					<section id="first_section">

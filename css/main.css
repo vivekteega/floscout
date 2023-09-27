@@ -1013,8 +1013,6 @@ theme-toggle {
   padding: max(1rem, 2vw);
   border-radius: 0.5rem;
   background-color: rgba(var(--foreground-color), 0.8);
-  content-visibility: auto;
-  contain-intrinsic-height: 35rem;
 }
 .transaction .contract-info {
   align-items: flex-start;
