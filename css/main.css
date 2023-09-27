@@ -1020,6 +1020,7 @@ theme-toggle {
   align-items: flex-start;
   display: grid;
   gap: 1.5rem;
+  min-width: 0;
 }
 .transaction > .icon:first-of-type {
   fill: none;
@@ -1044,6 +1045,25 @@ theme-toggle {
   border-radius: 0.5rem;
   background-color: rgba(var(--text-color), 0.1);
   color: rgba(var(--text-color), 0.8);
+}
+
+.transfer-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.transfer-step {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem 2rem;
+  border: solid thin rgba(var(--text-color), 0.4);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+}
+.transfer-step > :nth-child(2) {
+  width: auto;
+  transform: rotate(90deg);
 }
 
 #loading {
@@ -1262,6 +1282,19 @@ theme-toggle {
     min-width: 11rem;
     margin-bottom: 0;
     margin-top: 0.2rem !important;
+  }
+  .transfer-step {
+    align-items: center;
+    flex-direction: row;
+  }
+  .transfer-step > :nth-child(1) {
+    flex: 1;
+  }
+  .transfer-step > :nth-child(2) {
+    transform: none;
+  }
+  .transfer-step > :nth-child(3) {
+    flex: 1;
   }
 }
 @media only screen and (min-width: 1280px) {

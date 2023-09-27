@@ -811,10 +811,6 @@
 						<div class="contract-info">
 							<time>${getFormattedTime(time)}</time>
 							<div class="flex flex-direction-column">
-								<h5 class="label">Contract name</h5>
-								<h4>${contractName}</h4>
-							</div>
-							<div class="flex flex-direction-column">
 								<h5 class="label">contract address</h5>
 								<a href=${`#/address/${contractAddress}`} class="address wrap-around">${contractAddress}</a>
 							</div>
@@ -948,10 +944,6 @@
 						<div class="contract-info">
 							<time>${getFormattedTime(time)}</time>
 							<div class="flex flex-direction-column">
-								<h5 class="label">Contract name</h5>
-								<h4>${contractName}</h4>
-							</div>
-							<div class="flex flex-direction-column">
 								<h5 class="label">Sender (Smart contract)</h5>
 								<a href=${`#/contract/${contractName}-${senderAddress}`} class="address wrap-around">${contractName}-${senderAddress}</a>
 							</div>
@@ -976,6 +968,61 @@
 							`: ''}
 						</div>
 					</li>`;
+			},
+			compoundTransactionCard(details) {
+				const { time, hash, sender, receiver, contractName, token, amount, offChainTransactions = [] } = details
+				const smartContract = `${contractName}-${receiver}`
+				const renderedOffChainTransactions = offChainTransactions.map(tx => {
+					const { receiverAddress, tokenAmount, tokenIdentification } = tx
+					return html`
+						<li class="transfer-step">
+							<div class="flex flex-direction-column gap-0-5">
+								<div class="flex flex-direction-column">
+									<h5 class="label">Sender (Smart contract)</h5>
+									<a href=${`#/contract/${smartContract}`} class="address wrap-around">${smartContract}</a>
+								</div>
+								<p>Sent: <b>${tokenAmount} ${tokenIdentification}</b></p>
+							</div>
+							<svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"/></svg>
+							<div class="flex flex-direction-column">
+								<h5 class="label">Receiver</h5>
+								<sm-copy value=${receiverAddress}>
+									<a href=${`#/address/${receiverAddress}`} class="address wrap-around">${receiverAddress}</a>
+								</sm-copy>
+							</div>
+						</li>
+					`
+				})
+				return html`
+					<li class="transaction">
+						<svg class="icon" viewBox="0 0 64 64"> <title>transfer</title> <polyline points="17.04 35.97 14.57 33.5 40.15 7.9 32.75 0.5 55.52 0.5 55.52 23.28 48.12 15.87 23.86 40.14 15.88 48.13 8.48 40.72 8.48 63.5 31.25 63.5 23.85 56.1 49.43 30.5 46.96 28.03"/> </svg>
+						<div class="contract-type flex flex-direction-column gap-0-5">
+							<h4>Smart contract transfer</h4>
+							<time>${getFormattedTime(time)}</time>
+						</div>
+						<div class="contract-info">
+							<ul class="transfer-steps">
+								<li class="transfer-step">
+									<div class="flex flex-direction-column gap-0-5">
+										<div class="flex flex-direction-column">
+											<h5 class="label">Sender</h5>
+											<sm-copy value=${sender}>
+												<a href=${`#/address/${sender}`} class="address wrap-around">${sender}</a>
+											</sm-copy>
+											<p>Sent: <b>${amount} ${token}</b></p>
+										</div>
+									</div>
+									<svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"/></svg>
+									<div class="flex flex-direction-column">
+										<h5 class="label">Receiver (Smart contract)</h5>
+										<a href=${`#/contract/${smartContract}`} class="address wrap-around">${smartContract}</a>
+									</div>
+								</li>
+								${renderedOffChainTransactions}
+							</ul>	
+						</div>
+					</li>
+				`
 			}
 		};
 		const router = new Router({
@@ -1498,32 +1545,68 @@
 		}
 
 		function renderTransactions(transactions = []) {
-			let txFrag = parseTransactions(transactions);
-			const renderedTransactions = txFrag.map(tx => {
+			let parsedTxs = parseTransactions(transactions);
+			let groupedTxs = new Map();
+
+			parsedTxs.forEach((tx) => {
+				const { hash, transactionTrigger } = tx;
+				const key = hash || transactionTrigger;
+
+				if (!groupedTxs.has(key)) {
+					groupedTxs.set(key, {
+						sourceTransaction: null,
+						offChainTransactions: [],
+						type: transactionTrigger ? 'compoundTransaction' : undefined,
+					});
+				}
+
+				if (hash) {
+					groupedTxs.get(key).sourceTransaction = tx;
+				} else {
+					const { tokenIdentification, senderAddress, receiverAddress, onChain, tokenAmount } = tx;
+					groupedTxs.get(key).offChainTransactions.push({
+						tokenIdentification,
+						receiverAddress,
+						tokenAmount,
+					});
+				}
+			});
+
+			// Convert the Map to an array of values for sorting
+			const sortedTxs = [...groupedTxs.values()].sort((a, b) => b.sourceTransaction.time - a.sourceTransaction.time);
+
+			// Replace parsedTxs with sortedTxs
+			parsedTxs = sortedTxs.map((tx) => {
+				if (tx.type === 'compoundTransaction') {
+					return {
+						...tx.sourceTransaction,
+						offChainTransactions: tx.offChainTransactions,
+						type: tx.type,
+					};
+				}
+				return tx.sourceTransaction;
+			});
+			console.log(parsedTxs)
+			const renderedTransactions = parsedTxs.map(tx => {
 				switch (tx.type) {
 					case 'tokentransfer':
 					case 'nfttransfer':
 						return render.tokenTransferCard(tx)
-						break;
 					case 'contractdeposit':
 						return render.contractDepositCard(tx)
-						break;
 					case 'contracttransfer':
 						return render.contractTransferCard(tx);
-						break;
 					case 'tokenincorp':
 					case 'nftincorp':
 						return render.tokenCreationCard(tx);
-						break;
 					case 'contractincorp':
 						return render.contractCreationCard(tx);
-						break;
 					case 'contracttrigger':
 						return render.contractTriggerCard(tx);
-						break;
 					case 'offChainTransfer':
 						return render.offChainTransferCard(tx);
-						break;
+					case 'compoundTransaction':
+						return render.compoundTransactionCard(tx)
 				}
 			})
 			return html`${renderedTransactions.length ? renderedTransactions : html`<div class="no-results">No transactions found</div>`}`
