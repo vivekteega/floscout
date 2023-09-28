@@ -1168,7 +1168,7 @@ theme-toggle {
 
 .sc-card {
   display: grid;
-  gap: 0.5rem;
+  gap: 1rem;
   background-color: rgba(var(--foreground-color), 1);
   padding: max(1rem, 1.5vw);
   border-radius: 0.5rem;
@@ -1197,6 +1197,30 @@ theme-toggle {
 }
 .sc-card__info-link .icon {
   fill: var(--accent-color);
+}
+.sc-card > :last-child {
+  justify-content: flex-end;
+  padding-top: 1rem;
+}
+.sc-card > :last-child .button {
+  background-color: transparent;
+  border: solid 1px var(--accent-color);
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+}
+
+.involved-tokens li {
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.2rem;
+  background-color: rgba(var(--text-color), 0.06);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.involved-tokens li a {
+  color: rgba(var(--text-color), 0.8);
+}
+.involved-tokens li a:hover {
+  text-decoration: underline;
 }
 
 #filter_s_c_popup {

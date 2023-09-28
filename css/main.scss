@@ -1066,7 +1066,7 @@ theme-toggle {
 }
 .sc-card {
   display: grid;
-  gap: 0.5rem;
+  gap: 1rem;
   background-color: rgba(var(--foreground-color), 1);
   padding: max(1rem, 1.5vw);
   border-radius: 0.5rem;
@@ -1093,6 +1093,31 @@ theme-toggle {
     font-size: 0.9rem;
     .icon {
       fill: var(--accent-color);
+    }
+  }
+  > :last-child {
+    justify-content: flex-end;
+    padding-top: 1rem;
+    .button {
+      background-color: transparent;
+      border: solid 1px var(--accent-color);
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
+    }
+  }
+}
+.involved-tokens {
+  li {
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.2rem;
+    background-color: rgba(var(--text-color), 0.06);
+    font-size: 0.85rem;
+    font-weight: 500;
+    a {
+      color: rgba(var(--text-color), 0.8);
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 }

@@ -80,20 +80,21 @@
 		</header>
 		<div id="filter_s_c_popup__content" class="grid gap-1-5"></div>
 		<footer class="flex gap-0-5">
-			<button class="button button--colored margin-left-auto" onclick="clearFilter()">
+			<button class="button button--colored margin-left-auto" onclick="clearFilters()">
 				Clear
 			</button>
-			<button class="button button--primary" onclick="applyFilter()">
+			<button class="button button--primary" onclick="renderSmartContracts()">
 				Apply
 			</button>
 		</footer>
 	</sm-popup>
 	<!-- Set urls for token and flo Apis -->
 	<script>
+		const testMode = false
 		const floGlobals = {
-			blockchain: "FLO",
-			tokenApiUrl: 'https://ranchimallflo.ranchimall.net',
-			floApiUrl: 'https://flosight.ranchimall.net',
+			blockchain: testMode ? "FLO_TEST" : "FLO",
+			tokenApiUrl: testMode ? 'https://ranchimallflo-testnet-blockbook.ranchimall.net' : 'https://ranchimallflo.ranchimall.net',
+			floApiUrl: testMode ? 'https://blockbook-testnet.ranchimall.net' : 'https://flosight.ranchimall.net',
 		}
 	</script>
 	<script>
@@ -139,24 +140,8 @@
 			return getRef("notification_drawer").push(message, { icon, ...options });
 		}
 		// Use instead of document.getElementById
-		const domRefs = {};
 		function getRef(elementId) {
-			if (!domRefs.hasOwnProperty(elementId)) {
-				domRefs[elementId] = {
-					count: 1,
-					ref: null,
-				};
-				return document.getElementById(elementId);
-			} else {
-				if (domRefs[elementId].count < 3) {
-					domRefs[elementId].count = domRefs[elementId].count + 1;
-					return document.getElementById(elementId);
-				} else {
-					if (!domRefs[elementId].ref)
-						domRefs[elementId].ref = document.getElementById(elementId);
-					return domRefs[elementId].ref;
-				}
-			}
+			return document.getElementById(elementId);
 		}
 
 		// Use when a function needs to be executed after user finishes changes
@@ -198,13 +183,14 @@
 						filterButton.classList.toggle('selected')
 					}
 					const scTypes = [['time-trigger', 'Timed Event'], ['external-trigger', 'External Trigger'], ['tokenswap', 'Token Swap']]
+					const { tokens, types } = floGlobals.appliedFilters
 					renderElem(getRef('filter_s_c_popup__content'), html`
 						<div class="grid gap-1">
 							<h5>Type</h5>
-							<div id="" class="flex flex-wrap gap-0-5">
+							<div id="type_filter_list" class="flex flex-wrap gap-0-5">
 								${scTypes.map(([type, title]) => html`
-									<label class="sc-filter sc-type-filter interact">
-										<input type="checkbox" name="sc-type-filter" value=${type} onchange=${checkSelected}/>
+									<label class=${`sc-filter sc-type-filter interact ${types.has(type) ? 'selected' : ''}`}>
+										<input type="checkbox" name="sc-type-filter" value=${type} onchange=${checkSelected} ?checked=${types.has(type)}/>
 										<span class="sc-filter__name">${title}</span>
 									</label>
 								`)}
@@ -214,8 +200,8 @@
 							<h5>Involved tokens</h5>
 							<div id="token_filter_list" class="flex flex-wrap gap-0-5">
 								${floGlobals.tokenList.map(token => html`
-									<label class="sc-filter token-filter interact">
-										<input type="checkbox" name="token-filter" value=${token} onchange=${checkSelected}/>
+									<label class=${`sc-filter token-filter interact ${tokens.has(token) ? 'selected' : ''}`}>
+										<input type="checkbox" name="token-filter" value=${token} onchange=${checkSelected} ?checked=${tokens.has(token)}/>
 										<span class="sc-filter__name">${token}</span>
 									</label>
 								`)}
@@ -228,7 +214,8 @@
 		document.addEventListener('popupclosed', e => {
 			zIndex--
 			switch (e.target.id) {
-				case 'saved_ids_popup':
+				case 'filter_s_c_popup':
+					renderElem(getRef('filter_s_c_popup__content'), html``)
 					break;
 			}
 		})
@@ -1121,20 +1108,75 @@
 			await renderHome(state)
 		})
 		router.addRoute('home', renderHome)
-		router.addRoute('smart-contracts', async state => {
-			const smartContracts = floGlobals.smartContractList.map(contract => {
+		floGlobals.appliedFilters = {
+			tokens: new Set(),
+			types: new Set()
+		}
+		function filterSmartContracts() {
+			if (getRef('token_filter_list'))
+				floGlobals.appliedFilters.tokens = new Set([...getRef('token_filter_list').querySelectorAll('input[type="checkbox"]:checked')]
+					.map(elem => elem.value))
+			if (getRef('type_filter_list'))
+				floGlobals.appliedFilters.types = new Set([...getRef('type_filter_list').querySelectorAll('input[type="checkbox"]:checked')]
+					.map(elem => elem.value))
+
+			let filteredContracts = floGlobals.smartContractList
+			const { tokens, types } = floGlobals.appliedFilters
+			if (tokens.size || types.size) {
+				filteredContracts = filteredContracts.filter(sc => {
+					const { acceptingToken, sellingToken, contractSubType, tokenIdentification } = sc
+					if (tokens.size && !tokens.has(acceptingToken) && !tokens.has(sellingToken) && !tokens.has(tokenIdentification))
+						return false
+					if (types.size && !types.has(contractSubType))
+						return false
+					return true
+				})
+			}
+			const totalFilters = tokens.size + types.size
+			getRef('apply_filter_button').lastChild.textContent = totalFilters ? `Filter (${totalFilters})` : 'Filter';
+			if (getRef('clear_filter_button'))
+				getRef('clear_filter_button').classList[totalFilters ? 'remove' : 'add']('hidden')
+			return filteredContracts
+		}
+		function renderSmartContracts() {
+			const smartContracts = filterSmartContracts().map(contract => {
 				const { tokenIdentification, acceptingToken, blockNumber, contractAddress, contractName, contractSubType,
 					contractType, incorporationDate, oracle_address, price, sellingToken, status, transactionHash } = contract
 				let type = ''
+				let actions
 				switch (contractSubType) {
 					case 'tokenswap':
 						type = 'Token Swap'
+						actions = html`
+							<div class="flex align-center gap-0-5">
+								<button class="button button--small button--colored" onclick=${() => openPopup('token_swap_popup', contract)}>
+									Sell ${acceptingToken}
+								</button>
+								<button class="button button--small button--colored" onclick=${() => openPopup('token_swap_popup', contract, true)}>
+									Sell ${sellingToken}
+								</button>
+							</div>
+						`
 						break;
 					case 'time-trigger':
 						type = 'Timed Event'
+						actions = html`
+							<div class="flex align-center gap-0-5">
+								<button class="button button--small button--colored" onclick=${() => openPopup('time_trigger_popup', contract)}>
+									Participate
+								</button>
+							</div>
+						`
 						break;
 					case 'external-trigger':
 						type = 'External Trigger'
+						actions = html`
+							<div class="flex align-center gap-0-5">
+								<button class="button button--small button--colored" onclick=${() => openPopup('external_trigger_popup', contract)}>
+									Participate
+								</button>
+							</div>
+						`
 						break;
 				}
 				return html`
@@ -1147,25 +1189,73 @@
 							</a>
 						</div>
 						<h4>${contractName}</h4>
-
+						<ul class="flex align-center flex-wrap gap-0-5 involved-tokens">
+							${tokenIdentification ? html`
+								<li>
+									<a href=${`#/token/${tokenIdentification}`} class="token">${tokenIdentification}</a>
+								</li>
+							`: ''}
+							${acceptingToken ? html`
+								<li>
+									<a href=${`#/token/${acceptingToken}`} class="token">${acceptingToken}</a>
+								</li>
+							`: ''}
+							${sellingToken ? html`
+								<li>
+									<a href=${`#/token/${sellingToken}`} class="token">${sellingToken}</a>
+								</li>
+							`: ''}
+						</ul>
+						${actions}
 					</li>	
 				`
 			})
+			renderElem(getRef('smart_contract_wrapper'), html`
+				${smartContracts.length ? html`
+					<ul id="smart_contract_list">
+						${smartContracts}
+					</ul>
+				`: html`
+					<div class="flex flex-direction-column align-center">
+						<h3>No smart contracts found</h3>
+						<p>Try changing the filters</p>
+					</div>
+				`}
+			`)
+			closePopup()
+		}
+		function clearFilters() {
+			floGlobals.appliedFilters = {
+				tokens: new Set(),
+				types: new Set()
+			}
+			if (getRef('token_filter_list'))
+				getRef('token_filter_list').querySelectorAll('input[type="checkbox"]:checked').forEach(elem => elem.checked = false)
+			if (getRef('type_filter_list'))
+				getRef('type_filter_list').querySelectorAll('input[type="checkbox"]:checked').forEach(elem => elem.checked = false)
+			renderSmartContracts()
+			closePopup()
+		}
+		router.addRoute('smart-contracts', async state => {
 			renderElem(getRef("page_container"), html`
-				<div id="smart-contract-page" class="page">
-					<header>
-						<div class='flex space-between'>
-							<h2>Smart contracts</h2>
-							<button class="button button--small button--colored gap-0-3" onclick=${() => openPopup('filter_s_c_popup')}>
+				<div id="smart_contract_page" class="page">
+					<header class='flex space-between flex-wrap gap-1'>
+						<h2>Smart contracts</h2>
+						<div class="flex align-center gap-0-5">
+							<button id="clear_filter_button" class="button button--small button--colored gap-0-3 hidden" onclick=${clearFilters}>
+								<svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+								Clear
+							</button>
+							<button id="apply_filter_button" class="button button--small button--colored gap-0-3" onclick=${() => openPopup('filter_s_c_popup')}>
 								<svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/></svg>
 								Filter
 							</button>
-						</div>
-						<ul id="smart_contract_list">
-							${smartContracts}
-						</ul>
+						</div>	
+					</header>
+					<div id="smart_contract_wrapper"></div>
 				</div>
 			`)
+			renderSmartContracts()
 			getRef("page_title").textContent = '';
 		})
 		router.addRoute('address', async state => {
