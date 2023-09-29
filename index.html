@@ -926,12 +926,12 @@
 					</li>`;
 			},
 			blockCard(blockDetails) {
-				const { height, tx, time } = blockDetails;
-				const plural = parseInt(tx.length) > 1 ? 's' : '';
+				const { height, tx, txs, time } = blockDetails;
+				const plural = parseInt((tx || txs).length) > 1 ? 's' : '';
 				return html`
 					<div class="block-card grid align-center">
 						<a href=${`#/block/${height}`} class="block-height">${height}</a>
-          				<span>${tx.length} Transaction${plural}</span>
+          				<span>${(tx || txs).length} Transaction${plural}</span>
 						<time>${getFormattedTime(time, 'relative')}</time>
 					</div>
 				`;
