@@ -898,12 +898,14 @@ theme-toggle {
   text-transform: none !important;
   word-break: break-all;
 }
-.contract-choice {
+#winners_container {
+  display: grid;
+  gap: 1rem;
+}
+.contract-winner {
   display: grid;
   gap: 0.5rem 1rem;
-  &:last-of-type {
-    margin-bottom: 0;
-  }
+  font-size: 0.95rem;
 }
 #token_balance_list {
   display: flex;
@@ -1018,7 +1020,7 @@ theme-toggle {
 #error_page {
   padding: 1.5rem 0;
 }
-#view-wrappe .view-wrapper {
+.view-wrapper {
   display: grid;
   align-items: flex-start;
   & > * {
@@ -1039,12 +1041,14 @@ theme-toggle {
 .participant,
 .deposit-card {
   flex-wrap: wrap;
+  align-items: center;
   gap: 2rem;
   background-color: rgba(var(--foreground-color), 1);
   padding: max(1rem, 1.5vw);
   border-radius: 0.5rem;
   .address {
     min-width: 12rem;
+    flex: 1;
   }
 }
 #transaction_page {
@@ -1189,7 +1193,7 @@ theme-toggle {
       grid-area: 1/1/3/2;
     }
   }
-  .contract-choice {
+  .contract-winner {
     grid-template-columns: 2fr 1fr 1fr;
     align-items: center;
   }

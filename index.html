@@ -155,10 +155,10 @@
 			};
 		}
 
-		function formatAmount(amount = 0, currency = 'inr') {
+		function formatAmount(amount = 0) {
 			if (!amount)
 				return '0';
-			return amount.toLocaleString(undefined, { currency, maximumFractionDigits: 8, minimumFractionDigits: 0 })
+			return amount.toLocaleString(undefined, { maximumFractionDigits: 8, minimumFractionDigits: 0 })
 		}
 		let zIndex = 10
 		// function required for popups or modals to appear
@@ -529,25 +529,60 @@
 				}
 			})
 		}
+		let currentSubscriber = null;
 		/**
-	 * Creates a signal and returns getter, setter and domNode
-	 * @param {string|number} initialState 
-	 * @param {function} callback 
-	 * @returns {[function, function, function]} [getter, setter, domNode]
-	 */
-		function $signal(initialState, callback) {
-			let state = initialState;
-			function changeState(newState) {
-				if (newState === state) return;
-				state = newState;
-				callback && callback(newState);
-			}
-			return [
-				() => state,
-				(state) => {
-					changeState(state);
+		 * @param {any} initialValue - initial value for the signal
+		 * @returns {array} - array containing getter and setter for the signal
+		 * @example
+		 * const [getCount, setCount] = $signal(0);
+		 */
+		function $signal(initialValue) {
+			let value = initialValue;
+			const subscribers = new Set();
+
+			function getter() {
+				if (currentSubscriber) {
+					const weakRef = new WeakRef({ func: currentSubscriber });
+					subscribers.add(weakRef);
 				}
-			]
+				return value;
+			}
+
+			function setter(newValue) {
+				if (newValue !== value) {
+					value = newValue;
+					for (const subscriber of subscribers) {
+						const ref = subscriber.deref();
+						if (ref) {
+							ref.func();
+						}
+					}
+				}
+			}
+
+			return [getter, setter];
+		}
+		/**
+		 * 
+		 * @param {function} fn - function that will run if any of its dependent signals change
+		 * @example
+		 * $effect(() => {
+		 * console.log(count());
+		 * } 
+		 * @returns {void}
+		 */
+		async function $effect(fn) {
+			currentSubscriber = fn;
+			const result = fn();
+			try {
+				if (result instanceof Promise) {
+					await result;
+				}
+			} catch (e) {
+				console.error(e)
+			} finally {
+				currentSubscriber = null;
+			}
 		}
 	</script>
 	<script>
@@ -573,56 +608,83 @@
 			addrBalanceCard(address, balance, token) {
 				return html`
 				  <li class="flex align-center space-between flex-wrap gap-0-5 holder-balance">
-					<a href=${`#/address/${address}`} class="address wrap-around">${address}</a>
+					<sm-copy value=${address}>
+						<a href=${`#/address/${address}`} class="address wrap-around">${address}</a>
+					</sm-copy>
                     <span>${formatAmount(balance, token.toLowerCase() === 'rupee' ? 'inr' : 'usd')} ${token}</span>
 				  </li>
 				`;
 			},
 			participantCard(details) {
-				const { participantFloAddress, participationAmount, swapAmount, swapPrice, transactionHash, acceptingToken, sellingToken } = details;
-				return html`
-					<li class="flex participant">
-						<div class="grid gap-0-5 flex-1">
-							<div class="flex align-center gap-0-5">
-								<svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/></svg>
-								<h5>Token swap</h5>
-							</div>	
-							<a href=${`#/address/${participantFloAddress}`} class="address wrap-around">${participantFloAddress}</a> 
-						</div>
-						<div class="grid align-center gap-1 flex-1" style="grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr))">
-							<div>
-								<h5 class="label">Sent</h5>
-								<b>${formatAmount(participationAmount, 'usd')} ${acceptingToken}</b>
+				const { participantFloAddress, tokenIdentification, userChoice, tokenAmount, participationAmount, swapAmount, swapPrice, transactionHash, acceptingToken, sellingToken } = details;
+				if (participationAmount) {
+					return html`
+						<li class="flex participant">
+							<div class="grid gap-0-5 flex-1">
+								<div class="flex align-center gap-0-5">
+									<svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/></svg>
+									<h5>Token swap</h5>
+								</div>	
+								<sm-copy value=${participantFloAddress}>
+									<a href=${`#/address/${participantFloAddress}`} class="address wrap-around">${participantFloAddress}</a>
+								</sm-copy> 
 							</div>
-							<div>
-								<h5 class="label">Received</h5>
-								<b>${formatAmount(swapAmount, 'usd')} ${sellingToken}</b>
+							<div class="grid align-center gap-1 flex-1" style="grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr))">
+								<div>
+									<h5 class="label">Sent</h5>
+									<b>${formatAmount(participationAmount)} ${acceptingToken}</b>
+								</div>
+								<div>
+									<h5 class="label">Received</h5>
+									<b>${formatAmount(swapAmount)} ${sellingToken}</b>
+								</div>
+								<div>
+									<h5 class="label">Exchange rate</h5>
+									<b>${formatAmount(swapPrice)} ${acceptingToken}</b>
+								</div>
 							</div>
-							<div>
-								<h5 class="label">Exchange rate</h5>
-								<b>${formatAmount(swapPrice, 'usd')} ${acceptingToken}</b>
+						</li>
+					`;
+				} else if (tokenAmount) {
+					return html`
+						<li class="flex participant">
+							<sm-copy value=${participantFloAddress}>
+								<a href=${`#/address/${participantFloAddress}`} class="address wrap-around">${participantFloAddress}</a> 
+							</sm-copy>
+							<div class="grid align-center gap-1 flex-1" style="grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr))">
+								<div>
+									<h5 class="label">Amount</h5>
+									<b>${formatAmount(tokenAmount)} ${tokenIdentification}</b>
+								</div>
+								<div>
+									<h5 class="label">Choice</h5>
+									<b>${userChoice}</b>
+								</div>
 							</div>
-						</div>
-					</li>
-				`;
+						</li>
+					`;
+				} else {
+					return html`Unknown participant type`
+				}
 			},
 			depositCard(details) {
 				const { currentBalance, depositorAddress, originalBalance, status, time, transactionHash, acceptingToken, sellingToken } = details
-				console.log(details)
 				return html`
 				<li class="flex deposit-card">
 					<div class="grid gap-0-5 flex-1">
 						<h5>Deposit</h5>
-						<a href=${`#/address/${depositorAddress}`} class="address wrap-around">${depositorAddress}</a> 
+						<sm-copy value=${depositorAddress}>
+							<a href=${`#/address/${depositorAddress}`} class="address wrap-around">${depositorAddress}</a> 
+						</sm-copy>
 					</div>
 					<div class="grid align-center gap-1 flex-1" style="grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr))">
 						<div>
 							<h5 class="label">Deposited</h5>
-							<b>${formatAmount(originalBalance, 'usd')} ${sellingToken}</b>
+							<b>${formatAmount(originalBalance)} ${sellingToken}</b>
 						</div>
 						<div>
 							<h5 class="label">Current balance</h5>
-							<b>${formatAmount(currentBalance, 'usd')} ${sellingToken}</b>
+							<b>${formatAmount(currentBalance)} ${sellingToken}</b>
 						</div>
 						<div>
 							<h5 class="label">Status</h5>
@@ -633,7 +695,7 @@
 				`
 			},
 			contractChoiceCard(details) {
-				const { participantFloAddress, userChoice, tokenAmount, transactionHash, winningAmount } = details;
+				const { participantFloAddress, userChoice, tokenAmount, transactionHash, winningAmount, tokenIdentification } = details;
 				let action;
 				if (winningAmount) {
 					action = 'Won'
@@ -641,10 +703,12 @@
 				} else
 					action = 'Invested'
 				return html`
-					<li class="contract-choice">
-						<a href=${`#/address/${participantFloAddress}`} class="address wrap-around">${participantFloAddress}</a>
-						<h4>${userChoice}</h4>
-						<h4>${formatAmount(tokenAmount, 'usd')} ${action}</h4>
+					<li class="contract-winner">
+						<sm-copy value=${participantFloAddress}>
+							<a href=${`#/address/${participantFloAddress}`} class="address wrap-around">${participantFloAddress}</a>
+						</sm-copy>
+						<span>${userChoice}</span>
+						<span>${action} ${formatAmount(tokenAmount)} ${tokenIdentification}</span>
 					</li>
 				`;
 			},
@@ -819,7 +883,9 @@
 							<time>${getFormattedTime(time)}</time>
 							<div class="flex flex-direction-column">
 								<h5 class="label">contract address</h5>
-								<a href=${`#/address/${contractAddress}`} class="address wrap-around">${contractAddress}</a>
+								<sm-copy value=${contractAddress}>
+									<a href=${`#/contract/${contractName}-${contractAddress}`} class="address wrap-around">${contractName}-${contractAddress}</a>
+								</sm-copy>
 							</div>
 							<div class="flex flex-direction-column">
 								<h5 class="label">Winning Choice</h5>
@@ -827,7 +893,9 @@
 							</div>
 							<div class="flex flex-direction-column">
 								<h5 class="label">committee address</h5>
-								<a href=${`#/address/${committeeAddress}`} class="address wrap-around">${committeeAddress}</a>
+								<sm-copy value=${committeeAddress}>
+									<a href=${`#/address/${committeeAddress}`} class="address wrap-around">${committeeAddress}</a>
+								</sm-copy>
 							</div>
 							<div class="flex align-center space-between flex-wrap gap-1">
 								<div class="flex flex-direction-column">
@@ -845,7 +913,6 @@
 					hash, blockHeight, token, contractName, incAddress, contractType,
 					expiration, participationFees, availableChoices, time, acceptingToken, sellingToken, price,
 					minAmount, maxAmount } = obj;
-				console.log(obj)
 				return html`
 					<li id=${hash} class="transaction contract-creation">
 						<svg class="icon" viewBox="0 0 64 64"> <title>contract creation</title> <path d="M47.07,23.85V11"/> <path d="M3,47A7,7,0,0,0,.48,52.39a6.89,6.89,0,0,0,2.05,4.93,6.78,6.78,0,0,0,3.78,2,6.34,6.34,0,0,0,1.16.1H40.09a7,7,0,0,0,7-7V44"/> <path d="M6.31,53V11.61a7,7,0,0,1,7-7H45.91a6.26,6.26,0,0,1,1.16.1,6.74,6.74,0,0,1,3.78,1.95A7,7,0,0,1,50.37,17"/> <line x1="14.46" y1="23.85" x2="38.92" y2="23.85"/> <line x1="14.46" y1="32" x2="38.92" y2="32"/> <line x1="14.46" y1="40.15" x2="31.93" y2="40.15"/> <path d="M57.79,24.44l-2.88-2.9,3.79-3.79a1,1,0,0,1,1.39,0l3.11,3.11a1,1,0,0,1,0,1.39L40.34,45.1a1,1,0,0,1-.52.28L36,46A1,1,0,0,1,34.9,44.9l.67-3.77a1,1,0,0,1,.27-.52L52.65,23.8"/> </svg>
@@ -899,7 +966,7 @@
 								${price ? html`
 									<div class="flex flex-direction-column">
 										<h5 class="label">price</h5>
-										<h4>1 ${sellingToken} = ${formatAmount(price, 'usd')} ${acceptingToken}</h4>
+										<h4>1 ${sellingToken} = ${formatAmount(price)} ${acceptingToken}</h4>
 									</div>
 								`: ''}
 								${minAmount ? html`
@@ -1313,9 +1380,7 @@
 						<h4>${supply ? formatAmount(supply, token.toLowerCase() === 'rupee' ? 'inr' : 'usd') : 'Infinite'}</h4>
 						<h5 class="label">Incorporation address</h5>
 						<sm-copy value=${incAddress}>
-							<h4 class="wrap-around">
-								<a href=${`#/address/${incAddress}`} class="address wrap-around">${incAddress}</a> 	
-							</h4>
+							<a href=${`#/address/${incAddress}`} class="address wrap-around">${incAddress}</a> 	
 						</sm-copy>
 						</div>
 						<sm-chips data-target="token_views" onchange="changeView(event)">
@@ -1352,14 +1417,32 @@
 				const detailsToFetch = [getContractTransactions(contractIdObj), getContractParticipants(contractIdObj)]
 				if (contractType === 'continuos-event' && contractSubtype === 'tokenswap')
 					detailsToFetch.push(getContractDeposits(contractIdObj))
-				let [contractTransactions, contractParticipants, contractDeposits] = await Promise.all(detailsToFetch)
+				let [contractTransactions = [], contractParticipants = {}, contractDeposits = []] = await Promise.all(detailsToFetch)
 				let participants = [];
 				let winners = []
 				let deposits = contractDeposits.map(deposit => render.depositCard({ ...deposit, acceptingToken, sellingToken }))
+				// Consolidate participants with same address and choice
+				const consolidatedParticipants = {}
 				for (const participant in contractParticipants) {
-					participants.push(render.participantCard(contractParticipants[participant]))
-					if (contractParticipants[participant].winningAmount)
-						winners.push(render.contractChoiceCard(contractParticipants[participant]))
+					const { participantFloAddress, tokenAmount, tokenIdentification, transactionHash, userChoice, winningAmount } = contractParticipants[participant]
+					if (!consolidatedParticipants[`${participantFloAddress}-${userChoice}`]) {
+						consolidatedParticipants[`${participantFloAddress}-${userChoice}`] = {
+							participantFloAddress,
+							tokenAmount,
+							tokenIdentification,
+							transactionHash,
+							userChoice,
+							winningAmount
+						}
+					} else {
+						consolidatedParticipants[`${participantFloAddress}-${userChoice}`].tokenAmount += tokenAmount
+						consolidatedParticipants[`${participantFloAddress}-${userChoice}`].winningAmount += winningAmount
+					}
+				}
+				for (const participant in consolidatedParticipants) {
+					participants.push(render.participantCard(consolidatedParticipants[participant]))
+					if (consolidatedParticipants[participant].winningAmount)
+						winners.push(render.contractChoiceCard(consolidatedParticipants[participant]))
 				}
 				renderElem(getRef("page_container"), html`
 					<div id="contract_page" class="page">
@@ -1378,7 +1461,9 @@
 							`: ''}
 							<div class="flex info-row">
 								<h5 class="label">Contract Address</h5>
-								<a href=${`#/address/${contractAddress}`} class="address wrap-around">${contractAddress}</a>
+								<sm-copy value=${contractAddress}>
+									<a href=${`#/address/${contractAddress}`} class="address wrap-around">${contractAddress}</a>
+								</sm-copy>
 							</div>
 							${expiration ? html`
 								<div class="flex info-row">
@@ -1391,7 +1476,9 @@
 									<h5 class="label">Payee Addresses</h5>
 									<div class="grid gap-0-5">
 										${Object.keys(payeeAddress).map(address => html`
-											<a href=${`#/address/${address}`} class="address wrap-around">${address}</a>
+											<sm-copy value=${address}>
+												<a href=${`#/address/${address}`} class="address wrap-around">${address}</a>
+											</sm-copy>
 										`)}
 									</div>
 								</div>
@@ -1399,19 +1486,19 @@
 							${minAmount ? html`
 								<div class="flex info-row">
 									<h5 class="label">Min. Subscription Amount</h5>
-									<h4>${formatAmount(minAmount, 'usd')} ${token}</h4>
+									<h4>${formatAmount(minAmount)} ${token}</h4>
 								</div>
 							`: ''}
 							${maxAmount ? html`
 								<div class="flex info-row">
 									<h5 class="label">Max. Subscription Amount</h5>
-									<h4>${formatAmount(maxAmount, 'usd')} ${token}</h4>
+									<h4>${formatAmount(maxAmount)} ${token}</h4>
 								</div>
 							`: ''}
 							${participationFees ? html`
 								<div class="flex info-row">
 									<h5 class="label">Participation Fees</h5>
-									<h4>${formatAmount(participationFees, 'usd')} ${token}</h4>
+									<h4>${formatAmount(participationFees)} ${token}</h4>
 								</div>
 							`: ''}
 							${contractType === 'one-time-event' ? html`
@@ -1449,25 +1536,27 @@
 							${oracle_address ? html`
 								<div class="flex info-row">
 									<h5 class="label">Oracle address</h5>
-									<a href=${`#/address/${oracle_address}`} class="address wrap-around">${oracle_address}</a>
+									<sm-copy value=${oracle_address}>
+										<a href=${`#/address/${oracle_address}`} class="address wrap-around">${oracle_address}</a>
+									</sm-copy>
 								</div>
 							`: ''}
 							${totalParticipationAmount ? html`
 								<div class="flex info-row">
 									<h5 class="label">Total participation amount</h5>
-									<h4>${formatAmount(totalParticipationAmount, 'usd')} ${acceptingToken}</h4>
+									<h4>${formatAmount(totalParticipationAmount)} ${acceptingToken}</h4>
 								</div>
 							`: ''}
 							${totalHonorAmount ? html`
 								<div class="flex info-row">
 									<h5 class="label">Total output amount</h5>
-									<h4>${formatAmount(totalHonorAmount, 'usd')} ${sellingToken}</h4>
+									<h4>${formatAmount(totalHonorAmount)} ${sellingToken}</h4>
 								</div>
 							`: ''}
 							${currentDepositBalance ? html`
 								<div class="flex info-row">
 									<h5 class="label">Total deposit balance </h5>
-									<h4>${formatAmount(currentDepositBalance, 'usd')} ${sellingToken}</h4>
+									<h4>${formatAmount(currentDepositBalance)} ${sellingToken}</h4>
 								</div>
 							`: ''}
 						</div>
@@ -1611,7 +1700,7 @@
 								${amount ? html`
 									<div class="flex flex-direction-column">
 										<h5 class="label">Amount</h5>
-										<h4>${formatAmount(amount, 'usd')}</h4>
+										<h4>${formatAmount(amount)}</h4>
 									</div>
 								`: ''}
 							</div>
@@ -1706,7 +1795,6 @@
 				}
 				return tx.sourceTransaction;
 			});
-			console.log(parsedTxs)
 			const renderedTransactions = parsedTxs.map(tx => {
 				switch (tx.type) {
 					case 'tokentransfer':
@@ -1908,135 +1996,24 @@
 			let latestTxArray = [];
 			txList.forEach(tx => {
 				const {
-					txid,
-					blockHeight,
-					vin,
-					vout,
-					time,
-					receiverAddress,
-					senderAddress,
-					contractAddress,
-					contractType,
+					txid, blockHeight, vin, vout, time, receiverAddress, senderAddress, contractAddress, contractType,
 					contractConditions: {
 						expiryTime, accepting_token, selling_token, subtype, price,
 						participationAmount, minimumsubscriptionamount, maximumsubscriptionamount
 					} = {},
-					contractAmount,
-					type,
-					tokenAmount,
-					transferType,
-					triggerCondition,
-					userChoice,
-					nftHash,
-					depositAmount,
-					contractName,
-					tokenIdentification,
-					transactionTrigger,
-					onChain
+					contractAmount, type, tokenAmount, transferType, triggerCondition, userChoice, nftHash, depositAmount,
+					contractName, tokenIdentification, transactionTrigger, onChain
 				} = tx;
 				let obj = {
-					hash: txid,
-					blockHeight,
 					time
 				};
+				if (txid)
+					obj["hash"] = txid;
+				if (blockHeight)
+					obj["blockHeight"] = blockHeight;
 				if (onChain) {
-					if (type != "smartContractPays") {
-						// determine token
-						obj["token"] = tokenIdentification;
-						switch (type) {
-							case 'transfer':
-								if (transferType == "token" || transferType == 'nft') {
-									obj = Object.assign({}, obj, {
-										sender: senderAddress,
-										receiver: receiverAddress,
-										amount: tokenAmount,
-										type: transferType == "token" ? "tokentransfer" : "nfttransfer",
-									});
-									latestTxArray.push(obj);
-									break;
-								} else if (transferType == 'smartContract') {
-									// smart contract transfer
-									obj = Object.assign({}, obj, {
-										sender: senderAddress,
-										receiver: receiverAddress,
-										amount: tokenAmount,
-										contractName,
-										userChoice,
-										type: "contracttransfer",
-									});
-									latestTxArray.push(obj);
-									break;
-								}
-							case 'tokenIncorporation':
-								// token incorporation
-								// smart contract incorporation
-								obj = Object.assign({}, obj, {
-									incAddress: senderAddress,
-									supply: tokenAmount,
-									type: "tokenincorp",
-								});
-								latestTxArray.push(obj);
-								break;
-							case 'smartContractIncorporation':
-								// smart contract incorporation
-								// todo : add checks to determine obj for different types of smart contract incorporation
-								switch (subtype) {
-									case 'tokenswap':
-										obj = Object.assign({}, obj, {
-											contractName,
-											incAddress: contractAddress,
-											contractType,
-											type: "contractincorp",
-											sellingToken: selling_token,
-											acceptingToken: accepting_token,
-											price,
-										});
-										delete obj["token"];
-										break;
-									default:
-										obj = Object.assign({}, obj, {
-											contractName,
-											incAddress: contractAddress,
-											contractType,
-											expiration: expiryTime,
-											participationFees: contractAmount,
-											availableChoices: "",
-											type: "contractincorp",
-											minAmount: minimumsubscriptionamount,
-											maxAmount: maximumsubscriptionamount,
-										});
-										break;
-								}
-								latestTxArray.push(obj);
-								break;
-							case 'nftIncorporation':
-								// nft incorporation
-								obj = Object.assign({}, obj, {
-									incAddress: senderAddress,
-									supply: tokenAmount,
-									type: "nftincorp",
-									nftHash
-								});
-								latestTxArray.push(obj);
-								break;
-							case 'smartContractDeposit':
-								// smart contract deposit
-								obj = Object.assign({}, obj, {
-									contractName,
-									contractAddress,
-									contractType,
-									amount: depositAmount,
-									type: "contractdeposit",
-									sender: senderAddress,
-									receiver: receiverAddress,
-								});
-								latestTxArray.push(obj);
-								break;
-						}
-
-					} else {
+					if (type === "smartContractPays") {
 						// transaction is a FLO Smart Contract Committee trigger
-
 						obj = Object.assign({}, obj, {
 							hash: txid,
 							blockHeight,
@@ -2045,6 +2022,91 @@
 							winningChoice: triggerCondition,
 							committeeAddress: senderAddress,
 							type: 'contracttrigger'
+						});
+						latestTxArray.push(obj);
+					}
+					else if (type === 'transfer') {
+						if (transferType == "token" || transferType == 'nft') {
+							obj = Object.assign({}, obj, {
+								sender: senderAddress,
+								receiver: receiverAddress,
+								amount: tokenAmount,
+								type: transferType == "token" ? "tokentransfer" : "nfttransfer",
+								token: tokenIdentification,
+							});
+							latestTxArray.push(obj);
+						} else if (transferType == 'smartContract') {
+							// smart contract transfer
+							obj = Object.assign({}, obj, {
+								sender: senderAddress,
+								receiver: receiverAddress,
+								amount: tokenAmount,
+								contractName,
+								userChoice,
+								type: "contracttransfer",
+								token: tokenIdentification,
+							});
+							latestTxArray.push(obj);
+						}
+					} else if (type === 'tokenIncorporation') {
+						// token incorporation
+						// smart contract incorporation
+						obj = Object.assign({}, obj, {
+							incAddress: senderAddress,
+							supply: tokenAmount,
+							type: "tokenincorp",
+							token: tokenIdentification,
+						});
+						latestTxArray.push(obj);
+					} else if (type === 'smartContractIncorporation') {
+						// smart contract incorporation
+						// todo : add checks to determine obj for different types of smart contract incorporation
+						if (subtype == 'tokenswap') {
+							obj = Object.assign({}, obj, {
+								contractName,
+								incAddress: contractAddress,
+								contractType,
+								type: "contractincorp",
+								sellingToken: selling_token,
+								acceptingToken: accepting_token,
+								price,
+							});
+						} else {
+							obj = Object.assign({}, obj, {
+								contractName,
+								incAddress: contractAddress,
+								contractType,
+								expiration: expiryTime,
+								participationFees: contractAmount,
+								availableChoices: "",
+								type: "contractincorp",
+								minAmount: minimumsubscriptionamount,
+								maxAmount: maximumsubscriptionamount,
+								token: tokenIdentification,
+							});
+						}
+						latestTxArray.push(obj);
+					} else if (type === 'nftIncorporation') {
+						// nft incorporation
+						obj = Object.assign({}, obj, {
+							incAddress: senderAddress,
+							supply: tokenAmount,
+							type: "nftincorp",
+							nftHash,
+							token: tokenIdentification,
+						});
+						latestTxArray.push(obj);
+					} else if (type === 'smartContractDeposit') {
+						// smart contract deposit
+						obj = Object.assign({}, obj, {
+							contractName,
+							contractAddress,
+							contractType,
+							amount: depositAmount,
+							type: "contractdeposit",
+							sender: senderAddress,
+							receiver: receiverAddress,
+							token: tokenIdentification,
 						});
 						latestTxArray.push(obj);
 					}
