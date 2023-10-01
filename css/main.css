@@ -808,6 +808,7 @@ header.grid-2 {
 #logo {
   grid-area: logo;
   color: inherit;
+  margin-right: auto;
 }
 
 .app-brand {
@@ -842,6 +843,8 @@ theme-toggle {
   width: 100%;
   --min-height: 2.8rem;
   font-weight: 500;
+  border: solid thin rgba(var(--text-color), 0.3);
+  border-radius: 0.5rem;
 }
 
 #suggestions {
@@ -857,8 +860,11 @@ theme-toggle {
   transition: max-height 0.2s ease-in-out;
 }
 #suggestions:not(:empty) {
+  margin-top: 0.3rem;
   max-height: 20rem;
   overflow-y: auto;
+  box-shadow: 0 1rem 1.5rem rgba(0, 0, 0, 0.16);
+  border: solid thin rgba(var(--text-color), 0.3);
 }
 
 .suggestion {

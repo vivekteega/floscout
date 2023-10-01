@@ -1255,7 +1255,7 @@
 								<svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M10.02 6L8.61 7.41 13.19 12l-4.58 4.59L10.02 18l6-6-6-6z"/></svg>	
 							</a>
 						</div>
-						<h4>${contractName}</h4>
+						<h4>${contractName.replace(/-/g, ' ')}</h4>
 						<ul class="flex align-center flex-wrap gap-0-5 involved-tokens">
 							${tokenIdentification ? html`
 								<li>
@@ -1598,14 +1598,14 @@
 			if (!blockId) return;
 			try {
 				const [blockInfo, blockTxs] = await Promise.all([getBlockInfo(blockId), getBlockTransactions(blockId)])
-				const { blockHeight, size, transactions, reward, hash, difficulty, nonce } = blockInfo;
+				const { blockHeight, size, reward, hash, difficulty, nonce } = blockInfo;
 				renderElem(getRef("page_container"), html`
 					<div id="block_page" class="page">
 						<h5 class="label">Block Height</h5>
 						<h2 class="block-height">${blockHeight}</h2>
 						<div class="card">
 							<h5 class="label">Relevant Transactions</h5>
-							<h4>${transactions.length}</h4>
+							<h4>${blockTxs.length}</h4>
 							<h5 class="label">Confirmations</h5>
 							<h4>${size}</h4>
 							<h5 class="label">Reward</h5>
