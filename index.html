@@ -91,7 +91,7 @@
 			<button class="button button--colored margin-left-auto" onclick="clearFilters()">
 				Clear
 			</button>
-			<button class="button button--primary" onclick="renderSmartContracts()">
+			<button class="button button--primary" onclick="router.routeTo(location.hash)">
 				Apply
 			</button>
 		</footer>
@@ -123,6 +123,19 @@
 			<h3>Create smart contract</h3>
 		</header>
 		<div id="smart_contract_creation_popup__content" class="grid gap-1-5"></div>
+	</sm-popup>
+	<sm-popup id="transaction_result_popup">
+		<header slot="header" class="popup__header">
+			<button class="popup__header__close justify-self-start" onclick="closePopup()">
+				<svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"
+					fill="#000000">
+					<path d="M0 0h24v24H0V0z" fill="none" />
+					<path
+						d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+				</svg>
+			</button>
+		</header>
+		<div id="transaction_result"></div>
 	</sm-popup>
 	<!-- Set urls for token and flo Apis -->
 	<script>
@@ -336,7 +349,9 @@
 				}
 			});
 			document.addEventListener('copy', () => {
-				notify('copied', 'success')
+				notify('copied', 'success', {
+					timeout: 1500
+				})
 			})
 			getAllSuggestions().then(suggestions => {
 				router.routeTo(window.location.hash)
@@ -1022,10 +1037,14 @@
 						<svg class="icon" viewBox="0 0 64 64"> <title>contract creation</title> <path d="M47.07,23.85V11"/> <path d="M3,47A7,7,0,0,0,.48,52.39a6.89,6.89,0,0,0,2.05,4.93,6.78,6.78,0,0,0,3.78,2,6.34,6.34,0,0,0,1.16.1H40.09a7,7,0,0,0,7-7V44"/> <path d="M6.31,53V11.61a7,7,0,0,1,7-7H45.91a6.26,6.26,0,0,1,1.16.1,6.74,6.74,0,0,1,3.78,1.95A7,7,0,0,1,50.37,17"/> <line x1="14.46" y1="23.85" x2="38.92" y2="23.85"/> <line x1="14.46" y1="32" x2="38.92" y2="32"/> <line x1="14.46" y1="40.15" x2="31.93" y2="40.15"/> <path d="M57.79,24.44l-2.88-2.9,3.79-3.79a1,1,0,0,1,1.39,0l3.11,3.11a1,1,0,0,1,0,1.39L40.34,45.1a1,1,0,0,1-.52.28L36,46A1,1,0,0,1,34.9,44.9l.67-3.77a1,1,0,0,1,.27-.52L52.65,23.8"/> </svg>
 						<div class="contract-type">
 							<h5 class="label">Smart Contract creation</h5>
-							<a href=${`#/token/${token}`} class="">${token}</a>
+							${token ? html`<a href=${`#/token/${token}`} class="">${token}</a>` : html`
+								<time>${getFormattedTime(time)}</time>
+							`}
 						</div>
 						<div class="contract-info">
-							<time>${getFormattedTime(time)}</time>
+							${token ? html`
+								<time>${getFormattedTime(time)}</time>
+							` : ''}
 							<div class="flex flex-direction-column">
 								<h5 class="label">Contract ID</h5>
 								<a href=${`#/contract/${contractName}-${incAddress}`} class="address wrap-around">${contractName}-${incAddress}</a>
@@ -1309,52 +1328,74 @@
 			}
 			return filteredContracts
 		}
-		function renderSmartContracts() {
+		function clearFilters() {
+			floGlobals.appliedFilters = {
+				tokens: new Set(),
+				types: new Set()
+			}
+			if (getRef('token_filter_list'))
+				getRef('token_filter_list').querySelectorAll('input[type="checkbox"]:checked').forEach(elem => elem.checked = false)
+			if (getRef('type_filter_list'))
+				getRef('type_filter_list').querySelectorAll('input[type="checkbox"]:checked').forEach(elem => elem.checked = false)
+			router.routeTo(location.hash)
+			closePopup()
+		}
+		function getSmartContractActions(smartContractAddress) {
+			const { acceptingToken, sellingToken, contractSubType, status } = floGlobals.smartContractList[smartContractAddress]
+			if (status !== 'active') return '';
+			let actions = '';
+			switch (contractSubType) {
+				case 'tokenswap':
+					actions = html`
+						<div class="flex align-center gap-0-5 sc-card__actions">
+							<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'deposit')}>
+								Sell ${acceptingToken}
+							</button>
+							<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'participate')}>
+								Sell ${sellingToken}
+							</button>
+						</div>
+					`
+					break;
+				case 'time-trigger':
+					actions = html`
+						<div class="flex align-center gap-0-5 sc-card__actions">
+							<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'participate')}>
+								Participate
+							</button>
+						</div>
+					`
+					break;
+				case 'external-trigger':
+					actions = html`
+						<div class="flex align-center gap-0-5 sc-card__actions">
+							<button class="button button--small button--outlined" onclick=${() => openPopup('external_trigger_popup', contract)}>
+								Participate
+							</button>
+						</div>
+					`
+					break;
+			};
+			return actions;
+		}
+		router.addRoute('smart-contracts', async state => {
 			let activeContracts = []
 			let inactiveContracts = []
-
 			filterSmartContracts().forEach(contract => {
 				const { tokenIdentification, acceptingToken, blockNumber, contractAddress, contractName, contractSubType,
 					contractType, incorporationDate, oracle_address, price, sellingToken, status, transactionHash } = contract;
 				const smartContractAddress = `${contractName}-${contractAddress}`;
 				let type = '';
-				let actions = '';
+				let actions = getSmartContractActions(smartContractAddress);
 				switch (contractSubType) {
 					case 'tokenswap':
 						type = 'Token Swap'
-						if (status !== 'active') break;
-						actions = html`
-							<div class="flex align-center gap-0-5 sc-card__actions">
-								<button class="button button--small button--colored" onclick=${() => handleSmartContractAction(smartContractAddress, 'deposit')}>
-									Sell ${acceptingToken}
-								</button>
-								<button class="button button--small button--colored" onclick=${() => handleSmartContractAction(smartContractAddress, 'participate')}>
-									Sell ${sellingToken}
-								</button>
-							</div>
-						`
 						break;
 					case 'time-trigger':
 						type = 'Timed Event'
-						if (status !== 'active') break;
-						actions = html`
-							<div class="flex align-center gap-0-5 sc-card__actions">
-								<button class="button button--small button--colored" onclick=${() => handleSmartContractAction(smartContractAddress, 'participate')}>
-									Participate
-								</button>
-							</div>
-						`
 						break;
 					case 'external-trigger':
 						type = 'External Trigger'
-						if (status !== 'active') break;
-						actions = html`
-							<div class="flex align-center gap-0-5 sc-card__actions">
-								<button class="button button--small button--colored" onclick=${() => openPopup('external_trigger_popup', contract)}>
-									Participate
-								</button>
-							</div>
-						`
 						break;
 				};
 				const rendered = html`
@@ -1395,11 +1436,13 @@
 			})
 			const { tokens, types } = floGlobals.appliedFilters
 			const totalFilters = tokens.size + types.size
-			renderElem(getRef('smart_contract_wrapper'), html`
-				<div class="flex flex-direction-column gap-0-5">
-					<div class="flex align-center gap-0-5">
-						<h4>Active contracts</h4>
-						<div class="badge">${activeContracts.length}</div>
+			renderElem(getRef("page_container"), html`
+				<div id="smart_contract_page" class="page flex flex-direction-column gap-1-5">
+					<header class='flex space-between flex-wrap gap-1'>
+						<button id="create_smart_contract_button" class="button button--primary gap-0-5" onclick=${initSmartContractCreation}>
+							<svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+							Create new
+						</button>
 						<div class="flex align-center gap-0-5 margin-left-auto">
 							${totalFilters ? html`
 								<button id="clear_filter_button" class="button button--small button--colored gap-0-3" onclick=${clearFilters}>
@@ -1412,6 +1455,16 @@
 								Filter ${totalFilters ? `(${totalFilters})` : ''}
 							</button>
 						</div>
+					</header>
+					<div id="smart_contract_wrapper" class="flex flex-direction-column gap-3"></div>
+				</div>
+			`)
+			renderElem(getRef('smart_contract_wrapper'), html`
+				<div class="flex flex-direction-column gap-0-5">
+					<div class="flex align-center gap-0-5">
+						<svg class="icon" style="fill: var(--accent-color)" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/></g><g><path d="M11,21h-1l1-7H7.5c-0.88,0-0.33-0.75-0.31-0.78C8.48,10.94,10.42,7.54,13.01,3h1l-1,7h3.51c0.4,0,0.62,0.19,0.4,0.66 C12.97,17.55,11,21,11,21z"/></g></svg>
+						<h4>Active contracts</h4>
+						<div class="badge">${activeContracts.length}</div>
 					</div>
 					${activeContracts.length ? html`
 						<ul id="active_smart_contract_list" class="smart-contract-list">
@@ -1424,6 +1477,7 @@
 				${inactiveContracts.length ? html`
 					<div class="flex flex-direction-column gap-0-5">
 						<div class="flex align-center gap-0-5">
+							<svg class='icon' xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M14.59 8L12 10.59 9.41 8 8 9.41 10.59 12 8 14.59 9.41 16 12 13.41 14.59 16 16 14.59 13.41 12 16 9.41 14.59 8zM12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
 							<h4>Inactive contracts</h4>
 							<div class="badge">${inactiveContracts.length}</div>
 						</div>
@@ -1433,31 +1487,8 @@
 					</div>
 				`: ''}
 			`)
+			// close filter popup
 			closePopup()
-		}
-		function clearFilters() {
-			floGlobals.appliedFilters = {
-				tokens: new Set(),
-				types: new Set()
-			}
-			if (getRef('token_filter_list'))
-				getRef('token_filter_list').querySelectorAll('input[type="checkbox"]:checked').forEach(elem => elem.checked = false)
-			if (getRef('type_filter_list'))
-				getRef('type_filter_list').querySelectorAll('input[type="checkbox"]:checked').forEach(elem => elem.checked = false)
-			renderSmartContracts()
-			closePopup()
-		}
-		router.addRoute('smart-contracts', async state => {
-			renderElem(getRef("page_container"), html`
-				<div id="smart_contract_page" class="page flex flex-direction-column gap-1-5">
-					<header class='flex space-between flex-wrap gap-1'>
-						<h2>Smart contracts</h2>	
-						<button id="create_smart_contract_button" class="button button--primary" onclick=${initSmartContractCreation}>Create</button>
-					</header>
-					<div id="smart_contract_wrapper" class="flex flex-direction-column gap-3"></div>
-				</div>
-			`)
-			renderSmartContracts()
 			getRef("page_title").textContent = 'Smart Contracts';
 		})
 		router.addRoute('address', async state => {
@@ -1579,6 +1610,7 @@
 					if (consolidatedParticipants[participant].winningAmount)
 						winners.push(render.contractChoiceCard(consolidatedParticipants[participant]))
 				}
+				const contractActions = getSmartContractActions(contractId)
 				renderElem(getRef("page_container"), html`
 					<div id="contract_page" class="page">
 						${status ? html` <div class=${`status ${status}`}>${status}</div> ` : ''}
@@ -1702,6 +1734,15 @@
 									<li>${userChoices[choice]}</li>
 								`)}
 							</ul>
+						`: ''}
+						${contractActions ? html`
+							<div class="card grid gap-1">
+								<div>
+									<h4>Actions</h4>
+									<p>Participate in this contract</p>
+								</div>
+								${contractActions}
+							</div>
 						`: ''}
 						<sm-chips class="margin-top-1" data-target="contract_views" onchange="changeView(event)">
 							<sm-chip value="0" selected>Transactions</sm-chip>
@@ -2480,7 +2521,7 @@
 												<sm-input class="payee-share" placeholder="Share (%)" value="100" type="number" min="0" max="100" step="0.01" error-text="Share should be between 0-100" animate required> </sm-input>
 											</li>
 										</ul>
-										<button onclick=${addPayeeAddress} class="margin-right-auto gap-0-5">
+										<button onclick=${addPayeeAddress} class="button button--small margin-right-auto button--colored gap-0-5">
 											<svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>    
 											Add Address
 										</button>
@@ -2775,18 +2816,15 @@
 				}).then(res => {
 					if (!res) return
 					floBlockchainAPI.sendTx(depositorAddress, contractAddress, floGlobals.sendAmt, depositorPrivateKey, floData).then(txid => {
+						closePopup()
 						showTransactionResult(true, txid, {
 							title: `${sellingToken} tokens deposited`,
 							description: `If your tokens are not exchanged before the expiry time, you will get them back.`
 						})
-						getRef('smart_contract_deposit_form').reset()
-						getRef('deposit_button').disabled = true
 					}).catch(error => {
+						closePopup()
 						showTransactionResult(false, error)
 						console.error(error)
-
-					}).finally(() => {
-						buttonLoader('deposit_button', false)
 					})
 				})
 			}).catch(error => {
@@ -2848,17 +2886,15 @@
 				}).then(res => {
 					if (!res) return
 					floBlockchainAPI.sendTx(participantAddress, contractAddress, floGlobals.sendAmt, participantPrivateKey, floData).then(txid => {
+						closePopup()
 						showTransactionResult(true, txid, {
 							title,
 							description
 						})
-						getRef('smart_contract_participate_form').reset()
-						getRef('participate_button').disabled = true
 					}).catch(error => {
+						closePopup()
 						showTransactionResult(false, error)
 						console.error(error)
-					}).finally(() => {
-						buttonLoader('participate_button', false)
 					})
 				})
 			}).catch(error => {
@@ -2888,16 +2924,14 @@
 				if (!res) return
 				buttonLoader(e.target.closest('button'), true)
 				floBlockchainAPI.writeData(oracleAddress, floData, oraclePrivateKey, contractAddress).then((txid) => {
+					closePopup()
 					showTransactionResult(true, txid, {
 						title: 'Price update initiated',
 					})
-					getRef('smart_contract_update_form').reset()
-					getRef('update_price_button').disabled = true
 				}).catch((error) => {
+					closePopup()
 					showTransactionResult(false, error)
 					console.error(error)
-				}).finally(() => {
-					buttonLoader(e.target.closest('button'), false)
 				})
 			})
 		}
@@ -2921,16 +2955,14 @@
 				if (!res) return
 				buttonLoader('trigger_contract_button', true)
 				floBlockchainAPI.writeData(triggerAddress, floData, triggerPrivateKey, contractAddress).then((txid) => {
+					closePopup()
 					showTransactionResult(true, txid, {
 						title: 'Contract trigger initiated',
 					})
-					getRef('smart_contract_trigger_form').reset()
-					getRef('trigger_contract_button').disabled = true
 				}).catch((error) => {
+					closePopup()
 					showTransactionResult(false, error)
 					console.error(error)
-				}).finally(() => {
-					buttonLoader('trigger_contract_button', false)
 				})
 			})
 		}
@@ -3055,18 +3087,20 @@
 				if (!res) return
 				buttonLoader('create_contract_button', true)
 				floBlockchainAPI.writeData(creatorAddress, floData, creatorPrivateKey, creatorAddress).then((txid) => {
+					closePopup()
 					showTransactionResult(true, txid, {
 						title: 'Smart contract creation initiated',
-						description: html`Check details about your smart contract <a href=${`https://ranchimall.github.io/floscout/#/contract/${contractName}-${creatorAddress}`} target="_blank" rel="noopener noreferrer">here</a>.
-                                        <br> It may take some time for the smart contract to be created.`
+						description: html`
+						<div class="grid gap-0-5 justify-items-center">
+							<strong>It may take some time for the smart contract to be created.</strong>
+							<a href="#/smart-contracts" class="button button--small button--primary" onclick=${() => closePopup()}>Open smart contracts page</a>	
+						</div>
+						`
 					})
-					getRef('smart_contract_popup__content').reset()
-					getRef('create_contract_button').disabled = true
 				}).catch((error) => {
+					closePopup()
 					showTransactionResult(false, error)
 					console.error(error)
-				}).finally(() => {
-					buttonLoader('create_contract_button', false)
 				})
 			})
 		}
@@ -3108,6 +3142,37 @@
 			getRef('choices_container').querySelectorAll('.user-choice').forEach((input, index) => {
 				input.placeholder = `Choice ${index + 1}`
 			})
+		}
+		function showTransactionResult(success, result, options = {}) {
+			let { title, description } = options
+			if (!title)
+				title = success ? 'Transaction request sent' : 'Transaction failed'
+			if (!description)
+				description = success ? 'This might take upto 30 mins to complete and reflect on blockchain.' : result
+
+			renderElem(getRef('transaction_result'), html`
+                ${success ? html`
+                    <svg class="icon icon--success" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"> <path d="M0 0h24v24H0z" fill="none" /> <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" /> </svg>
+                ` : ''}
+                ${!success ? html`
+                    <svg class="icon icon--failed" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"> <path d="M0 0h24v24H0z" fill="none" /> <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" /> </svg>
+                ` : ''}
+                <h3 id="transaction_result__title">${title}</h3>
+                <div id="transaction_result__description"> ${description} </div>
+                ${success && result ? html`
+                    <div class="grid gap-1">
+						<a id="transaction_link" class="flex align-center button--colored" href=${`${floBlockchainAPI.current_server}tx/${result}`} style="margin-top: 1.5rem;" target="_blank">
+                            See transaction on blockchain
+                            <svg class="icon margin-left-0-5" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"> <path d="M0 0h24v24H0z" fill="none"></path> <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"></path> </svg>
+                        </a>
+                        <div class="grid">
+                            <span class="label">Transaction ID</span>
+                            <sm-copy class="justify-self-center" value=${result}></sm-copy>
+                        </div>
+                    </div>
+                ` : ''}
+            `)
+			openPopup('transaction_result_popup')
 		}
 	</script>
 </body>

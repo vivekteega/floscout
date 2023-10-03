@@ -56,6 +56,7 @@ strong {
   line-height: 1.7;
   color: rgba(var(--text-color), 0.9);
   max-width: 70ch;
+  font-size: 0.9rem;
 }
 
 img {
@@ -116,10 +117,10 @@ button,
   color: inherit;
   -webkit-tap-highlight-color: transparent;
   align-items: center;
-  font-size: inherit;
+  font-size: 0.9rem;
   font-weight: 500;
   white-space: nowrap;
-  padding: 0.6rem 0.8rem;
+  padding: 0.5rem 1rem;
   border-radius: 0.3rem;
   justify-content: center;
   flex-shrink: 0;
@@ -138,6 +139,7 @@ button:not(:disabled),
   border: solid thin rgba(var(--text-color), 0.06);
 }
 .button--primary {
+  padding: 0.6rem 1rem;
   color: rgba(var(--background-color), 1);
   background-color: var(--accent-color);
 }
@@ -161,8 +163,12 @@ button:not(:disabled),
   padding: 0.4rem 0.6rem;
 }
 .button--outlined {
-  border: solid rgba(var(--text-color), 0.3) 0.1rem;
-  background-color: rgba(var(--foreground-color), 1);
+  border: solid var(--accent-color) 1px;
+  background-color: transparent;
+  color: var(--accent-color);
+}
+.button--outlined .icon {
+  fill: var(--accent-color);
 }
 .button--transparent {
   background-color: transparent;
@@ -394,6 +400,10 @@ ul {
 
 .justify-content-center {
   justify-content: center;
+}
+
+.justify-items-center {
+  justify-items: center;
 }
 
 .justify-right {
@@ -716,7 +726,7 @@ ul {
 .label:first-of-type {
   margin-top: 0;
 }
-.label + * {
+.label + :is(h1, h2, h3, h4, h5, h6, p, span, sm-copy, a) {
   font-weight: 700;
 }
 
@@ -1245,12 +1255,6 @@ theme-toggle {
   justify-content: flex-end;
   padding-top: 1rem;
 }
-.sc-card .sc-card__actions .button {
-  background-color: transparent;
-  border: solid 1px var(--accent-color);
-  font-size: 0.9rem;
-  padding: 0.5rem 1rem;
-}
 .sc-card .badge {
   margin-right: auto;
 }
@@ -1396,6 +1400,86 @@ theme-toggle {
   height: 3.18rem;
 }
 
+#transaction_result {
+  display: grid;
+  gap: 1.5rem;
+  height: max(40vh, 24rem);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  align-content: center;
+}
+#transaction_result:empty {
+  display: none;
+}
+#transaction_result h3 {
+  text-align: center;
+  width: 100%;
+}
+#transaction_result > .icon {
+  justify-self: center;
+  height: 4rem;
+  width: 4rem;
+  border-radius: 5rem;
+  margin-bottom: 1rem;
+  -webkit-animation: popup 1s;
+          animation: popup 1s;
+}
+#transaction_result > .icon--success {
+  fill: rgba(var(--background-color), 1);
+  padding: 1rem;
+  background-color: #0bbe56;
+}
+#transaction_result > .icon--failed {
+  background-color: rgba(var(--text-color), 0.03);
+  fill: var(--danger-color);
+}
+#transaction_result sm-copy {
+  font-size: 0.8rem;
+}
+#transaction_result #transaction_link {
+  justify-self: center;
+}
+
+@-webkit-keyframes popup {
+  0% {
+    opacity: 0;
+    transform: scale(0.2) translateY(600%);
+  }
+  10% {
+    transform: scale(0.2) translateY(5rem);
+    opacity: 1;
+  }
+  40% {
+    transform: scale(0.2) translateY(0);
+  }
+  80% {
+    transform: scale(1.1) translateY(0);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes popup {
+  0% {
+    opacity: 0;
+    transform: scale(0.2) translateY(600%);
+  }
+  10% {
+    transform: scale(0.2) translateY(5rem);
+    opacity: 1;
+  }
+  40% {
+    transform: scale(0.2) translateY(0);
+  }
+  80% {
+    transform: scale(1.1) translateY(0);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
 @media only screen and (max-width: 640px) {
   .hide-on-small {
     display: none;
