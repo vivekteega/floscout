@@ -1255,14 +1255,14 @@
 			const { topToken, totalTransactions, walletAddresses } = data;
 			renderElem(getRef("page_container"), html`
 				<div id="homepage" class="page">
-					<section id="first_section">
+					<section id="first_section" class="full-bleed">
 						<div id="highlights">
 							<div class="highlight-item">
 								<h4 class="label">top token</h4>
 								<h2 class="token"><a href=${`#/token/${topToken}`} class="">${topToken}</a> </h2>
 							</div>
 							<div class="highlight-item">
-								<h4 class="label">Total transactions</h4>
+								<h4 class="label">Total token transactions</h4>
 								<h2>${totalTransactions}</h2>
 							</div>
 							<div class="highlight-item">
@@ -1275,18 +1275,27 @@
 							</div>
 						</div>
 					</section>
-					<section id="latest_transaction_section" class="margin-bottom-2">
+					<section id="latest_smart_contracts_section" class="full-bleed flex flex-direction-column gap-1">
+						<header class="flex align-center space-between">
+							<h3>Recent smart contracts</h3>
+							<a href=${`#/smart-contracts`} class="button button--small button--colored">View all</a>
+						</header>
+						<div id="top_smart_contracts_container">
+							${renderSmartContracts()[0].slice(0, 3)}
+						</div>
+					</section>
+					<section id="latest_transaction_section" class="flex flex-direction-column gap-1">
 						<header class="flex align-center space-between">
 							<h3>Recent token transactions</h3>
 							<a id='all_trans_btn' href=${`#/transactions`} class="button button--small button--colored">View all</a>
 						</header>
-						<ul id="top_transaction_container" class="transaction-container">
+						<ul id="top_transaction_container" class="grid gap-0-5">
 							${renderTransactions(latestTxs)}
 						</ul>
 					</section>
-					<section id="latest_blocks_section">
+					<section id="latest_blocks_section" class="flex flex-direction-column gap-1">
 						<header class="flex align-center space-between">
-							<h3>Recent token transaction blocks</h3>
+							<h3>Recent token blocks</h3>
 							<a id='all_blocks_btn' href=${`#/blocks`} class="button button--small button--colored">View all</a>
 						</header>
 						<div id="top_blocks_container">
@@ -1349,36 +1358,30 @@
 					actions = html`
 						<div class="flex align-center gap-0-5 sc-card__actions">
 							<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'deposit')}>
-								Sell ${acceptingToken}
+								Sell ${sellingToken}
 							</button>
 							<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'participate')}>
-								Sell ${sellingToken}
+								Sell ${acceptingToken}
 							</button>
 						</div>
 					`
 					break;
 				case 'time-trigger':
+				case 'external-trigger':
 					actions = html`
 						<div class="flex align-center gap-0-5 sc-card__actions">
 							<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'participate')}>
 								Participate
-							</button>
-						</div>
-					`
-					break;
-				case 'external-trigger':
-					actions = html`
-						<div class="flex align-center gap-0-5 sc-card__actions">
-							<button class="button button--small button--outlined" onclick=${() => openPopup('external_trigger_popup', contract)}>
-								Participate
-							</button>
-						</div>
-					`
+							</button >
+						</div >
+						`
 					break;
 			};
 			return actions;
 		}
-		router.addRoute('smart-contracts', async state => {
+		function renderSmartContracts(smartContracts) {
+			if (!smartContracts)
+				smartContracts = Object.values(floGlobals.smartContractList).sort((a, b) => b.blockNumber - a.blockNumber)
 			let activeContracts = []
 			let inactiveContracts = []
 			filterSmartContracts().forEach(contract => {
@@ -1387,19 +1390,15 @@
 				const smartContractAddress = `${contractName}-${contractAddress}`;
 				let type = '';
 				let actions = getSmartContractActions(smartContractAddress);
-				switch (contractSubType) {
-					case 'tokenswap':
-						type = 'Token Swap'
-						break;
-					case 'time-trigger':
-						type = 'Timed Event'
-						break;
-					case 'external-trigger':
-						type = 'External Trigger'
-						break;
-				};
+				if (contractSubType === 'tokenswap') {
+					type = 'Token Swap';
+				} else if (contractSubType === 'time-trigger') {
+					type = 'Timed Event';
+				} else if (contractSubType === 'external-trigger') {
+					type = 'External Trigger';
+				}
 				const rendered = html`
-					<li class=${`sc-card ${status}`} .dataset=${{ address: `${contractName}-${contractAddress}` }}>
+					<li class=${`sc-card ${status}`} .dataset=${{ address: smartContractAddress }}>
 						${status !== 'active' ? html` <div class="badge">${status}</div> ` : ''}
 						<div class="flex align-center space-between">
 							<p class="sc-card__type">${type}</p>
@@ -1434,6 +1433,10 @@
 				else
 					inactiveContracts.push(rendered)
 			})
+			return [activeContracts, inactiveContracts]
+		}
+		router.addRoute('smart-contracts', async state => {
+			const [activeContracts, inactiveContracts] = renderSmartContracts(filterSmartContracts())
 			const { tokens, types } = floGlobals.appliedFilters
 			const totalFilters = tokens.size + types.size
 			renderElem(getRef("page_container"), html`
@@ -2652,6 +2655,7 @@
 			target.focusIn()
 		}
 		function handleSmartContractAction(smartContractAddress, action) {
+			renderElem(getRef('smart_contract_popup__content'), html`<sm-spinner></sm-spinner>`)
 			switch (action) {
 				// TODO: check minimum amount
 				case 'deposit': {
@@ -2693,45 +2697,47 @@
 						getRef('smart_contract_popup__title').textContent = `Swap ${acceptingToken} with ${sellingToken}`
 					}
 					renderElem(getRef('smart_contract_popup__content'), html`
-							${userChoices ? html`
-								<fieldset>
-									<legend>Choices</legend>
-									<div class="grid gap-0-5">
-										${userChoices.map(choice => html`
-											<label class="flex align-center">
-												<input type="radio" name="choice" value="${choice}" required>
-												<span class="capitalize">${choice}</span>
-											</label>
-										`)}
-									</div>
-							`: ''}
-							${contractSubType === 'tokenswap' ? html`
-								<strong>Exchange rate: 1 ${sellingToken} = ${price} ${acceptingToken}</strong>
-							`: ''}
-							<div class="grid gap-0-5">
-								<span id="participation_amount_label" class="label">Participation amount (${acceptingToken || tokenIdentification})</span>
-								<sm-input id="participation_amount" type="number" step="0.00000001" min="0.00000001" error-text="The amount should be above 0.00000001" required></sm-input>
-							</div>
-							<div class="grid gap-0-5">
-								<span class="label">FLO private key</span>
-								<sm-input id="participant_private_key" class="password-field" type="password" data-private-key required>
-									<label slot="right" class="interact">
-										<input type="checkbox" class="hidden" readonly onchange="togglePrivateKeyVisibility(this)">
-										<svg class="icon invisible" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"> <title>Hide password</title> <path d="M0 0h24v24H0zm0 0h24v24H0zm0 0h24v24H0zm0 0h24v24H0z" fill="none"></path> <path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"></path> </svg>
-										<svg class="icon visible" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"> <title>Show password</title> <path d="M0 0h24v24H0z" fill="none"></path> <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"></path> </svg>
-									</label>
-								</sm-input>
-							</div>
-							<div class="multi-state-button">
-								<button id="participate_button" class="button button--primary" onclick=${() => participate(smartContractAddress)} type="submit" disabled>Sell</button>
-							</div>
-						`)
+						<h4 class="wrap-around">${contractName.replace(/-/g, ' ')}-${contractAddress}</h4>
+						${userChoices ? html`
+							<fieldset>
+								<legend>Choices</legend>
+								<div class="grid gap-0-5">
+									${userChoices.map(choice => html`
+										<label class="flex align-center">
+											<input type="radio" name="choice" value="${choice}" required>
+											<span class="capitalize">${choice}</span>
+										</label>
+									`)}
+								</div>
+						`: ''}
+						${contractSubType === 'tokenswap' ? html`
+							<strong>Exchange rate: 1 ${sellingToken} = ${price} ${acceptingToken}</strong>
+						`: ''}
+						<div class="grid gap-0-5">
+							<span id="participation_amount_label" class="label">Participation amount (${acceptingToken || tokenIdentification})</span>
+							<sm-input id="participation_amount" type="number" step="0.00000001" min="0.00000001" error-text="The amount should be above 0.00000001" required></sm-input>
+						</div>
+						<div class="grid gap-0-5">
+							<span class="label">FLO private key</span>
+							<sm-input id="participant_private_key" class="password-field" type="password" data-private-key required>
+								<label slot="right" class="interact">
+									<input type="checkbox" class="hidden" readonly onchange="togglePrivateKeyVisibility(this)">
+									<svg class="icon invisible" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"> <title>Hide password</title> <path d="M0 0h24v24H0zm0 0h24v24H0zm0 0h24v24H0zm0 0h24v24H0z" fill="none"></path> <path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"></path> </svg>
+									<svg class="icon visible" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"> <title>Show password</title> <path d="M0 0h24v24H0z" fill="none"></path> <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"></path> </svg>
+								</label>
+							</sm-input>
+						</div>
+						<div class="multi-state-button">
+							<button id="participate_button" class="button button--primary" onclick=${() => participate(smartContractAddress)} type="submit" disabled>Sell</button>
+						</div>
+					`)
 					break;
 				}
 				case 'updateprice': {
 					const { contractName, contractAddress, oracle_address, price, acceptingToken } = floGlobals.smartContractList[smartContractAddress]
 					getRef('smart_contract_popup__title').textContent = `Update price`
-					renderElem(getRef('smart_contract_update_form'), html`
+					renderElem(getRef('smart_contract_popup__content'), html`
+						<sm-form>
 							<div class="grid gap-0-5">
 								<span class="label">Oracle FLO Address</span>
 								<sm-copy id="oracle_address" value=${oracle_address}></sm-copy>
@@ -2755,15 +2761,17 @@
 								<sm-input id="updated_price" type="number" step="0.00000001" min="0.00000001" error-text="Minimum 0.00000001 required" required></sm-input>
 							</div>
 							<div class="multi-state-button">
-								<button id="update_price_button" class="button button--primary" type="submit" onclick=${updatePrice} disabled>Update</button>
+								<button id="update_price_button" class="button button--primary" type="submit" onclick=${() => updatePrice(smartContractAddress)} disabled>Update</button>
 							</div>
-						`)
+						</sm-form>
+					`)
 					break;
 				}
 				case 'trigger': {
 					const { contractName, contractAddress, price, tokenIdentification, userChoices } = floGlobals.smartContractList[smartContractAddress]
 					getRef('smart_contract_popup__title').textContent = `Trigger`
-					renderElem(getRef('smart_contract_trigger_form'), html`
+					renderElem(getRef('smart_contract_popup__content'), html`
+						<sm-form>
 							<fieldset>
 								<legend>Select outcome</legend>
 								<div class="grid gap-0-5">
@@ -2786,9 +2794,10 @@
 								</sm-input>
 							</div>
 							<div class="multi-state-button">
-								<button id="trigger_contract_button" class="button button--primary" onclick=${triggerContract} type="submit" disabled>Trigger</button>
+								<button id="trigger_contract_button" class="button button--primary" onclick=${() => triggerContract(smartContractAddress)} type="submit" disabled>Trigger</button>
 							</div>
-						`)
+						</sm-form>
+					`)
 					break;
 				}
 			}
@@ -2810,16 +2819,16 @@
 					buttonLoader('deposit_button', false)
 					return notify(`Insufficient balance.\n You have ${balance} ${sellingToken}`, 'error')
 				}
-				getConfirmation('Deposit', {
-					message: `Are you sure you want to deposit ${depositAmount} ${sellingToken} in ${contractName}?`,
+				getConfirmation('Deposit for swap', {
+					message: `Are you sure you want to send ${depositAmount} ${sellingToken} to ${contractName} (${contractAddress})?`,
 					confirmText: 'Deposit',
 				}).then(res => {
 					if (!res) return
 					floBlockchainAPI.sendTx(depositorAddress, contractAddress, floGlobals.sendAmt, depositorPrivateKey, floData).then(txid => {
 						closePopup()
 						showTransactionResult(true, txid, {
-							title: `${sellingToken} tokens deposited`,
-							description: `If your tokens are not exchanged before the expiry time, you will get them back.`
+							title: `${sellingToken} tokens sent`,
+							description: `If your tokens are not swapped before the expiry time, you will get them back.`
 						})
 					}).catch(error => {
 						closePopup()
@@ -2847,14 +2856,24 @@
 					switch (contractSubType) {
 						case 'time-trigger':
 							floData = `send ${participationAmount} ${tokenIdentification}# to ${contractName}@`
-							description = html`You have participated in the event. Check out details <a href=${`https://ranchimall.github.io/floscout/#/contract/${contractName}-${contractAddress}`} target='_blank'>here</a>`
+							description = html`
+								<div class="grid gap-0-5">
+									<p>You have participated in ${contractName} with ${participationAmount} ${tokenIdentification}</p>
+									<a href=${`#/contract/${contractName}-${contractAddress}`} class="button button--small button--primary">Check your participation</a>
+								</div>
+							`
 							break
 						case 'external-trigger':
 							const userChoice = getRef('smart_contract_participate_form').querySelector('input[name="choice"]:checked').value
 							if (!userChoice)
 								return notify('Please select a choice', 'error')
 							floData = `send ${participationAmount} ${tokenIdentification}# to ${contractName}@ to FLO address ${contractAddress} with the userchoice: ${userChoice}`
-							description = html`You have casted your vote. Check out details <a href=${`https://ranchimall.github.io/floscout/#/contract/${contractName}-${contractAddress}`} target='_blank'>here</a>`
+							description = html`
+								<div class="grid gap-0-5">
+									<p>You have casted your vote for ${userChoice} in ${contractName} with ${participationAmount} ${tokenIdentification}</p>
+									<a href=${`#/contract/${contractName}-${contractAddress}`} class="button button--small button--primary">Check your vote</a>
+								</div>
+							`
 							break
 					}
 				}
@@ -2864,10 +2883,12 @@
 						case 'tokenswap':
 							floData = `send ${participationAmount} ${acceptingToken}# to ${contractName}@`
 							title = 'Token swap initiated'
-							description = html`Check your transactions and token balance <a href=${`https://ranchimall.github.io/flowallet/#/transactions/${participantAddress}`} target='_blank'>here</a>`
-							break;
-
-						default:
+							description = html`
+								<div class="grid gap-0-5">
+									<p>You have initiated a token swap in ${contractName} with ${participationAmount} ${acceptingToken}</p>
+									<a href=${`#/contract/${contractName}-${contractAddress}`} class="button button--small button--primary">Check swap status</a>
+								</div>
+							`
 							break;
 					}
 				}
@@ -2904,12 +2925,10 @@
 			})
 		}
 
-		function updatePrice(e) {
-			const selectedSmartContract = getRef('selected_smart_contract').value
-			const [contractName, contractAddress] = (selectedSmartContract).split('_')
+		function updatePrice(smartContractAddress) {
+			const { contractName, contractAddress, acceptingToken } = floGlobals.smartContractList[smartContractAddress]
 			const oraclePrivateKey = getRef('oracle_private_key').value.trim()
 			const oracleAddress = getRef('oracle_address').value
-			const { acceptingToken } = getScDetails(contractName, contractAddress)
 			if (!floCrypto.verifyPrivKey(oraclePrivateKey, oracleAddress)) {
 				return notify(`Private key doesn't match with Oracle address`, 'error')
 			}
@@ -2936,12 +2955,11 @@
 			})
 		}
 
-		function triggerContract(e) {
-			const selectedSmartContract = getRef('selected_smart_contract').value
-			const [contractName, contractAddress] = (selectedSmartContract).split('_')
+		function triggerContract(smartContractAddress) {
+			const { contractName, contractAddress } = floGlobals.smartContractList[smartContractAddress]
 			const triggerPrivateKey = getRef('trigger_private_key').value.trim()
 			const triggerAddress = floCrypto.getFloID(triggerPrivateKey)
-			const triggerOutcome = getRef('smart_contract_trigger_form').querySelector('input[name="outcome"]:checked').value
+			const triggerOutcome = getRef('smart_contract_popup__content').querySelector('input[name="outcome"]:checked').value
 			const floData = `${contractName}@ triggerCondition:"${triggerOutcome}"`
 			console.log(floData)
 			// if (contractAddress !== triggerAddress) {
