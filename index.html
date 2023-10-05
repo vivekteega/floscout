@@ -788,10 +788,12 @@
 									<h5 class="label">Amount</h5>
 									<b>${formatAmount(tokenAmount)} ${tokenIdentification}</b>
 								</div>
-								<div>
-									<h5 class="label">Choice</h5>
-									<b>${userChoice}</b>
-								</div>
+								${userChoice ? html`
+									<div>
+										<h5 class="label">Choice</h5>
+										<b>${userChoice}</b>
+									</div>
+								`: ''}
 							</div>
 						</li>
 					`;
@@ -884,6 +886,7 @@
 				`;
 			},
 			contractTransferCard(obj) {
+				console.log(obj)
 				const { hash, token, sender, receiver, amount, contractName, userChoice, time } = obj;
 				return html`
 					<li id=${hash} class="transaction token-transfer">
@@ -894,6 +897,12 @@
 						</div>
 						<div class="contract-info">
 							<time>${getFormattedTime(time)}</time>
+							${userChoice ? html`
+								<div class="flex flex-direction-column">
+									<h5 class="label">User choice</h5>
+									<h4>${userChoice}</h4>
+								</div>
+							`: ''}
 							<div class="flex flex-direction-column">
 								<h5 class="label">Amount</h5>
 								<h4>${formatAmount(amount, token.toLowerCase() === 'rupee' ? 'inr' : 'usd')} ${token}</h4>
@@ -1180,7 +1189,7 @@
 					</li>`;
 			},
 			compoundTransactionCard(details) {
-				const { time, hash, sender, receiver, contractName, token, amount, offChainTransactions = [] } = details
+				const { time, hash, sender, receiver, contractName, token, amount, offChainTransactions = [], userChoice } = details
 				const smartContract = `${contractName}-${receiver}`
 				const renderedOffChainTransactions = offChainTransactions.map(tx => {
 					const { receiverAddress, tokenAmount, tokenIdentification } = tx
@@ -1363,27 +1372,25 @@
 			closePopup()
 		}
 		function getSmartContractActions(smartContractAddress, priceType = 'predetermined', showAdminOptions = false) {
-			const { acceptingToken, sellingToken, contractSubType, status } = floGlobals.smartContractList[smartContractAddress]
-			if (!showAdminOptions && status !== 'active') return ''
+			const { acceptingToken, sellingToken, contractSubType, status } = floGlobals.smartContractList[smartContractAddress];
+			if (!showAdminOptions && status !== 'active') return '';
 			let actions = '';
-			if (contractSubType === 'tokenswap') {
+			if (contractSubType === 'tokenswap' && status === 'active') {
 				actions = html`
-					<div class="flex align-center gap-0-5 sc-card__actions">
-						${status === 'active' ? html`
-							<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'deposit')}>
-								Swap ${sellingToken}
-							</button>
-							<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'participate')}>
-								Swap ${acceptingToken}
-							</button>
-						`: ''}
+					<div class="flex align-center gap-0-5 flex-wrap sc-card__actions">
+						<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'deposit')}>
+							Swap ${sellingToken}
+						</button>
+						<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'participate')}>
+							Swap ${acceptingToken}
+						</button>
 						${showAdminOptions && priceType === 'dynamic' ? html`
 							<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'updateprice')}>
 								Update price
 							</button>
 						`: ''}
 					</div>
-				`
+				`;
 			} else if (contractSubType === 'time-trigger' && status === 'active') {
 				actions = html`
 					<div class="flex align-center gap-0-5 sc-card__actions">
@@ -1391,22 +1398,23 @@
 							Participate
 						</button>
 					</div>
-				`
-			} else if (contractSubType === 'external-trigger') {
+				`;
+			} else if (contractSubType === 'external-trigger' && status === 'active') {
 				actions = html`
 					<div class="flex align-center gap-0-5 sc-card__actions">
-						${status === 'active' ? html`
-							<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'participate')}>
-								Participate
-							</button>
-						`: ''}
-						${showAdminOptions && status === 'expired' ? html`
-							<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'trigger')}>
-								Trigger
-							</button>
-						`: ''}
+						<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'participate')}>
+							Participate
+						</button>
 					</div>
-				`
+				`;
+			} else if (contractSubType === 'external-trigger' && showAdminOptions && status === 'expired') {
+				actions = html`
+					<div class="flex align-center gap-0-5 sc-card__actions">
+						<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'trigger')}>
+							Trigger
+						</button>
+					</div>
+				`;
 			}
 			return actions;
 		}
@@ -1647,13 +1655,9 @@
 				const contractActions = getSmartContractActions(contractId, priceType, true)
 				const progress = Math.min((() => {
 					if (!minAmount && !maxAmount) return 0
-					if (minAmount && !maxAmount) return totalParticipationAmount / minAmount * 100
+					if (minAmount) return totalParticipationAmount / minAmount * 100
 					if (maxAmount) return totalParticipationAmount / maxAmount * 100
 				})(), 100)
-				let minGoal = 0
-				if (minAmount && maxAmount) {
-					minGoal = minAmount / maxAmount * 100
-				}
 				renderElem(getRef("page_container"), html`
 					<div id="contract_page" class="page">
 						${status ? html` <div class=${`status ${status}`}>${status}</div> ` : ''}
@@ -1662,28 +1666,36 @@
 							<div class="card grid gap-2">
 								<div class='grid gap-0-5'>
 									<svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12.36 6l.4 2H18v6h-3.36l-.4-2H7V6h5.36M14 4H5v17h2v-7h5.6l.4 2h7V6h-5.6L14 4z"/></svg>
-									<h3>Collection Goal</h3>
 								</div>
 								<div class='grid'>
 									<div id="goal_progress_wrapper">
 										<div id="goal_progress" class="progress-bar" style=${`width: ${progress}%`}></div>
-										<div id="progress_pin">${progress}%</div>
 									</div>
-									<div class="flex align-center gap-0-5">
-										${minAmount ? html`
-											<div class="flex flex-direction-column goal-milestone" style=${maxAmount ? `left: calc(${minGoal}% - 3rem)` : ''}>
-												<h5 class="label">Minimum</h5>
-												<h4>${formatAmount(minAmount)} ${token}</h4>
-											</div>
-										`: ''}
-										${maxAmount ? html`
-											<div class="flex flex-direction-column goal-milestone">
-												<h5 class="label">Maximum</h5>
-												<h4>${formatAmount(maxAmount)} ${token}</h4>
-											</div>
-										`: ''}
-									</div>	
+									<div class="flex align-center space-between gap-1">
+										<div class='grid goal-milestone'>
+											<h5 class="label">Raised (${progress}%)</h5>
+											<h4>${formatAmount(totalParticipationAmount)} ${token}</h4>
+										</div>
+										<div class="grid goal-milestone">
+											<h5 class="label">Goal</h5>
+											<h4>${minAmount ? `${formatAmount(minAmount)} ${token}` : ''} ${maxAmount ? ` - ${formatAmount(maxAmount)} ${token}` : ''}</h4>
+										</div>
+									</div>
 								</div>
+							</div>
+						`: ''}
+						${userChoices ? html`
+							<h3>Available Choices</h3>
+							<ul type="circle" class="card">
+								${Object.keys(userChoices).map(choice => html`
+									<li>${userChoices[choice]}</li>
+								`)}
+							</ul>
+						`: ''}
+						${contractActions ? html`
+							<div class="card grid gap-1">
+								<h4>Participate in this contract</h4>
+								${contractActions}
 							</div>
 						`: ''}
 						<div id="contract_info" class="card">
@@ -1786,23 +1798,6 @@
 								</div>
 							`: ''}
 						</div>
-						${userChoices ? html`
-							<h3>Available Choices</h3>
-							<ul type="circle" class="card">
-								${Object.keys(userChoices).map(choice => html`
-									<li>${userChoices[choice]}</li>
-								`)}
-							</ul>
-						`: ''}
-						${contractActions ? html`
-							<div class="card grid gap-1">
-								<div>
-									<h4>Actions</h4>
-									<p>Participate in this contract</p>
-								</div>
-								${contractActions}
-							</div>
-						`: ''}
 						<sm-chips class="margin-top-1" data-target="contract_views" onchange="changeView(event)">
 							<sm-chip value="0" selected>Transactions</sm-chip>
 							<sm-chip value="1">Participants</sm-chip>
@@ -1822,10 +1817,6 @@
 					</div>
 				`);
 				getRef("page_title").textContent = "Contract";
-				// position progress pin on goal progress bar in percentage
-				if (getRef('progress_pin')) {
-					getRef('progress_pin').style.left = `calc(${progress}% - ${getRef('progress_pin').getBoundingClientRect().width / 2}px)`
-				}
 			} catch (e) {
 				console.trace(e)
 				renderElem(getRef("page_container"), html`${render.errorPage(e)}`);
@@ -2825,7 +2816,7 @@
 							</sm-input>
 						</div>
 						<div class="multi-state-button">
-							<button id="participate_button" class="button button--primary" onclick=${() => participate(smartContractAddress)} type="submit" disabled>Swap</button>
+							<button id="participate_button" class="button button--primary" onclick=${() => participate(smartContractAddress)} type="submit" disabled>${userChoices ? 'Vote' : contractSubType === 'tokenswap' ? 'Swap' : 'Participate'}</button>
 						</div>
 					`)
 					break;
