@@ -17,7 +17,7 @@ body {
 body {
   --accent-color: #3d5afe;
   --secondary-color: #ffac2e;
-  --text-color: 34, 34, 34;
+  --text-color: 54, 54, 54;
   --foreground-color: 252, 253, 255;
   --background-color: 241, 243, 248;
   --danger-color: rgb(255, 75, 75);
@@ -658,6 +658,9 @@ ul {
   border-radius: 0.5rem;
   background: rgba(var(--text-color), 0.06);
   margin: 1.5rem 0;
+  & + & {
+    margin-top: 0;
+  }
   h2 {
     margin-bottom: 1.5rem;
   }
@@ -802,15 +805,27 @@ header.grid-2 {
 }
 #highlights {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
   gap: 1.5rem;
   margin-top: 2rem;
   .highlight-item {
+    position: relative;
     opacity: 0;
     display: flex;
     flex-direction: column;
     padding: 1rem 1.5rem;
-    border-left: 0.1rem solid rgba(var(--text-color), 0.2);
+    border-left: 1px solid var(--accent-color);
+    &::before {
+      content: "";
+      position: absolute;
+      width: 0.2rem;
+      height: 1rem;
+      top: 0;
+      left: 0;
+      border-radius: 0 0.1rem 0.1rem 0;
+      display: inline-block;
+      background-color: var(--accent-color);
+    }
     .label {
       margin-top: auto;
     }
@@ -932,6 +947,11 @@ header.grid-2 {
       background-color: var(--green);
     }
   }
+  &.expired {
+    &::before {
+      background-color: var(--yellow);
+    }
+  }
   &.closed {
     &::before {
       background-color: var(--danger-color);
@@ -949,6 +969,7 @@ header.grid-2 {
 .address {
   text-transform: none !important;
   word-break: break-all;
+  font-weight: 700;
 }
 #winners_container {
   display: grid;
@@ -1044,7 +1065,7 @@ header.grid-2 {
 #all_blocks_page,
 #top_blocks_container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
   gap: 1rem;
 }
 .block-card {
@@ -1110,6 +1131,70 @@ header.grid-2 {
     min-width: 12rem;
   }
 }
+#goal_progress_wrapper {
+  position: relative;
+  display: flex;
+  height: 0.1rem;
+  background-color: rgba(var(--text-color), 0.3);
+  border-radius: 1rem;
+}
+.progress-bar {
+  position: relative;
+  background-color: var(--accent-color);
+  width: var(--progress);
+  border-radius: 1rem;
+  &::before {
+    content: "";
+    position: absolute;
+    border-style: solid;
+    border-width: 0.3rem 0.3rem 0 0.3rem;
+    border-color: var(--accent-color) transparent transparent transparent;
+    width: 0;
+    height: 0;
+    left: calc(100% - 0.3rem);
+    bottom: 100%;
+    box-shadow: 0 0.3rem 0.3rem rgba(0, 0, 0, 0.1);
+    z-index: 1;
+  }
+}
+#progress_pin {
+  position: absolute;
+  bottom: calc(100% + 0.3rem);
+  padding: 0.4rem 0.6rem;
+  font-size: 0.85rem;
+  background-color: var(--accent-color);
+  font-weight: 500;
+  color: rgba(var(--foreground-color), 1);
+  border-radius: 0.3rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+.goal-milestone {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-top: 1rem;
+  font-size: 0.9rem;
+  max-width: 6rem;
+  text-align: center;
+  &:last-of-type {
+    margin-left: auto;
+    text-align: end;
+    align-items: flex-end;
+    margin-top: -12rem;
+    &::before {
+      top: calc(100% + 1.07rem);
+    }
+  }
+  &::before {
+    content: "";
+    position: absolute;
+    width: 0.2rem;
+    height: 0.8rem;
+    top: -0.45rem;
+    background-color: var(--accent-color);
+  }
+}
 
 #smart_contract_page {
 }
@@ -1117,7 +1202,7 @@ header.grid-2 {
   display: grid;
   gap: 1rem;
   margin-top: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
 }
 .sc-card {
   display: flex;
@@ -1154,11 +1239,6 @@ header.grid-2 {
   .sc-card__actions {
     justify-content: flex-end;
     padding-top: 1rem;
-    // .button {
-    //   background-color: transparent;
-    //   border: solid 1px var(--accent-color);
-    //   padding: 0.5rem 1rem;
-    // }
   }
   .badge {
     margin-right: auto;

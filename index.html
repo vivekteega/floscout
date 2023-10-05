@@ -139,7 +139,7 @@
 	</sm-popup>
 	<!-- Set urls for token and flo Apis -->
 	<script>
-		const testMode = false
+		const testMode = true
 		const floGlobals = {
 			blockchain: testMode ? "FLO_TEST" : "FLO",
 			tokenApiUrl: testMode ? 'https://ranchimallflo-testnet-blockbook.ranchimall.net' : 'https://ranchimallflo.ranchimall.net',
@@ -213,6 +213,13 @@
 		let zIndex = 10
 		// function required for popups or modals to appear
 		function openPopup(popupId, pinned) {
+			if (popupStack.peek() === undefined) {
+				document.addEventListener('keydown', (e) => {
+					if (e.key === 'Escape') {
+						closePopup()
+					}
+				})
+			}
 			zIndex++
 			getRef(popupId).setAttribute('style', `z-index: ${zIndex}`)
 			getRef(popupId).show({ pinned })
@@ -268,6 +275,12 @@
 					renderElem(getRef('filter_s_c_popup__content'), html``)
 					break;
 			}
+			if (popupStack.peek() === undefined)
+				document.removeEventListener('keydown', (e) => {
+					if (e.key === 'Escape') {
+						closePopup()
+					}
+				})
 		})
 		// displays a popup for asking permission. Use this instead of JS confirm
 		const getConfirmation = (title, options = {}) => {
@@ -1349,34 +1362,52 @@
 			router.routeTo(location.hash)
 			closePopup()
 		}
-		function getSmartContractActions(smartContractAddress) {
+		function getSmartContractActions(smartContractAddress, priceType = 'predetermined', showAdminOptions = false) {
 			const { acceptingToken, sellingToken, contractSubType, status } = floGlobals.smartContractList[smartContractAddress]
-			if (status !== 'active') return '';
+			if (!showAdminOptions && status !== 'active') return ''
 			let actions = '';
-			switch (contractSubType) {
-				case 'tokenswap':
-					actions = html`
-						<div class="flex align-center gap-0-5 sc-card__actions">
+			if (contractSubType === 'tokenswap') {
+				actions = html`
+					<div class="flex align-center gap-0-5 sc-card__actions">
+						${status === 'active' ? html`
 							<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'deposit')}>
-								Sell ${sellingToken}
+								Swap ${sellingToken}
 							</button>
 							<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'participate')}>
-								Sell ${acceptingToken}
+								Swap ${acceptingToken}
 							</button>
-						</div>
-					`
-					break;
-				case 'time-trigger':
-				case 'external-trigger':
-					actions = html`
-						<div class="flex align-center gap-0-5 sc-card__actions">
+						`: ''}
+						${showAdminOptions && priceType === 'dynamic' ? html`
+							<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'updateprice')}>
+								Update price
+							</button>
+						`: ''}
+					</div>
+				`
+			} else if (contractSubType === 'time-trigger' && status === 'active') {
+				actions = html`
+					<div class="flex align-center gap-0-5 sc-card__actions">
+						<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'participate')}>
+							Participate
+						</button>
+					</div>
+				`
+			} else if (contractSubType === 'external-trigger') {
+				actions = html`
+					<div class="flex align-center gap-0-5 sc-card__actions">
+						${status === 'active' ? html`
 							<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'participate')}>
 								Participate
-							</button >
-						</div >
-						`
-					break;
-			};
+							</button>
+						`: ''}
+						${showAdminOptions && status === 'expired' ? html`
+							<button class="button button--small button--outlined" onclick=${() => handleSmartContractAction(smartContractAddress, 'trigger')}>
+								Trigger
+							</button>
+						`: ''}
+					</div>
+				`
+			}
 			return actions;
 		}
 		function renderSmartContracts(smartContracts) {
@@ -1577,10 +1608,10 @@
 				const [contractId] = state.wildcards
 				if (!contractId) return;
 				const contractIdObj = splitContractNameAddress(contractId)
-				const {
+				let {
 					status, contract, contractType, contractSubtype, contractAddress, expiration, token,
 					participationFees, userChoices, payeeAddress, minAmount, maxAmount, acceptingToken,
-					sellingToken, numberOfDeposits, numberOfParticipants, totalHonorAmount, totalParticipationAmount,
+					sellingToken, numberOfDeposits, numberOfParticipants, totalHonorAmount, totalParticipationAmount = 0,
 					priceType, oracle_address, price, currentDepositBalance
 				} = await getContractInfo(contractIdObj)
 				const detailsToFetch = [getContractTransactions(contractIdObj), getContractParticipants(contractIdObj)]
@@ -1613,11 +1644,48 @@
 					if (consolidatedParticipants[participant].winningAmount)
 						winners.push(render.contractChoiceCard(consolidatedParticipants[participant]))
 				}
-				const contractActions = getSmartContractActions(contractId)
+				const contractActions = getSmartContractActions(contractId, priceType, true)
+				const progress = Math.min((() => {
+					if (!minAmount && !maxAmount) return 0
+					if (minAmount && !maxAmount) return totalParticipationAmount / minAmount * 100
+					if (maxAmount) return totalParticipationAmount / maxAmount * 100
+				})(), 100)
+				let minGoal = 0
+				if (minAmount && maxAmount) {
+					minGoal = minAmount / maxAmount * 100
+				}
 				renderElem(getRef("page_container"), html`
 					<div id="contract_page" class="page">
 						${status ? html` <div class=${`status ${status}`}>${status}</div> ` : ''}
                     	<h2 class="uppercase">${replaceDash(contract)}</h2>
+						${minAmount || maxAmount ? html`
+							<div class="card grid gap-2">
+								<div class='grid gap-0-5'>
+									<svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12.36 6l.4 2H18v6h-3.36l-.4-2H7V6h5.36M14 4H5v17h2v-7h5.6l.4 2h7V6h-5.6L14 4z"/></svg>
+									<h3>Collection Goal</h3>
+								</div>
+								<div class='grid'>
+									<div id="goal_progress_wrapper">
+										<div id="goal_progress" class="progress-bar" style=${`width: ${progress}%`}></div>
+										<div id="progress_pin">${progress}%</div>
+									</div>
+									<div class="flex align-center gap-0-5">
+										${minAmount ? html`
+											<div class="flex flex-direction-column goal-milestone" style=${maxAmount ? `left: calc(${minGoal}% - 3rem)` : ''}>
+												<h5 class="label">Minimum</h5>
+												<h4>${formatAmount(minAmount)} ${token}</h4>
+											</div>
+										`: ''}
+										${maxAmount ? html`
+											<div class="flex flex-direction-column goal-milestone">
+												<h5 class="label">Maximum</h5>
+												<h4>${formatAmount(maxAmount)} ${token}</h4>
+											</div>
+										`: ''}
+									</div>	
+								</div>
+							</div>
+						`: ''}
 						<div id="contract_info" class="card">
 							<div class="flex info-row">
 								<h5 class="label">Contract Type</h5>
@@ -1653,21 +1721,9 @@
 									</div>
 								</div>
 							`: ''}
-							${minAmount ? html`
-								<div class="flex info-row">
-									<h5 class="label">Min. Subscription Amount</h5>
-									<h4>${formatAmount(minAmount)} ${token}</h4>
-								</div>
-							`: ''}
-							${maxAmount ? html`
-								<div class="flex info-row">
-									<h5 class="label">Max. Subscription Amount</h5>
-									<h4>${formatAmount(maxAmount)} ${token}</h4>
-								</div>
-							`: ''}
 							${participationFees ? html`
 								<div class="flex info-row">
-									<h5 class="label">Participation Fees</h5>
+									<h5 class="label">Participation Amount</h5>
 									<h4>${formatAmount(participationFees)} ${token}</h4>
 								</div>
 							`: ''}
@@ -1766,6 +1822,10 @@
 					</div>
 				`);
 				getRef("page_title").textContent = "Contract";
+				// position progress pin on goal progress bar in percentage
+				if (getRef('progress_pin')) {
+					getRef('progress_pin').style.left = `calc(${progress}% - ${getRef('progress_pin').getBoundingClientRect().width / 2}px)`
+				}
 			} catch (e) {
 				console.trace(e)
 				renderElem(getRef("page_container"), html`${render.errorPage(e)}`);
@@ -1778,23 +1838,34 @@
 			try {
 				const [blockInfo, blockTxs] = await Promise.all([getBlockInfo(blockId), getBlockTransactions(blockId)])
 				const { blockHeight, size, reward, hash, difficulty, nonce } = blockInfo;
+				console.log(blockInfo, blockTxs)
 				renderElem(getRef("page_container"), html`
 					<div id="block_page" class="page">
 						<h5 class="label">Block Height</h5>
 						<h2 class="block-height">${blockHeight}</h2>
-						<div class="card">
-							<h5 class="label">Relevant Transactions</h5>
-							<h4>${blockTxs.length}</h4>
-							<h5 class="label">Confirmations</h5>
-							<h4>${size}</h4>
-							<h5 class="label">Reward</h5>
-							<h4>${reward}</h4>
-							<h5 class="label">Block Hash</h5>
-							<sm-copy value=${hash} clip-text></sm-copy>
-							<h5 class="label">Difficulty</h5>
-							<h4>${difficulty}</h4>
-							<h5 class="label">Nonce</h5>
-							<h4>${nonce}</h4>
+						<div class="card grid gap-1-5">
+							<div class="flex flex-wrap gap-1-5">
+								<div class="grid">
+									<h5 class="label">Confirmations</h5>
+									<h4>${size}</h4>
+								</div>
+								<div class="grid">
+									<h5 class="label">Reward</h5>
+									<h4>${reward}</h4>
+								</div>
+								<div class="grid">
+									<h5 class="label">Difficulty</h5>
+									<h4>${difficulty}</h4>
+								</div>
+								<div class="grid">
+									<h5 class="label">Nonce</h5>
+									<h4>${nonce}</h4>
+								</div>
+							</div>
+							<div class="grid">
+								<h5 class="label">Block Hash</h5>
+								<sm-copy value=${hash} clip-text></sm-copy>
+							</div>
 						</div>
 						<h3 class="heading">Transactions</h3>
 						<ul id="block_transaction_container" class="grid gap-1 top-bottom-padding">
@@ -2124,7 +2195,7 @@
 				}, contractAddress,
 				contractName
 			} = info
-			return {
+			const details = {
 				contract: contractName,
 				contractAddress,
 				contractType,
@@ -2148,6 +2219,11 @@
 				price,
 				currentDepositBalance
 			}
+			floGlobals.smartContractList[`${contractName}-${contractAddress}`] = {
+				...details,
+				...floGlobals.smartContractList[`${contractName}-${contractAddress}`]
+			}
+			return details
 		}
 
 		async function getContractParticipants(contract) {
@@ -2649,13 +2725,14 @@
 			openPopup('smart_contract_creation_popup', true)
 		}
 
+
 		function togglePrivateKeyVisibility(input) {
 			const target = input.closest('sm-input')
 			target.type = target.type === 'password' ? 'text' : 'password';
 			target.focusIn()
 		}
-		function handleSmartContractAction(smartContractAddress, action) {
-			renderElem(getRef('smart_contract_popup__content'), html`<sm-spinner></sm-spinner>`)
+		async function handleSmartContractAction(smartContractAddress, action) {
+			openPopup('smart_contract_popup')
 			switch (action) {
 				// TODO: check minimum amount
 				case 'deposit': {
@@ -2683,15 +2760,30 @@
 							</sm-input>
 						</div>
 						<div class="multi-state-button">
-							<button id="deposit_button" class="button button--primary" onclick=${() => deposit(smartContractAddress)} type="submit" disabled>Sell</button>
+							<button id="deposit_button" class="button button--primary" onclick=${() => deposit(smartContractAddress)} type="submit" disabled>Swap</button>
 						</div>
 					`)
 					break;
 				}
 				case 'participate': {
-					const { price, contractName, contractAddress, acceptingToken, sellingToken, tokenIdentification, userChoices, contractSubType } = floGlobals.smartContractList[smartContractAddress]
+					let { price, contractName, contractAddress, acceptingToken, sellingToken, tokenIdentification, userChoices, contractSubType, participationFees } = floGlobals.smartContractList[smartContractAddress]
 					if (userChoices) {
 						getRef('smart_contract_popup__title').textContent = `Participate`
+						renderElem(getRef('smart_contract_popup__content'), html`<sm-spinner class="justify-self-center"></sm-spinner>`)
+						if (typeof participationFees === 'undefined') {
+							try {
+								// TODO: remove this when smart contract list api is updated
+								const details = await getContractInfo({
+									name: contractName,
+									address: contractAddress
+								})
+								participationFees = details.participationFees
+							} catch (err) {
+								console.error(err)
+								renderElem(getRef('smart_contract_popup__content'), html`<p class="error">Failed to fetch contract info</p>`)
+								return
+							}
+						}
 					}
 					if (contractSubType === 'tokenswap') {
 						getRef('smart_contract_popup__title').textContent = `Swap ${acceptingToken} with ${sellingToken}`
@@ -2714,8 +2806,13 @@
 							<strong>Exchange rate: 1 ${sellingToken} = ${price} ${acceptingToken}</strong>
 						`: ''}
 						<div class="grid gap-0-5">
-							<span id="participation_amount_label" class="label">Participation amount (${acceptingToken || tokenIdentification})</span>
-							<sm-input id="participation_amount" type="number" step="0.00000001" min="0.00000001" error-text="The amount should be above 0.00000001" required></sm-input>
+							${typeof participationFees !== 'undefined' ? html`
+								<span id="participation_amount_label" class="label">Pre-defined participation amount (${acceptingToken || tokenIdentification})</span>
+								<sm-input id="participation_amount" type="number" step="0.00000001" value=${participationFees} readonly required></sm-input>
+							`: html`
+								<span id="participation_amount_label" class="label">Participation amount (${acceptingToken || tokenIdentification})</span>
+								<sm-input id="participation_amount" type="number" step="0.00000001" min="0.00000001" error-text="The amount should be above 0.00000001" required></sm-input>
+							`}
 						</div>
 						<div class="grid gap-0-5">
 							<span class="label">FLO private key</span>
@@ -2728,7 +2825,7 @@
 							</sm-input>
 						</div>
 						<div class="multi-state-button">
-							<button id="participate_button" class="button button--primary" onclick=${() => participate(smartContractAddress)} type="submit" disabled>Sell</button>
+							<button id="participate_button" class="button button--primary" onclick=${() => participate(smartContractAddress)} type="submit" disabled>Swap</button>
 						</div>
 					`)
 					break;
@@ -2737,33 +2834,31 @@
 					const { contractName, contractAddress, oracle_address, price, acceptingToken } = floGlobals.smartContractList[smartContractAddress]
 					getRef('smart_contract_popup__title').textContent = `Update price`
 					renderElem(getRef('smart_contract_popup__content'), html`
-						<sm-form>
-							<div class="grid gap-0-5">
-								<span class="label">Oracle FLO Address</span>
-								<sm-copy id="oracle_address" value=${oracle_address}></sm-copy>
-							</div>
-							<div class="grid gap-0-5">
-								<span class="label">Oracle FLO private key</span>
-								<sm-input id="oracle_private_key" class="password-field" type="password" data-private-key="" required="">
-									<label slot="right" class="interact">
-										<input type="checkbox" class="hidden" readonly="" onchange="togglePrivateKeyVisibility(this)">
-										<svg class="icon invisible" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"> <title>Hide password</title> <path d="M0 0h24v24H0zm0 0h24v24H0zm0 0h24v24H0zm0 0h24v24H0z" fill="none"></path> <path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"></path> </svg>
-										<svg class="icon visible" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"> <title>Show password</title> <path d="M0 0h24v24H0z" fill="none"></path> <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"></path> </svg>
-									</label>
-								</sm-input>
-							</div>
-							<p>
-								<span class="label">Current price: </span>
-								<span id="current_price" class="label">${price} ${acceptingToken}</span>
-							</p>
-							<div class="grid gap-0-5">
-								<span id="updated_price_label" class="label">Updated price (${acceptingToken})</span>
-								<sm-input id="updated_price" type="number" step="0.00000001" min="0.00000001" error-text="Minimum 0.00000001 required" required></sm-input>
-							</div>
-							<div class="multi-state-button">
-								<button id="update_price_button" class="button button--primary" type="submit" onclick=${() => updatePrice(smartContractAddress)} disabled>Update</button>
-							</div>
-						</sm-form>
+						<div class="grid gap-0-5">
+							<span class="label">Oracle FLO Address</span>
+							<sm-copy id="oracle_address" value=${oracle_address}></sm-copy>
+						</div>
+						<div class="grid gap-0-5">
+							<span class="label">Oracle FLO private key</span>
+							<sm-input id="oracle_private_key" class="password-field" type="password" data-private-key="" required="">
+								<label slot="right" class="interact">
+									<input type="checkbox" class="hidden" readonly="" onchange="togglePrivateKeyVisibility(this)">
+									<svg class="icon invisible" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"> <title>Hide password</title> <path d="M0 0h24v24H0zm0 0h24v24H0zm0 0h24v24H0zm0 0h24v24H0z" fill="none"></path> <path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"></path> </svg>
+									<svg class="icon visible" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"> <title>Show password</title> <path d="M0 0h24v24H0z" fill="none"></path> <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"></path> </svg>
+								</label>
+							</sm-input>
+						</div>
+						<p>
+							<span class="label">Current price: </span>
+							<span id="current_price" class="label">${price} ${acceptingToken}</span>
+						</p>
+						<div class="grid gap-0-5">
+							<span id="updated_price_label" class="label">Updated price (${acceptingToken})</span>
+							<sm-input id="updated_price" type="number" step="0.00000001" min="0.00000001" error-text="Minimum 0.00000001 required" required></sm-input>
+						</div>
+						<div class="multi-state-button">
+							<button id="update_price_button" class="button button--primary" type="submit" onclick=${() => updatePrice(smartContractAddress)} disabled>Update</button>
+						</div>
 					`)
 					break;
 				}
@@ -2801,7 +2896,6 @@
 					break;
 				}
 			}
-			openPopup('smart_contract_popup')
 		}
 
 
