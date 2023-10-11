@@ -749,6 +749,7 @@
 			},
 			participantCard(details) {
 				const { participantFloAddress, tokenIdentification, userChoice, tokenAmount, participationAmount, swapAmount, swapPrice, transactionHash, acceptingToken, sellingToken } = details;
+				console.log(details)
 				if (participationAmount) {
 					return html`
 						<li class="flex participant">
@@ -798,7 +799,8 @@
 						</li>
 					`;
 				} else {
-					return html`Unknown participant type`
+					return ''
+					console.warn(`Unknown participant type`)
 				}
 			},
 			depositCard(details) {
@@ -1648,7 +1650,9 @@
 					}
 				}
 				for (const participant in consolidatedParticipants) {
-					participants.push(render.participantCard(consolidatedParticipants[participant]))
+					const participantCard = render.participantCard(consolidatedParticipants[participant])
+					if (participantCard)
+						participants.push(participantCard)
 					if (consolidatedParticipants[participant].winningAmount)
 						winners.push(render.contractChoiceCard(consolidatedParticipants[participant]))
 				}
