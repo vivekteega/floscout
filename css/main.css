@@ -1380,10 +1380,16 @@ fieldset input[type=radio] {
 #smart_contract_creation_popup::part(popup) {
   view-transition-name: sc-popup;
 }
+#smart_contract_creation_popup::part(popup-header) {
+  view-transition-name: sc-popup-header;
+}
 
-::view-transition-group(sc-popup) {
+::view-transition-old(sc-popup),
+::view-transition-new(sc-popup) {
   -webkit-animation-duration: 0.3s;
           animation-duration: 0.3s;
+  height: 100%;
+  width: 100%;
 }
 
 .smart-contract-template {

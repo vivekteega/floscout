@@ -1270,9 +1270,15 @@ fieldset {
   &::part(popup) {
     view-transition-name: sc-popup;
   }
+  &::part(popup-header) {
+    view-transition-name: sc-popup-header;
+  }
 }
-::view-transition-group(sc-popup) {
+::view-transition-old(sc-popup),
+::view-transition-new(sc-popup) {
   animation-duration: 0.3s;
+  height: 100%;
+  width: 100%;
 }
 .smart-contract-template {
   display: grid;
