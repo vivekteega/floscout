@@ -1638,13 +1638,26 @@
 				// Consolidate participants with same address and choice
 				const consolidatedParticipants = {}
 				for (const participant in contractParticipants) {
-					const { participantFloAddress, tokenAmount, userChoice, winningAmount } = contractParticipants[participant]
+					const { participantFloAddress, tokenAmount, userChoice, winningAmount, participationAmount } = contractParticipants[participant]
 					const id = userChoice ? `${participantFloAddress}-${userChoice}` : participantFloAddress
 					if (!consolidatedParticipants[id]) {
 						consolidatedParticipants[id] = contractParticipants[participant]
 					} else {
-						consolidatedParticipants[id].tokenAmount += tokenAmount
-						consolidatedParticipants[id].winningAmount += winningAmount
+						if (tokenAmount) {
+							if (!consolidatedParticipants[id].tokenAmount)
+								consolidatedParticipants[id].tokenAmount = 0
+							consolidatedParticipants[id].tokenAmount += tokenAmount
+						}
+						if (participationAmount) {
+							if (!consolidatedParticipants[id].participationAmount)
+								consolidatedParticipants[id].participationAmount = 0
+							consolidatedParticipants[id].participationAmount += participationAmount
+						}
+						if (winningAmount) {
+							if (!consolidatedParticipants[id].winningAmount)
+								consolidatedParticipants[id].winningAmount = 0
+							consolidatedParticipants[id].winningAmount += winningAmount
+						}
 					}
 				}
 				for (const participant in consolidatedParticipants) {
