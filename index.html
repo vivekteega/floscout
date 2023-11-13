@@ -1191,8 +1191,8 @@
 					</li>`;
 			},
 			compoundTransactionCard(details) {
-				const { time, hash, sender, receiver, contractName, token, amount, offChainTransactions = [], userChoice } = details
-				const smartContract = `${contractName}-${receiver}`
+				const { time, hash, sender, receiver, contractName, token, amount, offChainTransactions = [], userChoice, contractAddress } = details
+				const smartContract = `${contractName}-${receiver || contractAddress}`
 				const renderedOffChainTransactions = offChainTransactions.map(tx => {
 					const { receiverAddress, tokenAmount, tokenIdentification } = tx
 					return html`
@@ -1226,31 +1226,35 @@
 						</div>
 						<div class="contract-info">
 							<ul class="transfer-steps">
-								<li class="transfer-step">
-									<div class="flex flex-direction-column gap-0-5">
-										<div class="flex flex-direction-column">
-											<h5 class="label">Sender</h5>
-											<sm-copy value=${sender}>
-												<a href=${`#/address/${sender}`} class="address wrap-around">${sender}</a>
-											</sm-copy>
-											<p>Sent: <b>${amount} ${token}</b></p>
+								${sender ? html`
+									<li class="transfer-step">
+										<div class="flex flex-direction-column gap-0-5">
+											<div class="flex flex-direction-column">
+												<h5 class="label">Sender</h5>
+												<sm-copy value=${sender}>
+													<a href=${`#/address/${sender}`} class="address wrap-around">${sender}</a>
+												</sm-copy>
+												<p>Sent: <b>${amount} ${token}</b></p>
+											</div>
 										</div>
-									</div>
-									<svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"/></svg>
-									<div class="flex flex-direction-column">
-										<h5 class="label">Receiver (Smart contract)</h5>
-										<a href=${`#/contract/${smartContract}`} class="address wrap-around">${smartContract}</a>
-									</div>
-								</li>
+										<svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"/></svg>
+										<div class="flex flex-direction-column">
+											<h5 class="label">Receiver (Smart contract)</h5>
+											<a href=${`#/contract/${smartContract}`} class="address wrap-around">${smartContract}</a>
+										</div>
+									</li>
+								`: ''}
 								${renderedOffChainTransactions}
 							</ul>	
-							<div class="flex align-center space-between flex-wrap gap-1">
-								<div class="flex flex-direction-column">
-									<h5 class="label">Transaction ID</h5>
-									<sm-copy value=${hash} clip-text></sm-copy>
+							${hash ? html`
+								<div class="flex align-center space-between flex-wrap gap-1">
+									<div class="flex flex-direction-column">
+										<h5 class="label">Transaction ID</h5>
+										<sm-copy value=${hash} clip-text></sm-copy>
+									</div>
+									<a href=${`#/transaction/${hash}`} class="button button--small button--colored">View details</a>
 								</div>
-								<a href=${`#/transaction/${hash}`} class="button button--small button--colored">View details</a>
-							</div>
+							`: ''}
 						</div>
 					</li>
 				`
@@ -2008,7 +2012,7 @@
 
 				if (!groupedTxs.has(key)) {
 					groupedTxs.set(key, {
-						sourceTransaction: null,
+						sourceTransaction: {},
 						offChainTransactions: [],
 						type: transactionTrigger ? 'compoundTransaction' : undefined,
 					});
@@ -2017,12 +2021,18 @@
 				if (hash) {
 					groupedTxs.get(key).sourceTransaction = tx;
 				} else {
-					const { tokenIdentification, senderAddress, receiverAddress, onChain, tokenAmount } = tx;
+					const { tokenIdentification, senderAddress, receiverAddress, onChain, tokenAmount, time, contractName } = tx;
 					groupedTxs.get(key).offChainTransactions.push({
 						tokenIdentification,
 						receiverAddress,
 						tokenAmount,
 					});
+					if (time)
+						groupedTxs.get(key).sourceTransaction.time = time
+					if (contractName)
+						groupedTxs.get(key).sourceTransaction.contractName = contractName
+					if (senderAddress)
+						groupedTxs.get(key).sourceTransaction.contractAddress = senderAddress
 				}
 			});
 
@@ -2232,7 +2242,6 @@
 		}
 
 		async function getContractDeposits(contract) {
-			console.log(`${floGlobals.tokenApiUrl}/api/v2/smartContractDeposits?contractName=${contract.name}&contractAddress=${contract.address}`)
 			const deposits = await fetchJson(`${floGlobals.tokenApiUrl}/api/v2/smartContractDeposits?contractName=${contract.name}&contractAddress=${contract.address}`)
 			return deposits.depositInfo
 		}
